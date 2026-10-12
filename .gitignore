@@ -1,0 +1,26 @@
+# Secrets and local configuration: never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Returned sign-off forms contain personal names. Kept in a restricted folder outside git (D-049)
+DOCS/SIGN-OFF/returns/
+
+# Windows device-name artefacts (a shell redirect to nul can create a real file)
+nul
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Dependencies and build output (added when the apps are scaffolded)
+node_modules/
+dist/
+.next/
+out/
+coverage/

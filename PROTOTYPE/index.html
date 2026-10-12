@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TCN Transport — Prototype (Choose a Role)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#ff5722;--yellow:#ffd369;--ink:#263742;--mut:#667380;--bg:#f3f5f9;--teal:#10c7a0;--line:#e9edf2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh;display:grid;place-items:center;padding:20px}
+.wrap{max-width:400px;width:100%;display:grid;gap:16px}
+.hero{background:var(--ink);border-radius:28px;padding:26px;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;width:130px;height:130px;border-radius:50%;background:var(--yellow);right:-40px;top:-40px}
+.hero .eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow)}
+h1{font-size:28px;letter-spacing:-.03em;margin:8px 0 6px;font-weight:800}
+.hero p{font-size:13px;color:#c9d3d8;max-width:30ch}
+.role{display:flex;align-items:center;gap:14px;background:#fff;border-radius:22px;padding:18px;text-decoration:none;color:inherit;box-shadow:0 24px 50px -22px rgba(38,55,66,.28);transition:transform .15s}
+.role:hover{transform:translateY(-3px)}
+.role .ic{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;flex-shrink:0}
+.role b{font-size:15px;display:block}
+.role span{font-size:12px;color:var(--mut)}
+.role svg.arw{margin-left:auto}
+.note{font-size:11px;color:var(--mut);text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <span class="eyebrow">The Covenant Nation · Ikorodu</span>
+    <h1>Transport System<br>Prototype</h1>
+    <p>Three apps, one platform. Pick a role to walk its full workflow.</p>
+    <svg width="120" height="62" viewBox="0 0 150 78" fill="none" style="margin-top:16px">
+      <rect x="6" y="8" width="138" height="48" rx="14" stroke="#ffd369" stroke-width="4"/>
+      <line x1="6" y1="34" x2="144" y2="34" stroke="#ffd369" stroke-width="4"/>
+      <line x1="34" y1="14" x2="34" y2="34" stroke="#ffd369" stroke-width="3"/>
+      <line x1="62" y1="14" x2="62" y2="34" stroke="#ffd369" stroke-width="3"/>
+      <line x1="90" y1="14" x2="90" y2="34" stroke="#ffd369" stroke-width="3"/>
+      <line x1="118" y1="8" x2="118" y2="56" stroke="#ffd369" stroke-width="3"/>
+      <circle cx="42" cy="62" r="9" stroke="#ffd369" stroke-width="4"/>
+      <circle cx="108" cy="62" r="9" stroke="#ffd369" stroke-width="4"/>
+    </svg>
+  </div>
+  <a class="role" href="member.html">
+    <div class="ic" style="background:#ffe0d6"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff5722" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg></div>
+    <div><b>Member App</b><span>Install → sign in → book → legs &amp; guests → pay → ticket → cancel</span></div>
+    <svg class="arw" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#667380" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+  </a>
+  <a class="role" href="marshal.html">
+    <div class="ic" style="background:#d9f7ef"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10c7a0" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+    <div><b>Marshal App</b><span>Duty → manifest per leg → board → walk-ons → incidents → summary</span></div>
+    <svg class="arw" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#667380" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+  </a>
+  <a class="role" href="admin.html">
+    <div class="ic" style="background:#efeaff"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8f7ff5" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M3 9h18M9 21V9"/></svg></div>
+    <div><b>Admin Console</b><span>Overview → programmes → fleet → bookings → refunds → approvals → audit</span></div>
+    <svg class="arw" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#667380" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>
+  </a>
+  <p class="note">Interactive mockup · mock data · reflects post-meeting model:<br>guest riders, outbound/return legs, digital payments only.<br>Built for phone-sized screens — best viewed at ~390px wide.</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TCN Transport — Member App (Prototype)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#ff5722;--yellow:#ffd369;--ink:#263742;--mut:#667380;--bg:#f3f5f9;
+  --teal:#10c7a0;--lilac:#8f7ff5;--aqua:#37c4e5;--peach:#ffb59e;--red:#e5484d;
+  --card:#fff;--line:#e9edf2;--shadow:0 24px 50px -22px rgba(38,55,66,.28);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh}
+h1,h2,h3{font-weight:800;letter-spacing:-.03em}
+button{font-family:inherit;cursor:pointer;border:0}
+input,select,textarea{font-family:inherit;font-size:14px}
+.app{max-width:430px;margin:0 auto;min-height:100dvh;background:var(--bg);position:relative;padding-bottom:96px}
+.view{display:none;padding:20px 20px 0}
+.view.on{display:block;animation:fade .28s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- shared ---------- */
+.card{background:var(--card);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+.eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.hero{background:var(--ink);border-radius:28px;padding:22px;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;width:130px;height:130px;border-radius:50%;background:var(--yellow);right:-40px;top:-40px}
+.hero .eyebrow{color:var(--yellow)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:99px;font-weight:800;font-size:14.5px;letter-spacing:-.01em}
+.btn.primary{background:var(--orange);color:#fff}
+.btn.dark{background:var(--ink);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.teal{background:var(--teal);color:#fff}
+.btn.sm{padding:11px 18px;width:auto;font-size:13px}
+.btn:disabled{opacity:.45;pointer-events:none}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:800;padding:5px 11px;border-radius:99px}
+.chip.g{background:#d9f7ef;color:#0a8a6d}.chip.o{background:#fff0d3;color:#9a6b00}.chip.r{background:#ffe1e3;color:#b03038}.chip.b{background:#e8eeff;color:#2f56d6}.chip.k{background:#efeaff;color:#6a56d9}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{padding:9px 16px;border-radius:99px;background:#fff;border:1.5px solid var(--line);font-size:12.5px;font-weight:700;color:var(--ink)}
+.pill.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.field{display:grid;gap:6px}
+.field label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)}
+.field input,.field select,.field textarea{padding:14px 16px;border-radius:16px;border:1.5px solid var(--line);background:#fff;outline:none;width:100%}
+.field input:focus{border-color:var(--orange)}
+.row{display:flex;align-items:center;gap:12px}
+.spread{justify-content:space-between}
+.stack{display:grid;gap:12px}
+.muted{color:var(--mut);font-size:12.5px;line-height:1.5}
+.hair{height:1px;background:var(--line)}
+.seg{display:flex;background:#eef1f5;border-radius:99px;padding:4px;gap:4px}
+.seg button{flex:1;padding:10px;border-radius:99px;font-size:12.5px;font-weight:800;color:var(--mut);background:transparent}
+.seg button.sel{background:#fff;color:var(--ink);box-shadow:0 4px 12px -6px rgba(38,55,66,.3)}
+.cap-bar{height:8px;border-radius:99px;background:#eef1f5;overflow:hidden}
+.cap-bar i{display:block;height:100%;border-radius:99px;background:var(--teal)}
+.cap-bar i.warn{background:var(--yellow)}.cap-bar i.full{background:var(--orange)}
+.stepper{display:flex;align-items:center;gap:14px;background:#fff;border:1.5px solid var(--line);border-radius:99px;padding:8px}
+.stepper button{width:40px;height:40px;border-radius:50%;background:var(--bg);font-size:20px;font-weight:800;color:var(--ink)}
+.stepper b{flex:1;text-align:center;font-size:18px}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 22px;border-radius:99px;font-size:13px;font-weight:700;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.3s;z-index:50;white-space:nowrap}
+.toast.on{opacity:1}
+.sheet{position:fixed;inset:0;background:rgba(38,55,66,.5);display:none;align-items:flex-end;justify-content:center;z-index:60}
+.sheet.on{display:flex}
+.sheet .inner{background:#fff;width:100%;max-width:430px;border-radius:28px 28px 0 0;padding:22px;max-height:82dvh;overflow:auto}
+.grip{width:44px;height:5px;border-radius:99px;background:var(--line);margin:0 auto 16px}
+
+/* ---------- top bar / nav ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 4px}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+.iconbtn{width:42px;height:42px;border-radius:50%;background:#fff;display:grid;place-items:center;position:relative;box-shadow:var(--shadow)}
+.iconbtn .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--orange);border:2px solid #fff}
+.bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--line);display:flex;padding:10px 8px calc(10px + env(safe-area-inset-bottom));z-index:40}
+.bottomnav button{flex:1;display:grid;place-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--mut);background:none;padding:6px 0;border-radius:14px}
+.bottomnav button.sel{color:var(--orange)}
+.bottomnav svg{width:21px;height:21px}
+
+/* ---------- component bits ---------- */
+.route{display:flex;gap:14px;align-items:center}
+.route .thumb{width:52px;height:52px;border-radius:16px;background:var(--bg);display:grid;place-items:center;flex-shrink:0}
+.slot{border:1.5px solid var(--line);border-radius:99px;padding:9px 14px;font-size:12px;font-weight:700;background:#fff}
+.slot.sel{background:var(--orange);color:#fff;border-color:var(--orange)}
+.slot.off{opacity:.4;text-decoration:line-through}
+.day-pill{display:grid;place-items:center;width:46px;padding:10px 0;border-radius:99px;background:#fff;border:1.5px solid var(--line);font-size:11px;font-weight:800;color:var(--mut);gap:2px}
+.day-pill b{font-size:15px;color:var(--ink)}
+.day-pill.sel{background:var(--ink);border-color:var(--ink)}.day-pill.sel b,.day-pill.sel{color:#fff}
+.leg-card{border:1.5px solid var(--line);border-radius:18px;padding:14px;display:flex;gap:12px;align-items:center;background:#fff}
+.leg-card.sel{border-color:var(--orange);background:#fff7f5}
+.leg-card .ic{width:40px;height:40px;border-radius:12px;background:var(--bg);display:grid;place-items:center;flex-shrink:0}
+.leg-card.sel .ic{background:#ffe0d6}
+.rider{display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid var(--line);border-radius:16px;background:#fff}
+.rider .rm{margin-left:auto;width:30px;height:30px;border-radius:50%;background:var(--bg);display:grid;place-items:center;color:var(--mut)}
+.ticket{background:#fff;border-radius:28px;overflow:hidden;box-shadow:var(--shadow)}
+.ticket .head{background:var(--ink);color:#fff;padding:20px;position:relative;overflow:hidden}
+.ticket .head::after{content:"";position:absolute;width:100px;height:100px;border-radius:50%;background:var(--yellow);right:-30px;top:-30px}
+.ticket .body{padding:20px;display:grid;gap:14px}
+.ticket .tear{border-top:2px dashed var(--line);position:relative}
+.ticket .tear::before,.ticket .tear::after{content:"";position:absolute;width:22px;height:22px;border-radius:50%;background:var(--bg);top:-11px}
+.ticket .tear::before{left:-11px}.ticket .tear::after{right:-11px}
+.qr{width:120px;height:120px;margin:0 auto;border-radius:16px;background:repeating-conic-gradient(var(--ink) 0% 25%, #fff 0% 50%) 50%/22px 22px;border:8px solid #fff;box-shadow:0 0 0 1.5px var(--line)}
+.notif{display:flex;gap:12px;padding:14px;border-radius:18px;background:#fff;align-items:flex-start}
+.notif .ic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.install-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:#fff;font-size:11px;font-weight:700;padding:7px 14px;border-radius:99px}
+.approval-note{background:#fff8e8;border:1.5px solid var(--yellow);border-radius:16px;padding:13px 15px;font-size:12.5px;color:#7a5b00;display:flex;gap:9px;align-items:flex-start}
+/* skeleton loading state */
+.skb{background:#e8edf2;border-radius:16px;position:relative;overflow:hidden}
+.skb::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.85) 50%,transparent 75%);animation:shim 1.1s infinite}
+@keyframes shim{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+@media(min-width:431px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- ============ V-INSTALL : landing / PWA gate ============ -->
+<div class="view" id="v-install">
+  <div style="height:18px"></div>
+  <div class="hero" style="padding:28px 24px 34px">
+    <span class="eyebrow">The Covenant Nation · Ikorodu</span>
+    <h1 style="font-size:32px;margin:10px 0 8px">Church<br>Transport</h1>
+    <p style="font-size:13.5px;color:#c9d3d8;max-width:30ch">Book your seat, bring your people, travel together. Free every Sunday.</p>
+    <svg width="150" height="78" viewBox="0 0 150 78" fill="none" style="margin-top:20px">
+      <rect x="6" y="8" width="138" height="48" rx="14" stroke="#ffd369" stroke-width="4"/>
+      <line x1="6" y1="34" x2="144" y2="34" stroke="#ffd369" stroke-width="4"/>
+      <line x1="34" y1="14" x2="34" y2="34" stroke="#ffd369" stroke-width="3"/>
+      <line x1="62" y1="14" x2="62" y2="34" stroke="#ffd369" stroke-width="3"/>
+      <line x1="90" y1="14" x2="90" y2="34" stroke="#ffd369" stroke-width="3"/>
+      <line x1="118" y1="8" x2="118" y2="56" stroke="#ffd369" stroke-width="3"/>
+      <circle cx="42" cy="62" r="9" stroke="#ffd369" stroke-width="4"/>
+      <circle cx="108" cy="62" r="9" stroke="#ffd369" stroke-width="4"/>
+    </svg>
+  </div>
+  <div class="stack" style="margin-top:16px">
+    <div class="card" style="display:flex;gap:12px;align-items:center">
+      <div class="route thumb" style="background:#d9f7ef"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a8a6d" stroke-width="2"><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/><circle cx="12" cy="12" r="4"/></svg></div>
+      <div style="flex:1"><b style="font-size:14px">Install the app first</b><p class="muted" style="margin-top:2px">Booking needs the app installed — it takes 10 seconds and uses no app store.</p></div>
+    </div>
+    <button class="btn primary" onclick="toast('Add to Home Screen — installing…');setTimeout(()=>go('v-auth'),900)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 3v12M6 9l6 6 6-6M4 21h16"/></svg>
+      Install App
+    </button>
+    <button class="btn ghost" onclick="go('v-auth')">Continue in browser</button>
+    <p class="muted" style="text-align:center;font-size:11.5px">iPhone: Share → <b>Add to Home Screen</b> · Android: tap install prompt</p>
+  </div>
+</div>
+
+<!-- ============ V-AUTH : sign in / register ============ -->
+<div class="view" id="v-auth">
+  <div style="height:14px"></div>
+  <h2 style="font-size:26px">Welcome</h2>
+  <p class="muted" style="margin:6px 0 16px">Sign in with your member account, or register as a first-timer / guest.</p>
+  <div class="seg" style="margin-bottom:16px">
+    <button class="sel" id="seg-in" onclick="authTab('in')">Sign In</button>
+    <button id="seg-new" onclick="authTab('new')">First Timer</button>
+    <button id="seg-guest" onclick="authTab('guest')">Guest</button>
+  </div>
+
+  <div class="stack" id="tab-in">
+    <div class="field"><label>Phone number</label><input value="+234 801 234 5678"></div>
+    <p class="muted" style="font-size:12px">We will send a 6-digit code by SMS to confirm it is you.</p>
+    <button class="btn primary" onclick="signin()">Send code by SMS</button>
+    <button class="btn ghost" onclick="toast('Google sign-in connects at deployment')">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.6 12.3c0-.7-.1-1.4-.2-2H12v3.9h6c-.3 1.3-1 2.4-2.2 3.1v2.6h3.5c2.1-1.9 3.3-4.7 3.3-7.6z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.5-2.6c-1 .7-2.3 1.1-3.8 1.1-2.9 0-5.4-2-6.3-4.6H2.1v2.7C3.9 20.6 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.7 14.2c-.2-.7-.4-1.4-.4-2.2s.1-1.5.4-2.2V7.1H2.1C1.4 8.6 1 10.2 1 12s.4 3.4 1.1 4.9l3.6-2.7z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.1-3.1C17.5 2.1 15 1 12 1 7.7 1 3.9 3.4 2.1 7.1l3.6 2.7c.9-2.6 3.4-4.6 6.3-4.6z"/></svg>
+      Google
+    </button>
+    <p class="muted" style="text-align:center;font-size:11.5px">Members only — your phone number must match the church register</p>
+  </div>
+
+  <div class="stack" id="tab-new" style="display:none">
+    <div class="approval-note"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a6b00" stroke-width="2.2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16.5v.5"/></svg><span><b>First-timer registrations are reviewed by the transport team.</b> You'll get a notification once approved — usually within a day.</span></div>
+    <div class="field"><label>Full name</label><input placeholder="e.g. Adaeze Okafor"></div>
+    <div class="field"><label>Phone number</label><input placeholder="+234 …"></div>
+    <div class="field"><label>Who invited you? (optional)</label><input placeholder="Member's name"></div>
+    <button class="btn primary" onclick="submitReg()">Submit for Approval</button>
+  </div>
+
+  <div class="stack" id="tab-guest" style="display:none">
+    <div class="approval-note" style="background:#eafaf5;border-color:var(--teal);color:#0a6a55"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a8a6d" stroke-width="2.2" style="flex-shrink:0;margin-top:1px"><path d="M10 13a5 5 0 007.5.5l3-3a5 5 0 00-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 00-7.5-.5l-3 3a5 5 0 007 7l1.7-1.7"/></svg><span><b>Have an invite link?</b> Guests sign up through a member's invite — no approval wait needed.</span></div>
+    <div class="field"><label>Invite code / link</label><input placeholder="Paste your invite code"></div>
+    <div class="field"><label>Your name</label><input placeholder="Full name"></div>
+    <div class="field"><label>Phone number</label><input placeholder="+234 …"></div>
+    <button class="btn teal" onclick="toast('Welcome, guest! Signed in');setTimeout(()=>go('v-home'),900)">Join as Guest</button>
+    <p class="muted" style="text-align:center;font-size:11.5px">A member can also add you directly from their app</p>
+  </div>
+</div>
+
+<!-- ============ V-HOME ============ -->
+<div class="view" id="v-home">
+  <div class="topbar" style="padding:0 0 14px">
+    <div class="row"><div class="avatar">AO</div><div><b style="font-size:15px">Good morning, Adaeze</b><div class="muted" style="font-size:11.5px">Member · Ikorodu Assembly</div></div></div>
+    <button class="iconbtn" onclick="go('v-alerts')"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="dot"></span></button>
+  </div>
+
+  <div class="seg" style="margin-bottom:14px">
+    <button class="sel" id="seg-sun" onclick="prog('sun')">Sunday Service</button>
+    <button id="seg-hal" onclick="prog('hal')">Special Events</button>
+  </div>
+
+  <div class="hero" style="padding:20px">
+    <div class="row spread"><span class="eyebrow" id="h-eyebrow">Next programme</span><span class="chip g" style="background:rgba(16,199,160,.2);color:#7ff5dd">BOOKING OPEN</span></div>
+    <h2 style="font-size:24px;margin:8px 0 4px" id="h-title">Sunday Service</h2>
+    <p style="font-size:12.5px;color:#c9d3d8" id="h-sub">Sun, Oct 12 · 7:30 AM · 4 buses on 3 routes</p>
+    <div class="row" style="margin-top:14px;justify-content:space-between">
+      <span class="install-badge" id="h-price">FREE</span>
+      <span style="font-size:11.5px;color:#8fa3ad" id="h-left">47 seats left</span>
+    </div>
+  </div>
+
+  <div class="g" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px">
+    <div class="card" style="padding:14px" onclick="sheetOpen('v-seatmap')"><div class="route thumb" style="background:#ffe0d6"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ff5722" stroke-width="2"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></div><b style="font-size:12.5px;display:block;margin-top:9px">Seat Map</b><span class="muted" style="font-size:10.5px">View layout</span></div>
+    <div class="card" style="padding:14px" onclick="sheetOpen('v-pickups')"><div class="route thumb" style="background:#e5f6fd"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#37c4e5" stroke-width="2"><path d="M12 21s-7-5.5-7-11a7 7 0 1114 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></div><b style="font-size:12.5px;display:block;margin-top:9px">Pickup Points</b><span class="muted" style="font-size:10.5px">3 on this route</span></div>
+    <div class="card" style="padding:14px" onclick="go('v-guests')"><div class="route thumb" style="background:#efeaff"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8f7ff5" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 15.2c2.6.4 4.6 1.9 5.5 4.8"/></svg></div><b style="font-size:12.5px;display:block;margin-top:9px">My Guests</b><span class="muted" style="font-size:10.5px">Bring someone</span></div>
+    <div class="card" style="padding:14px" onclick="go('v-bookings')"><div class="route thumb" style="background:#fff3d6"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c99400" stroke-width="2"><path d="M5 4h14v16l-2.3-1.7L14.4 20l-2.4-1.7L9.6 20l-2.3-1.7L5 20z"/><path d="M9 9h6M9 13h4"/></svg></div><b style="font-size:12.5px;display:block;margin-top:9px">My Bookings</b><span class="muted" style="font-size:10.5px" id="bk-count">2 active</span></div>
+  </div>
+
+  <h3 style="font-size:15px;margin:20px 0 10px">Choose your route</h3>
+  <div class="stack" id="routes"></div>
+</div>
+
+<!-- ============ V-BOOK ============ -->
+<div class="view" id="v-book">
+  <div class="row" style="margin-bottom:14px"><button class="iconbtn" onclick="go('v-home')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button><h3 style="font-size:17px">Book a Seat</h3></div>
+  <div class="stack">
+    <div class="card" style="padding:16px"><div class="row spread"><div><span class="eyebrow">Selected</span><b style="font-size:15px;display:block;margin-top:3px" id="bk-route">Ikorodu Garage Route</b><span class="muted" style="font-size:12px" id="bk-bus">Bus 1 · 14 seats</span></div><span class="chip g" id="bk-cap">9 left</span></div></div>
+
+    <div><span class="eyebrow" style="display:block;margin-bottom:8px">1 · Travel day</span>
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:4px" id="days"></div>
+      <button class="pill" style="margin-top:8px" onclick="sheetOpen('v-cal')">Open calendar ›</button>
+    </div>
+
+    <div><span class="eyebrow" style="display:block;margin-bottom:8px">2 · Trip leg</span>
+      <div class="stack" id="legs">
+        <div class="leg-card sel" data-leg="round" onclick="pickLeg(this,'round')"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><path d="M4 9h13l-3-3M20 15H7l3 3"/></svg></div><div style="flex:1"><b style="font-size:13.5px">Round trip</b><div class="muted" style="font-size:11.5px">Go and return with the bus</div></div><span class="chip b" id="legprice-round">1 seat</span></div>
+        <div class="leg-card" data-leg="out" onclick="pickLeg(this,'out')"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div><div style="flex:1"><b style="font-size:13.5px">Outbound only</b><div class="muted" style="font-size:11.5px">Going to church, returning on my own</div></div><span class="chip b">½ seat</span></div>
+        <div class="leg-card" data-leg="ret" onclick="pickLeg(this,'ret')"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></div><div style="flex:1"><b style="font-size:13.5px">Return only</b><div class="muted" style="font-size:11.5px">Coming on my own, returning with the bus</div></div><span class="chip b">½ seat</span></div>
+      </div>
+    </div>
+
+    <div><span class="eyebrow" style="display:block;margin-bottom:8px">3 · Departure time</span>
+      <div class="pills" id="slots"><button class="slot sel">6:00 AM</button><button class="slot">6:30 AM</button><button class="slot off">7:00 AM</button></div>
+    </div>
+
+    <div><span class="eyebrow" style="display:block;margin-bottom:8px">4 · Pickup point</span>
+      <div class="pills" id="pickups"><button class="pill sel">Ikorodu Garage</button><button class="pill">Agric Bus Stop</button><button class="pill">Owutu Junction</button></div>
+    </div>
+
+    <div><div class="row spread" style="margin-bottom:8px"><span class="eyebrow">5 · Seats</span><span class="muted" style="font-size:11.5px" id="seat-hint">1 rider selected</span></div>
+      <div class="stepper"><button onclick="seatStep(-1)">−</button><b id="seat-n">1</b><button onclick="seatStep(1)">+</button></div>
+    </div>
+
+    <div><div class="row spread" style="margin-bottom:8px"><span class="eyebrow">6 · Riders</span><button class="btn ghost sm" onclick="sheetOpen('v-addrider')">+ Add rider</button></div>
+      <div class="stack" id="riders"></div>
+      <p class="muted" style="font-size:11.5px;margin-top:8px">Add family or friends — they'll ride under your name. Or send an invite link from <b>My Guests</b>.</p>
+    </div>
+
+    <div class="field"><label>Name on booking</label><input value="Adaeze Okafor"></div>
+    <div class="field"><label>Requests (optional)</label><textarea rows="2" placeholder="e.g. seat near the door, travelling with elderly parent"></textarea></div>
+
+    <button class="btn primary" id="cta" onclick="checkout()">Confirm Seat — FREE</button>
+    <p class="muted" style="text-align:center;font-size:11px">Your seat is held while you complete payment — release after 15 min if unpaid</p>
+  </div>
+</div>
+
+<!-- ============ V-PAY ============ -->
+<div class="view" id="v-pay">
+  <div class="row" style="margin-bottom:14px"><button class="iconbtn" onclick="go('v-book')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button><h3 style="font-size:17px">Payment</h3><span class="chip o">HELD · 14:58</span></div>
+  <div class="stack">
+    <div class="card"><div class="row spread"><span class="eyebrow">Total</span><b style="font-size:22px" id="pay-total">₦2,500</b></div><div class="hair" style="margin:12px 0"></div><div class="muted" id="pay-lines">Special event · seats held for 15 min</div></div>
+    <div class="card">
+      <span class="eyebrow" style="display:block;margin-bottom:10px">Choose payment provider</span>
+      <div class="stack" id="providers">
+        <div class="leg-card sel" data-pv="Paystack" onclick="pickPv(this)"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 10h18"/></svg></div><div style="flex:1"><b style="font-size:13.5px">Paystack</b><div class="muted" style="font-size:11.5px">Card · bank transfer · USSD</div></div><span class="chip g">RECOMMENDED</span></div>
+        <div class="leg-card" data-pv="OPay" onclick="pickPv(this)"><div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M11 18h2"/></svg></div><div style="flex:1"><b style="font-size:13.5px">OPay</b><div class="muted" style="font-size:11.5px">OPay wallet · transfer</div></div><span class="chip b">WALLET</span></div>
+      </div>
+      <div class="hair" style="margin:14px 0"></div>
+      <div class="approval-note" style="background:#eafaf5;border-color:var(--teal);color:#0a6a55"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a8a6d" stroke-width="2.2" style="flex-shrink:0;margin-top:1px"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 018 0v3"/></svg><span><b>Your card details never touch this app.</b> You'll be redirected to the provider's secure page — the church sees only the payment confirmation.</span></div>
+    </div>
+    <button class="btn primary" id="paybtn" onclick="payRedirect()">Continue to Paystack →</button>
+    <p class="muted" style="text-align:center;font-size:11px">PCI-compliant design — provider-hosted checkout, no card storage on church systems</p>
+  </div>
+</div>
+
+<!-- ============ V-TICKET ============ -->
+<div class="view" id="v-ticket">
+  <div style="height:8px"></div>
+  <div class="ticket">
+    <div class="head"><span class="eyebrow" style="color:var(--yellow)">Booking confirmed</span><h2 style="font-size:22px;margin-top:6px" id="tk-prog">Sunday Service</h2><p style="font-size:12px;color:#c9d3d8;margin-top:2px" id="tk-date">Sun, Oct 12 · 6:00 AM departure</p></div>
+    <div class="body">
+      <div class="qr"></div>
+      <div style="text-align:center"><b style="font-size:19px;letter-spacing:.06em" id="tk-ref">TCN-8F3K2</b><div class="muted" style="font-size:11.5px">Booking reference</div></div>
+      <div class="tear"></div>
+      <div class="row spread"><div><span class="eyebrow">Route</span><b style="font-size:13.5px;display:block" id="tk-route">Ikorodu Garage · Bus 1</b></div><div style="text-align:right"><span class="eyebrow">Pickup</span><b style="font-size:13.5px;display:block" id="tk-pick">Ikorodu Garage</b></div></div>
+      <div class="row spread"><div><span class="eyebrow">Leg</span><span class="chip b" id="tk-leg">ROUND TRIP</span></div><div style="text-align:right"><span class="eyebrow">Riders</span><b style="font-size:13.5px" id="tk-riders">1</b></div></div>
+      <div id="tk-riderlist" class="muted" style="font-size:12px"></div>
+      <div class="row spread"><span class="chip g" id="tk-status">CONFIRMED — FREE</span><span class="muted" style="font-size:11px">Show this to your marshal</span></div>
+    </div>
+  </div>
+  <div class="stack" style="margin-top:14px">
+    <button class="btn dark" onclick="toast('Ticket saved to your app')">Save Ticket</button>
+    <button class="btn ghost" onclick="go('v-home')">Done</button>
+  </div>
+</div>
+
+<!-- ============ V-BOOKINGS ============ -->
+<div class="view" id="v-bookings">
+  <h2 style="font-size:22px;margin-bottom:14px">My Bookings</h2>
+  <div class="pills" style="margin-bottom:14px"><button class="pill sel" data-bt="up" onclick="bktab(this)">Upcoming</button><button class="pill" data-bt="past" onclick="bktab(this)">Past</button><button class="pill" data-bt="cxl" onclick="bktab(this)">Cancelled</button></div>
+  <div class="stack" id="bookinglist"></div>
+</div>
+
+<!-- ============ V-GUESTS ============ -->
+<div class="view" id="v-guests">
+  <div class="row" style="margin-bottom:14px"><button class="iconbtn" onclick="go('v-home')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button><h2 style="font-size:22px">My Guests</h2></div>
+  <div class="card" style="margin-bottom:14px;background:var(--ink);color:#fff">
+    <span class="eyebrow" style="color:var(--yellow)">Invite a guest</span>
+    <p style="font-size:13px;color:#c9d3d8;margin:8px 0 12px">Send this link to a friend or family member — they sign up instantly as your guest, no approval wait.</p>
+    <div class="row"><code style="flex:1;background:rgba(255,255,255,.1);padding:11px 14px;border-radius:12px;font-size:12px;color:var(--yellow)">tcn.app/g/AO-2917</code><button class="btn sm" style="background:var(--yellow);color:var(--ink)" onclick="toast('Invite link copied')">Copy</button></div>
+  </div>
+  <h3 style="font-size:14px;margin-bottom:10px">People riding with me (<span id="gcount">0</span>)</h3>
+  <div class="stack" id="guestlist"></div>
+  <button class="btn primary" style="margin-top:16px" onclick="sheetOpen('v-addrider')">+ Add a guest</button>
+  <p class="muted" style="font-size:11.5px;margin-top:10px;text-align:center">Guests ride under your accountability — their check-ins appear on your group tag</p>
+</div>
+
+<!-- ============ V-ALERTS ============ -->
+<div class="view" id="v-alerts">
+  <h2 style="font-size:22px;margin-bottom:14px">Notifications</h2>
+  <div class="stack" id="notiflist"></div>
+</div>
+
+<!-- ============ V-PROFILE ============ -->
+<div class="view" id="v-profile">
+  <div class="card" style="display:flex;gap:14px;align-items:center;margin-bottom:14px">
+    <div class="avatar" style="width:56px;height:56px;font-size:18px">AO</div>
+    <div><b style="font-size:17px">Adaeze Okafor</b><div class="muted" style="font-size:12px">+234 801 234 5678 · Member since 2021</div><span class="chip g" style="margin-top:6px">MEMBER — VERIFIED</span></div>
+  </div>
+  <div class="stack">
+    <div class="card" style="padding:6px 0">
+      <div class="row" style="padding:14px 16px"><b style="font-size:13.5px;flex:1">Notifications</b><span class="muted" style="font-size:12px">Push + Email · on</span></div><div class="hair"></div>
+      <div class="row" style="padding:14px 16px"><b style="font-size:13.5px;flex:1">Saved pickup point</b><span class="muted" style="font-size:12px">Ikorodu Garage</span></div><div class="hair"></div>
+      <div class="row" style="padding:14px 16px"><b style="font-size:13.5px;flex:1">Payments</b><span class="muted" style="font-size:12px">Via provider — nothing stored here</span></div>
+    </div>
+    <div class="card" style="padding:6px 0">
+      <div class="row" style="padding:14px 16px;cursor:pointer" onclick="sheetOpen('v-report')"><b style="font-size:13.5px;flex:1">Report a problem</b><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#667380" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg></div><div class="hair"></div>
+      <div class="row" style="padding:14px 16px;cursor:pointer" onclick="go('v-support')"><b style="font-size:13.5px;flex:1">Help &amp; contact transport team</b><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#667380" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg></div>
+    </div>
+    <button class="btn ghost" onclick="go('v-auth')">Sign out</button>
+  </div>
+</div>
+
+<!-- ============ V-PENDING : first-timer awaiting approval ============ -->
+<div class="view" id="v-pending">
+  <div style="height:30px"></div>
+  <div class="card" style="text-align:center;padding:34px 24px">
+    <div style="width:72px;height:72px;border-radius:50%;background:#fff0d3;display:grid;place-items:center;margin:0 auto 16px"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9a6b00" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3"/></svg></div>
+    <h2 style="font-size:22px">Registration under review</h2>
+    <p class="muted" style="font-size:13px;margin:10px auto 0;max-width:30ch">The transport team approves every first-timer personally — this keeps the bus for church members and their guests only.</p>
+    <div class="hair" style="margin:18px 0"></div>
+    <div class="row spread"><span class="muted" style="font-size:12px">Submitted</span><b style="font-size:13px">Just now</b></div>
+    <div class="row spread" style="margin-top:8px"><span class="muted" style="font-size:12px">Status</span><span class="chip o">PENDING APPROVAL</span></div>
+    <div class="row spread" style="margin-top:8px"><span class="muted" style="font-size:12px">You'll be notified via</span><b style="font-size:12.5px">Push + SMS fallback</b></div>
+  </div>
+  <div class="stack" style="margin-top:14px">
+    <p class="muted" style="text-align:center;font-size:12px">Meanwhile, you can ask your host member to add you as a guest so you don't miss this Sunday.</p>
+    <button class="btn ghost" onclick="go('v-support')">Contact the transport team</button>
+    <button class="btn dark" onclick="approveDemo()">Simulate approval →</button>
+    <p class="muted" style="text-align:center;font-size:10.5px">(demo shortcut — in production an admin approves you)</p>
+  </div>
+</div>
+
+<!-- ============ V-SUPPORT ============ -->
+<div class="view" id="v-support">
+  <div class="row" style="margin-bottom:14px"><button class="iconbtn" onclick="go('v-profile')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button><h2 style="font-size:22px">Help &amp; Support</h2></div>
+  <div class="stack">
+    <div class="card">
+      <span class="eyebrow">On travel day — talk to your marshal</span>
+      <div class="row" style="margin-top:10px"><div class="avatar" style="background:var(--teal);width:44px;height:44px;font-size:13px">TO</div><div style="flex:1"><b style="font-size:14px">Tobi Olanrewaju</b><div class="muted" style="font-size:11.5px">Marshal · Bus 1, your route</div></div></div>
+      <div class="row" style="margin-top:12px;gap:8px">
+        <a class="btn teal" style="flex:1;text-decoration:none" href="https://wa.me/2348000000001?text=Hello%20Marshal%20Tobi%2C%20this%20is%20Adaeze%20(TCN-8F3K2)…" target="_blank"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.1 3.2 5.1 4.49.71.3 1.27.49 1.7.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.12-.27-.2-.57-.34zM12.04 21.8a9.8 9.8 0 01-5-1.37l-.36-.21-3.72.97.99-3.62-.23-.37a9.77 9.77 0 1110.32 4.6z"/></svg>WhatsApp</a>
+        <a class="btn ghost" style="flex:1;text-decoration:none" href="tel:+2348000000001"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.13.96.36 1.9.7 2.8a2 2 0 01-.45 2.1L8.1 9.9a16 16 0 006 6l1.3-1.3a2 2 0 012.1-.45c.9.34 1.84.57 2.8.7A2 2 0 0122 16.9z"/></svg>Call</a>
+      </div>
+    </div>
+    <div class="card">
+      <span class="eyebrow">Transport team office</span>
+      <p class="muted" style="font-size:12.5px;margin:8px 0 12px">Bookings, refunds, registration issues, corrections to your record.</p>
+      <div class="row" style="gap:8px">
+        <a class="btn dark" style="flex:1;text-decoration:none" href="https://wa.me/2348000000002?text=Hello%20TCN%20Transport%20team…" target="_blank">WhatsApp</a>
+        <a class="btn ghost" style="flex:1;text-decoration:none" href="tel:+2348000000002">Call</a>
+      </div>
+    </div>
+    <button class="btn ghost" onclick="sheetOpen('v-report')">Report a problem instead</button>
+    <p class="muted" style="font-size:11px;text-align:center">In-app chat is planned — for now these open WhatsApp or your dialer</p>
+  </div>
+</div>
+
+<!-- ============ V-SKEL : loading state ============ -->
+<div class="view" id="v-skel"><div style="height:10px"></div>
+  <div class="skb" style="height:26px;width:46%;margin-bottom:18px"></div>
+  <div class="skb" style="height:104px;margin-bottom:12px"></div>
+  <div class="skb" style="height:104px;margin-bottom:12px"></div>
+  <div class="skb" style="height:104px;margin-bottom:12px"></div>
+  <div class="skb" style="height:48px;width:72%"></div>
+</div>
+
+<!-- ============ SHEETS ============ -->
+<div class="sheet" id="sh-v-report"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:4px">Report a problem</h3><p class="muted" style="font-size:12px;margin-bottom:14px">Goes straight to the transport team — linked to your account and booking</p>
+  <div class="stack">
+    <div class="field"><label>What's wrong?</label><select id="rep-cat"><option>A booking shows wrong details</option><option>Payment taken but seat not confirmed</option><option>I was marked no-show wrongly</option><option>App bug / something looks broken</option><option>Suggestion</option><option>Other</option></select></div>
+    <div class="field"><label>Related booking (optional)</label><select id="rep-bk"><option>—</option></select></div>
+    <div class="field"><label>Describe it</label><textarea id="rep-msg" rows="3" placeholder="What happened, when, which bus…"></textarea></div>
+    <button class="btn primary" onclick="submitReport()">Send report</button>
+  </div></div></div>
+
+<div class="sheet" id="sh-v-cal"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:12px">October 2026</h3>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center;font-size:11px;color:var(--mut);font-weight:800;margin-bottom:6px"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px" id="calgrid"></div>
+  <p class="muted" style="font-size:11.5px;margin-top:12px">Yellow days have programmes — tap to select</p>
+  <button class="btn dark" style="margin-top:12px" onclick="sheetClose()">Done</button></div></div>
+
+<div class="sheet" id="sh-v-seatmap"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:4px">Bus 1 — Seat Map</h3><p class="muted" style="font-size:12px;margin-bottom:14px">Layout preview · seats auto-assigned at booking</p>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px" id="seatmap"></div>
+  <div class="row" style="gap:16px;margin-top:14px"><span class="row" style="gap:6px"><i style="width:12px;height:12px;border-radius:4px;background:var(--teal);display:inline-block"></i><span class="muted" style="font-size:11px">Free</span></span><span class="row" style="gap:6px"><i style="width:12px;height:12px;border-radius:4px;background:var(--ink);display:inline-block"></i><span class="muted" style="font-size:11px">Taken</span></span><span class="row" style="gap:6px"><i style="width:12px;height:12px;border-radius:4px;background:var(--yellow);display:inline-block"></i><span class="muted" style="font-size:11px">Held</span></span></div>
+  <button class="btn dark" style="margin-top:14px" onclick="sheetClose()">Close</button></div></div>
+
+<div class="sheet" id="sh-v-pickups"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:12px">Pickup Points — Ikorodu Garage Route</h3>
+  <div class="stack">
+    <div class="card" style="padding:14px;box-shadow:none;border:1.5px solid var(--line)"><b style="font-size:13.5px">Ikorodu Garage</b><p class="muted" style="font-size:12px;margin-top:3px">Main terminus · boards 5:45 AM · most seats</p></div>
+    <div class="card" style="padding:14px;box-shadow:none;border:1.5px solid var(--line)"><b style="font-size:13.5px">Agric Bus Stop</b><p class="muted" style="font-size:12px;margin-top:3px">By the roundabout · boards 5:52 AM</p></div>
+    <div class="card" style="padding:14px;box-shadow:none;border:1.5px solid var(--line)"><b style="font-size:13.5px">Owutu Junction</b><p class="muted" style="font-size:12px;margin-top:3px">Last stop before express · boards 6:02 AM</p></div>
+  </div>
+  <button class="btn dark" style="margin-top:14px" onclick="sheetClose()">Close</button></div></div>
+
+<div class="sheet" id="sh-v-addrider"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:4px">Add a rider</h3><p class="muted" style="font-size:12px;margin-bottom:14px">Pick from your guests or add someone new — they ride under your name</p>
+  <div id="guestpick"></div>
+  <div class="stack" style="margin-top:12px">
+    <div class="field"><label>Full name</label><input id="rider-name" placeholder="e.g. Chidi Nwosu"></div>
+    <div class="field"><label>Relationship</label><select id="rider-rel"><option>Family</option><option>Friend</option><option>Guest / first-timer</option></select></div>
+    <div class="field"><label>Phone (optional)</label><input placeholder="+234 …"></div>
+    <button class="btn primary" onclick="addRider()">Add rider</button>
+  </div></div></div>
+
+<div class="sheet" id="sh-v-cancel"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:8px">Cancel this booking?</h3>
+  <p class="muted" style="font-size:13px" id="cancel-msg">Seat releases back to the pool immediately.</p>
+  <div class="stack" style="margin-top:16px">
+    <button class="btn" style="background:var(--red);color:#fff" onclick="doCancel()">Yes, cancel booking</button>
+    <button class="btn ghost" onclick="sheetClose()">Keep my seat</button>
+  </div></div></div>
+
+<!-- ============ BOTTOM NAV ============ -->
+<nav class="bottomnav" id="bnav" style="display:none">
+  <button class="sel" onclick="nav(this,'v-home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5L12 3l9 7.5V21h-6v-6h-6v6H3z"/></svg>Home</button>
+  <button onclick="nav(this,'v-bookings')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h14v16l-2.3-1.7L14.4 20l-2.4-1.7L9.6 20l-2.3-1.7L5 20z"/></svg>Bookings</button>
+  <button onclick="nav(this,'v-guests')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5"/><circle cx="17.5" cy="9" r="2.5"/></svg>Guests</button>
+  <button onclick="nav(this,'v-profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Profile</button>
+</nav>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ================= REAL STATE MODEL (in-memory mock backend) ================= */
+const ref=()=>'TCN-'+Math.random().toString(36).slice(2,7).toUpperCase();
+const ini=n=>n.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+const AV=['var(--lilac)','var(--aqua)','var(--peach)','var(--teal)','var(--orange)'];
+
+const S={
+ prog:'sun',leg:'round',seats:1,curBk:-1,
+ sel:{route:null,bus:null,busLeft:0,routeIdx:0,busIdx:0,day:'Oct 12',slot:'6:00 AM',pick:'Ikorodu Garage'},
+ riders:[{n:'Adaeze Okafor',t:'You'}],
+ guests:[{n:'Emeka Okafor',t:'Family',st:'confirmed',note:'rides Sun, Oct 12'},{n:'Tunde Ajayi',t:'Friend',st:'pending',note:'invited via link'},{n:'Mrs. Bassey',t:'Guest',st:'confirmed',note:'added manually'}],
+ bookings:[
+  {ref:'TCN-8F3K2',prog:'Sunday Service',date:'Oct 12 · 6:00 AM',route:'Ikorodu Garage',bus:'Bus 1',leg:'Round trip',pick:'Ikorodu Garage',riders:['Adaeze Okafor','Emeka Okafor','Mrs. Bassey'],status:'confirmed',paid:false,tab:'up'},
+  {ref:'TCN-9J4L7',prog:'Hallelujah Night',date:'Oct 31 · 9:00 PM',route:'Ikorodu Garage',bus:'Bus 1',leg:'Outbound only',pick:'Agric Bus Stop',riders:['Adaeze Okafor'],status:'held',paid:false,tab:'up'}],
+ notifs:[
+  {i:'ok',t:'Seat confirmed — Sunday Service',b:'Bus 1, Ikorodu Garage route · Ref TCN-8F3K2 · 6:00 AM departure',w:'2h ago'},
+  {i:'clock',t:'Departure reminder',b:'Your bus leaves Ikorodu Garage at 6:00 AM tomorrow. Arrive by 5:45 AM for boarding.',w:'5h ago'},
+  {i:'bell',t:'Hallelujah Night booking opens Friday',b:'Paid programme · ₦2,500 · book early — last edition sold out',w:'1d ago'},
+  {i:'guest',t:'Tunde Ajayi joined via your invite',b:'Your guest signed up — they can now book under your group',w:'2d ago'}],
+ cap:{sun:[
+   {r:'Ikorodu Garage Route',b:[{n:'Bus 1',total:14,left:9,open:true},{n:'Bus 2',total:14,left:4,open:true}]},
+   {r:'Isawo / Agric Route',b:[{n:'Bus 3',total:14,left:11,open:true}]},
+   {r:'Owutu / Bayeku Route',b:[{n:'Bus 4',total:14,left:0,open:false}]}],
+  hal:[
+   {r:'Ikorodu Garage Route',b:[{n:'Bus 1',total:14,left:6,open:true},{n:'Bus 2',total:14,left:8,open:true}]},
+   {r:'Mile 12 Route',b:[{n:'Bus 3',total:14,left:0,open:false}]}]}};
+const PRICE={sun:0,hal:2500};
+const PNAME={sun:'Sunday Service',hal:'Hallelujah Night'};
+const PDATE={sun:'Sun, Oct 12',hal:'Fri, Oct 31'};
+/* ===== CANONICAL BOOKING STATES (prototype mirrors the product state machine) =====
+   held      → seat reserved, payment not yet confirmed (15-min timer)
+   confirmed → free or paid — a real seat on the manifest
+   cancelled → released by member/admin; seat returns to pool
+   expired   → hold elapsed without payment — auto-released
+   boarded   → checked in by marshal at the bus (terminal)
+   noshow    → manifest closed without boarding (terminal, non-refundable) */
+const STATUS={held:{l:'HELD — PAYMENT DUE',c:'o'},confirmed:{l:'CONFIRMED',c:'g'},cancelled:{l:'CANCELLED',c:'r'},expired:{l:'EXPIRED',c:'r'},boarded:{l:'BOARDED',c:'b'},noshow:{l:'NO-SHOW',c:'r'}};
+const REPORTS=[];let provider='Paystack';
+
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+/* views that "fetch" data — flash skeleton first, then hydrate */
+const LAZY={'v-bookings':1,'v-guests':1,'v-alerts':1,'v-ticket':1,'v-support':1,'v-pay':1};
+let sklT=0;
+function _show(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));$(v).classList.add('on');window.scrollTo(0,0);
+  $('bnav').style.display=['v-install','v-auth'].includes(v)?'none':'flex'}
+function _hydrate(v){if(v==='v-bookings')renderBookings();if(v==='v-guests')renderGuests();if(v==='v-alerts')renderNotifs()}
+function go(v){clearTimeout(sklT);
+  if(LAZY[v]){_show('v-skel');sklT=setTimeout(()=>{_show(v);_hydrate(v)},480)}
+  else{_show(v);_hydrate(v)}}
+function nav(el,v){document.querySelectorAll('#bnav button').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');go(v)}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
+function sheetOpen(v){if(v==='v-addrider')renderGuestPick();
+  if(v==='v-report')$('rep-bk').innerHTML='<option>—</option>'+S.bookings.map(b=>`<option>${b.ref} — ${b.prog}</option>`).join('');
+  const s=$('sh-'+v);if(s)s.classList.add('on')}
+function sheetClose(){document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'))}
+document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)s.classList.remove('on')}));
+document.addEventListener('click',e=>{const p=e.target.closest('.pill');if(p&&p.parentElement.id==='pickups'){document.querySelectorAll('#pickups .pill').forEach(x=>x.classList.remove('sel'));p.classList.add('sel');S.sel.pick=p.textContent}
+  const s=e.target.closest('.slot');if(s&&!s.classList.contains('off')){document.querySelectorAll('.slot').forEach(x=>x.classList.remove('sel'));s.classList.add('sel');S.sel.slot=s.textContent}});
+
+/* ---------- auth ---------- */
+function authTab(t){['in','new','guest'].forEach(k=>{$('seg-'+k).classList.toggle('sel',k===t);$('tab-'+k).style.display=k===t?'grid':'none'})}
+function signin(){toast('Signed in');setTimeout(()=>go('v-home'),700)}
+function submitReg(){toast('Submitted — pending admin approval');setTimeout(()=>go('v-pending'),900)}
+function approveDemo(){addNotif('ok','Registration approved','Welcome! You can now book seats and bring guests.','just now');
+  toast('Approved — welcome!');setTimeout(()=>go('v-home'),800)}
+
+/* ---------- payment: provider-hosted redirect, nothing stored ---------- */
+function pickPv(el){document.querySelectorAll('#providers .leg-card').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');
+  provider=el.dataset.pv;$('paybtn').textContent='Continue to '+provider+' →'}
+function payRedirect(){toast('Redirecting to '+provider+' secure checkout…');
+  setTimeout(()=>{toast(provider+' confirmed payment');setTimeout(()=>finalize('confirmed'),900)},1400)}
+
+/* ---------- report a problem ---------- */
+function reportBk(i){const b=S.bookings[i];sheetOpen('v-report');
+  setTimeout(()=>{$('rep-bk').value=b.ref+' — '+b.prog;if(!$('rep-bk').value){const o=document.createElement('option');o.textContent=b.ref+' — '+b.prog;o.selected=true;$('rep-bk').appendChild(o)}},60)}
+function submitReport(){const msg=$('rep-msg').value.trim();if(!msg){toast('Describe the problem first');return}
+  REPORTS.push({cat:$('rep-cat').value,bk:$('rep-bk').value,msg,when:'just now'});
+  addNotif('bell','Report received','We logged it — the transport team will follow up. Ref '+ref(),'just now');
+  $('rep-msg').value='';sheetClose();toast('Report sent to the transport team')}
+
+/* ---------- programme ---------- */
+function prog(p){S.prog=p;$('seg-sun').classList.toggle('sel',p==='sun');$('seg-hal').classList.toggle('sel',p==='hal');
+  const free=p==='sun';$('h-eyebrow').textContent=free?'Next programme':'Special programme';
+  $('h-title').textContent=PNAME[p];
+  $('h-sub').textContent=free?'Sun, Oct 12 · 7:30 AM · 4 buses on 3 routes':'Fri, Oct 31 · 9:00 PM · 3 buses on 2 routes';
+  $('h-price').textContent=free?'FREE':'₦2,500 / seat';
+  let left=0;S.cap[p].forEach(r=>r.b.forEach(b=>left+=b.left));
+  $('h-left').textContent=left+' seats left';renderRoutes()}
+
+/* ---------- routes ---------- */
+function renderRoutes(){let h='';
+  S.cap[S.prog].forEach((rt,i)=>{rt.b.forEach((b,bi)=>{const full=b.left<=0||!b.open;
+    const pct=b.left/b.total,col=full?'full':pct<.35?'warn':'';
+    h+=`<div class="card" style="padding:15px;${full?'opacity:.6':''}" onclick="${full?'':`pickBus(${i},${bi})`}">
+      <div class="route"><div class="thumb"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="M3 10h18M8 21h.01M16 21h.01M6 17v4M18 17v4"/></svg></div>
+      <div style="flex:1"><b style="font-size:13.5px">${rt.r}</b><div class="muted" style="font-size:11.5px">${b.n} · ${b.total} seats</div>
+      <div class="cap-bar" style="margin-top:8px"><i class="${col}" style="width:${(b.total-b.left)/b.total*100}%"></i></div></div>
+      <span class="chip ${full?'r':pct<.35?'o':'g'}">${full?'FULL':b.left+' left'}</span></div></div>`})});
+  $('routes').innerHTML=h}
+function pickBus(i,bi){const b=S.cap[S.prog][i].b[bi];S.sel.route=S.cap[S.prog][i].r;S.sel.bus=b.n;S.sel.routeIdx=i;S.sel.busIdx=bi;S.sel.busLeft=b.left;
+  $('bk-route').textContent=S.sel.route;$('bk-bus').textContent=b.n+' · '+b.total+' seats';
+  $('bk-cap').textContent=b.left+' left';$('bk-cap').className='chip '+(b.left<6?'o':'g');updCTA();go('v-book')}
+
+/* ---------- days / calendar / seatmap ---------- */
+(function(){const days=[['SUN','12'],['SUN','19'],['SUN','26'],['NOV','01']];let h='';
+  days.forEach((d,i)=>{h+=`<button class="day-pill${i===0?' sel':''}" onclick="document.querySelectorAll('.day-pill').forEach(x=>x.classList.remove('sel'));this.classList.add('sel');S.sel.day='Oct '+${d[1]==='01'?'1':d[1]}">${d[0]}<b>${d[1]}</b></button>`});
+  $('days').innerHTML=h;
+  let c='';for(let i=1;i<=31;i++){const sun=[4,11,18,25].includes(i);c+=`<button style="padding:10px 0;border-radius:10px;font-size:12.5px;font-weight:700;background:${sun?'#fff3d6':'transparent'};color:${sun?'var(--ink)':'#b9c2c9'};border:${i===12?'2px solid var(--orange)':'none'}">${i}</button>`}
+  $('calgrid').innerHTML=c;
+  let sm='';for(let i=1;i<=14;i++){const st=i%5===0?'var(--yellow)':i%3===0?'var(--ink)':'var(--teal)';sm+=`<div style="aspect-ratio:1;border-radius:10px;background:${st};display:grid;place-items:center;color:#fff;font-size:10px;font-weight:800">${i}</div>`}
+  $('seatmap').innerHTML=sm})();
+
+/* ---------- booking flow ---------- */
+function pickLeg(el,l){document.querySelectorAll('.leg-card').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');S.leg=l}
+function seatStep(d){S.seats=Math.max(1,Math.min(8,S.seats+d));$('seat-n').textContent=S.seats;
+  $('seat-hint').textContent=S.seats+(S.seats>1?' seats reserved — add riders below':' seat');updCTA()}
+function updCTA(){$('cta').textContent=S.prog==='sun'?'Confirm Seat — FREE':'Pay ₦'+(PRICE[S.prog]*S.riders.length).toLocaleString()+' & Book'}
+const LEGNAME={round:'Round trip',out:'Outbound only',ret:'Return only'};
+
+/* riders */
+function renderRiders(){let h='';S.riders.forEach((r,i)=>{h+=`<div class="rider"><div class="avatar" style="width:34px;height:34px;font-size:11px;background:${i===0?'var(--ink)':AV[i%AV.length]}">${ini(r.n)}</div><div><b style="font-size:13px">${r.n}</b><div class="muted" style="font-size:10.5px">${r.t}</div></div>${i?`<button class="rm" onclick="S.riders.splice(${i},1);renderRiders();updCTA()">✕</button>`:''}</div>`});
+  $('riders').innerHTML=h;$('seat-n').textContent=Math.max(S.seats,S.riders.length)}
+function renderGuestPick(){const avail=S.guests.filter(g=>!S.riders.some(r=>r.n===g.n));
+  $('guestpick').innerHTML=avail.length?`<div class="stack" style="margin-bottom:6px">`+avail.map((g,i)=>`<div class="rider"><div class="avatar" style="width:34px;height:34px;font-size:11px;background:${AV[i%AV.length]}">${ini(g.n)}</div><div style="flex:1"><b style="font-size:13px">${g.n}</b><div class="muted" style="font-size:10.5px">${g.t} · ${g.st}</div></div><button class="btn teal sm" onclick="pickGuest('${g.n}')">Add</button></div>`).join('')+`</div><div class="hair" style="margin:4px 0 10px"></div>`:'<p class="muted" style="font-size:12px;margin-bottom:10px">No saved guests left to pick — add someone new below.</p>'}
+function pickGuest(n){const g=S.guests.find(x=>x.n===n);S.riders.push({n:g.n,t:g.t});renderRiders();updCTA();renderGuestPick();toast(n+' added to booking')}
+function addRider(){const n=$('rider-name').value.trim();if(!n){toast('Enter a name');return}
+  const rel=$('rider-rel').value;
+  S.riders.push({n,t:rel});if(!S.guests.some(g=>g.n===n))S.guests.push({n,t:rel,st:'pending',note:'added just now'});
+  $('rider-name').value='';renderRiders();updCTA();renderGuestPick();renderGuests();
+  addNotif('guest',n+' added as a guest','They appear on the manifest tagged to you','just now');
+  toast(n+' added')}
+
+/* checkout → booking record */
+function checkout(){if(S.riders.length>S.sel.busLeft){toast('Only '+S.sel.busLeft+' seats left on this bus');return}
+  if(S.prog==='sun')finalize('confirmed');else go('v-pay')}
+function payDone(){payRedirect()}
+function finalize(status){
+  let b;
+  if(S.curBk>=0&&S.bookings[S.curBk]&&S.bookings[S.curBk].status==='held'){b=S.bookings[S.curBk];b.status='confirmed';b.paid=true;S.curBk=-1}
+  else{b={ref:ref(),prog:PNAME[S.prog],date:PDATE[S.prog]+' · '+S.sel.slot,route:S.sel.route,bus:S.sel.bus,leg:LEGNAME[S.leg],pick:S.sel.pick,riders:S.riders.map(r=>r.n),status,paid:S.prog==='hal',tab:'up'};
+  S.bookings.unshift(b);
+  if(S.sel.routeIdx!=null)S.cap[S.prog][S.sel.routeIdx].b[S.sel.busIdx].left-=b.riders.length}
+  $('tk-prog').textContent=b.prog;$('tk-date').textContent=b.date+' departure';
+  $('tk-ref').textContent=b.ref;$('tk-route').textContent=b.route+' · '+b.bus;
+  $('tk-pick').textContent=b.pick;$('tk-leg').textContent=b.leg.toUpperCase();
+  $('tk-riders').textContent=b.riders.length;
+  $('tk-riderlist').textContent=b.riders.length>1?'Riders: '+b.riders.join(', '):'';
+  $('tk-status').textContent=b.paid?'CONFIRMED — PAID':'CONFIRMED — FREE';
+  $('tk-status').className='chip '+(b.paid?'b':'g');
+  addNotif('ok','Seat confirmed — '+b.prog,b.bus+', '+b.route+' route · Ref '+b.ref,'just now');
+  S.riders=[{n:'Adaeze Okafor',t:'You'}];renderRiders();renderRoutes();go('v-ticket')}
+
+/* ---------- my bookings ---------- */
+let bfilter='up';
+function bktab(el){bfilter=el.dataset.bt;document.querySelectorAll('#v-bookings .pill').forEach(p=>p.classList.remove('sel'));el.classList.add('sel');renderBookings()}
+function renderBookings(){const list=S.bookings.filter(b=>b.tab===bfilter);let h='';
+  list.forEach((b)=>{const i=S.bookings.indexOf(b);
+    const st=STATUS[b.status]?[STATUS[b.status].l,STATUS[b.status].c]:['PAST','b'];
+    h+=`<div class="card" style="padding:15px"><div class="row spread"><b style="font-size:14px">${b.prog}</b><span class="chip ${st[1]}">${st[0]}</span></div>
+    <p class="muted" style="font-size:12px;margin:6px 0">${b.date} · ${b.route} · ${b.bus} · ${b.leg}</p>
+    <p class="muted" style="font-size:11px">Ref ${b.ref} · ${b.riders.length} rider${b.riders.length>1?'s':''}${b.riders.length>1?' ('+b.riders.join(', ')+')':''}</p>
+    ${b.status!=='cancelled'&&b.tab==='up'?`<div class="hair" style="margin:10px 0"></div><div class="row" style="gap:8px">
+      ${b.status==='held'?`<button class="btn primary sm" onclick="payHeld(${i})">Pay now</button>`:`<button class="btn ghost sm" onclick="showTicket(${i})">View ticket</button>`}
+      <button class="btn sm" style="background:#ffe1e3;color:#b03038" onclick="S.curBk=${i};$('cancel-msg').textContent='${b.prog} · ${b.bus} · ${b.leg} · ${b.riders.length} rider${b.riders.length>1?'s':''}';sheetOpen('v-cancel')">Cancel</button>
+      <button class="btn ghost sm" onclick="reportBk(${i})">Report</button></div>`:''}
+    </div>`});
+  $('bookinglist').innerHTML=h||'<p class="muted" style="text-align:center;padding:26px">Nothing here yet</p>';
+  $('bk-count').textContent=S.bookings.filter(b=>b.tab==='up'&&b.status!=='cancelled').length+' active'}
+function showTicket(i){const b=S.bookings[i];$('tk-prog').textContent=b.prog;$('tk-date').textContent=b.date+' departure';
+  $('tk-ref').textContent=b.ref;$('tk-route').textContent=b.route+' · '+b.bus;$('tk-pick').textContent=b.pick;
+  $('tk-leg').textContent=b.leg.toUpperCase();$('tk-riders').textContent=b.riders.length;
+  $('tk-riderlist').textContent=b.riders.length>1?'Riders: '+b.riders.join(', '):'';
+  $('tk-status').textContent=b.paid?'CONFIRMED — PAID':'CONFIRMED — FREE';$('tk-status').className='chip '+(b.paid?'b':'g');go('v-ticket')}
+function payHeld(i){S.prog='hal';go('v-pay');S.curBk=i}
+function doCancel(){const b=S.bookings[S.curBk];if(b){b.status='cancelled';b.tab='cxl';
+  addNotif('clock','Booking cancelled',b.prog+' · Ref '+b.ref+' — seats released','just now');
+  toast('Booking cancelled — '+(b.paid?'refund initiated to your payment method':'seat released'))}
+  sheetClose();renderBookings();renderRoutes()}
+
+/* ---------- guests ---------- */
+function renderGuests(){$('gcount').textContent=S.guests.length;
+  $('guestlist').innerHTML=S.guests.map((g,i)=>`<div class="rider"><div class="avatar" style="background:${AV[i%AV.length]};width:38px;height:38px;font-size:12px">${ini(g.n)}</div><div style="flex:1"><b style="font-size:13.5px">${g.n}</b><div class="muted" style="font-size:11.5px">${g.t} · ${g.note}</div></div><span class="chip ${g.st==='confirmed'?'g':'o'}" style="margin-left:auto">${g.st.toUpperCase()}</span></div>`).join('')||'<p class="muted" style="text-align:center;padding:16px">No guests yet — invite someone</p>'}
+
+/* ---------- notifications ---------- */
+const NICONS={ok:['#d9f7ef','#0a8a6d','M20 6L9 17l-5-5'],clock:['#fff0d3','#9a6b00','M12 8v5M12 16.5v.5'],bell:['#e8eeff','#2f56d6','M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9'],guest:['#efeaff','#8f7ff5','M9 4.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5']};
+function addNotif(i,t,b,w){S.notifs.unshift({i,t,b,w});renderNotifs()}
+function renderNotifs(){$('notiflist').innerHTML=S.notifs.map(n=>{const c=NICONS[n.i]||NICONS.bell;
+  return `<div class="notif"><div class="ic" style="background:${c[0]}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="${c[1]}" stroke-width="2.2"><path d="${c[2]}"/></svg></div><div><b style="font-size:13.5px">${n.t}</b><p class="muted" style="font-size:12px;margin-top:2px">${n.b}</p><span class="muted" style="font-size:10.5px">${n.w}</span></div></div>`}).join('')}
+
+renderRiders();renderRoutes();renderGuests();renderNotifs();renderBookings();go('v-install');
+</script>
+</body>
+</html>

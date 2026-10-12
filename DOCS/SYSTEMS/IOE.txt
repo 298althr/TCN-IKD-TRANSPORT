@@ -1,0 +1,258 @@
+IOE-018 · Intelligence Orchestration Engine (IOE)
+
+Version: 1.0
+Status: Core System Orchestrator
+Layer: Global Coordination & Intelligence Routing
+Dependencies: All Engines
+
+1. Purpose
+
+The Intelligence Orchestration Engine (IOE) is the central nervous system of the Universal Intelligence Operating System.
+
+Unlike the individual engines, which each perform specialized functions, the IOE coordinates the entire platform.
+
+It determines:
+
+Which engine should execute.
+
+When each engine executes.
+
+Which data should be routed.
+
+Which engines depend on one another.
+
+How failures are handled.
+
+How workflows resume.
+
+How intelligence is synchronized across the platform.
+
+Without IOE, the engines operate independently.
+
+With IOE, they become a unified intelligence operating system.
+
+2. Responsibilities
+
+The Intelligence Orchestrator is responsible for:
+
+Workflow orchestration
+
+Engine scheduling
+
+Pipeline execution
+
+Dependency resolution
+
+Event routing
+
+State synchronization
+
+Parallel execution
+
+Failure recovery
+
+Queue management
+
+Context propagation
+
+Engine health monitoring
+
+Global coordination
+
+3. System Architecture
+
+Universal Intelligence Kernel │ │ Intelligence Orchestration Engine │ ──────────────────────────────────────────────────────────── Problem Engine ↓ Quality Engine ↓ Knowledge Engine ↓ Hypothesis Engine ↓ Simulation Engine ↓ Recommendation Engine ↓ Governance Engine ↓ Execution Engine ↓ Monitoring Engine ↓ Learning Engine ↓ Memory Engine ↓ Explainability Engine ──────────────────────────────────────────────────────────── External APIs AI Models Databases Users Agents Robots Applications 
+
+4. Orchestration Lifecycle
+
+New Request ↓ Create Workflow ↓ Analyze Dependencies ↓ Create Execution Graph ↓ Dispatch Engines ↓ Collect Outputs ↓ Validate Pipeline ↓ Publish Results ↓ Archive Execution 
+
+5. Database Schema
+
+Table 1 — orchestration_workflows
+
+Master workflow registry.
+
+workflow_id UUID PK workflow_name workflow_type status priority created_at 
+
+Table 2 — workflow_instances
+
+instance_id UUID PK workflow_id decision_case_id current_state started_at completed_at 
+
+Table 3 — engine_registry
+
+Master engine catalog.
+
+engine_id UUID PK engine_name engine_type version status health_score 
+
+Table 4 — engine_dependencies
+
+dependency_id UUID PK engine_id depends_on_engine dependency_type mandatory 
+
+Table 5 — execution_graph
+
+Directed acyclic graph (DAG).
+
+node_id UUID PK workflow_instance_id engine_reference parent_node execution_order 
+
+Table 6 — execution_queue
+
+queue_id UUID PK workflow_instance_id engine_reference priority scheduled_time status 
+
+Table 7 — engine_executions
+
+execution_id UUID PK engine_reference workflow_instance_id started_at completed_at result 
+
+Table 8 — engine_messages
+
+message_id UUID PK source_engine target_engine payload_reference timestamp 
+
+Table 9 — context_packages
+
+Shared execution context.
+
+context_package_id UUID PK workflow_instance_id context_reference version updated_at 
+
+Table 10 — synchronization_events
+
+sync_event_id UUID PK workflow_instance_id event_type source_engine completed_at 
+
+Table 11 — parallel_execution_groups
+
+group_id UUID PK workflow_instance_id execution_strategy status 
+
+Table 12 — workflow_checkpoints
+
+checkpoint_id UUID PK workflow_instance_id checkpoint_name validation_status completed_at 
+
+Table 13 — retry_queue
+
+retry_id UUID PK engine_reference workflow_instance_id failure_reason retry_count next_retry 
+
+Table 14 — workflow_failures
+
+failure_id UUID PK workflow_instance_id failed_engine severity resolution_status 
+
+Table 15 — orchestration_events
+
+event_id UUID PK workflow_instance_id event_type payload_json timestamp 
+
+Table 16 — workflow_templates
+
+Reusable orchestration templates.
+
+template_id UUID PK template_name supported_domains workflow_definition version 
+
+Table 17 — orchestration_metrics
+
+metric_id UUID PK workflow_instance_id execution_time engines_executed success_rate resource_usage 
+
+Table 18 — workflow_history
+
+Version history.
+
+history_id UUID PK workflow_instance_id previous_state new_state changed_at 
+
+Table 19 — orchestration_audit
+
+Immutable audit.
+
+audit_id UUID PK workflow_instance_id action actor timestamp 
+
+Table 20 — orchestration_health
+
+Global health dashboard.
+
+health_id UUID PK active_workflows queued_workflows failed_workflows overall_health updated_at 
+
+6. Engine Dependency Graph
+
+UIK ↓ IOE ↓ PRE ↓ QOF ↓ KGE ↓ HVE ↓ SME ↓ RGE ↓ GCE ↓ EXE ↓ MOE ↓ LME ↓ MME ↓ XTE 
+
+IOE manages the lifecycle of every engine without implementing domain-specific business logic.
+
+7. Execution Modes
+
+The orchestrator supports multiple execution strategies:
+
+Sequential execution
+
+Parallel execution
+
+Event-driven execution
+
+Rule-driven execution
+
+Scheduled execution
+
+Human-in-the-loop execution
+
+AI-agent execution
+
+Distributed execution
+
+Failover execution
+
+Execution strategy is configurable per workflow.
+
+8. Failure Management
+
+Every failure passes through:
+
+Failure ↓ Detection ↓ Classification ↓ Retry ↓ Alternative Path ↓ Escalation ↓ Rollback ↓ Audit ↓ Learning 
+
+Failure policies are centrally managed to ensure consistency across all engines.
+
+9. Integration Points
+
+Inputs
+
+User requests
+
+APIs
+
+Scheduled jobs
+
+External events
+
+AI agents
+
+Sensors
+
+Message brokers
+
+Outputs
+
+All intelligence engines
+
+External services
+
+Dashboards
+
+Monitoring systems
+
+Audit systems
+
+Notifications
+
+10. Design Principles
+
+Orchestration is stateless where possible; workflow state is persisted.
+
+Every engine communicates through standardized contracts.
+
+Workflows are modeled as directed acyclic graphs.
+
+Parallel execution is supported whenever dependencies permit.
+
+Failures are isolated and recoverable.
+
+Context is propagated consistently across engines.
+
+Every orchestration event is auditable.
+
+New engines can be added without modifying existing orchestration logic.
+
+11. Foundation Summary
+
+The Intelligence Orchestration Engine is the coordination layer of the Universal Intelligence Operating System. It transforms independent engines into a cohesive platform by managing workflow execution, dependency resolution, state synchronization, failure recovery, and inter-engine communication. IOE ensures that intelligence flows reliably, efficiently, and transparently across the entire architecture while remaining extensible and domain-agnostic.

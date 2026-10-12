@@ -1,0 +1,651 @@
+MNIF-003 · Multi-Node Intelligence Framework (MNIF)
+
+Version: 1.0
+Status: Core Intelligence Engine
+Layer: Intelligence Processing Network
+Dependencies: Universal Intelligence Kernel (UIK), ADCOS
+
+---
+
+1. Purpose
+
+The Multi-Node Intelligence Framework (MNIF) is the distributed reasoning engine of the Universal Intelligence Operating System.
+
+Rather than relying on a single AI model or reasoning process, MNIF decomposes a problem into specialized intelligence nodes. Each node has a defined responsibility, produces structured outputs, validates its own reasoning, and passes its results to downstream nodes.
+
+MNIF answers one question:
+
+«"How should intelligence be decomposed into independent, verifiable reasoning units?"»
+
+---
+
+2. Design Principles
+
+1. One node performs one responsibility.
+2. Nodes never assume missing information.
+3. Every node produces structured outputs.
+4. Every output has confidence and evidence.
+5. Nodes communicate only through contracts.
+6. Nodes are replaceable.
+7. Multiple nodes may solve the same task independently.
+8. Consensus is preferred over single-model reasoning.
+
+---
+
+3. High-Level Architecture
+
+                     ADCOS
+                       │
+              MNIF Intelligence Bus
+                       │
+ ┌─────────────────────────────────────────────┐
+ │ Context Node                               │
+ │ Problem Node                               │
+ │ Objective Node                             │
+ │ Constraint Node                            │
+ │ Assumption Node                            │
+ │ Information Acquisition Node               │
+ │ Knowledge Construction Node                │
+ │ Research Node                              │
+ │ Hypothesis Node                            │
+ │ Validation Node                            │
+ │ Simulation Node                            │
+ │ Recommendation Node                        │
+ │ Execution Planning Node                    │
+ │ Monitoring Node                            │
+ │ Learning Node                              │
+ │ Memory Node                                │
+ └─────────────────────────────────────────────┘
+
+---
+
+4. Intelligence Node Lifecycle
+
+Task Assigned
+
+↓
+
+Input Validation
+
+↓
+
+Reasoning
+
+↓
+
+Evidence Collection
+
+↓
+
+Confidence Estimation
+
+↓
+
+Output Generation
+
+↓
+
+Peer Review (Optional)
+
+↓
+
+Publication
+
+↓
+
+Next Node
+
+---
+
+5. Universal Node Contract
+
+Every intelligence node must expose:
+
+- Node ID
+- Node Name
+- Version
+- Purpose
+- Input Schema
+- Output Schema
+- Required Dependencies
+- Confidence Model
+- Validation Rules
+- Failure Conditions
+- Execution Cost
+- Average Runtime
+
+---
+
+6. Database Schema
+
+---
+
+Table 1 — intelligence_nodes
+
+Master registry of all nodes.
+
+node_id UUID PK
+
+node_name
+
+node_category
+
+version
+
+description
+
+status
+
+created_at
+
+---
+
+Table 2 — node_types
+
+node_type_id UUID PK
+
+type_name
+
+description
+
+Examples
+
+- Reasoning
+- Validation
+- Research
+- Execution
+- Monitoring
+- Memory
+
+---
+
+Table 3 — node_instances
+
+Running node instances.
+
+instance_id UUID PK
+
+node_id FK
+
+decision_case_id
+
+workflow_id
+
+status
+
+started_at
+
+finished_at
+
+---
+
+Table 4 — node_inputs
+
+input_id UUID PK
+
+instance_id FK
+
+input_object
+
+schema_version
+
+received_at
+
+---
+
+Table 5 — node_outputs
+
+output_id UUID PK
+
+instance_id FK
+
+output_object
+
+confidence
+
+output_schema
+
+generated_at
+
+---
+
+Table 6 — node_dependencies
+
+dependency_id UUID PK
+
+node_id
+
+depends_on_node
+
+dependency_type
+
+---
+
+Table 7 — node_execution_history
+
+history_id UUID PK
+
+instance_id
+
+execution_number
+
+duration_ms
+
+status
+
+error_message
+
+timestamp
+
+---
+
+Table 8 — node_confidence
+
+confidence_id UUID PK
+
+instance_id
+
+confidence_score
+
+confidence_method
+
+threshold
+
+accepted
+
+---
+
+Table 9 — node_evidence
+
+Evidence supporting conclusions.
+
+evidence_id UUID PK
+
+instance_id
+
+source_object
+
+evidence_type
+
+weight
+
+confidence
+
+---
+
+Table 10 — node_assumptions
+
+assumption_id UUID PK
+
+instance_id
+
+statement
+
+risk_level
+
+validated
+
+---
+
+Table 11 — node_constraints
+
+constraint_id UUID PK
+
+instance_id
+
+constraint_name
+
+constraint_type
+
+severity
+
+---
+
+Table 12 — node_messages
+
+Inter-node communication.
+
+message_id UUID PK
+
+source_node
+
+target_node
+
+message_type
+
+payload_json
+
+created_at
+
+---
+
+Table 13 — node_validation_results
+
+validation_id UUID PK
+
+instance_id
+
+validator_node
+
+validation_status
+
+issues_found
+
+validated_at
+
+---
+
+Table 14 — node_consensus
+
+Consensus between multiple nodes.
+
+consensus_id UUID PK
+
+decision_case_id
+
+consensus_type
+
+participant_count
+
+agreement_score
+
+final_result
+
+---
+
+Table 15 — node_votes
+
+vote_id UUID PK
+
+consensus_id
+
+node_id
+
+vote
+
+confidence
+
+---
+
+Table 16 — node_failures
+
+failure_id UUID PK
+
+instance_id
+
+failure_type
+
+description
+
+recovery_strategy
+
+resolved
+
+---
+
+Table 17 — node_resources
+
+Runtime resource usage.
+
+resource_id UUID PK
+
+instance_id
+
+cpu_usage
+
+memory_usage
+
+execution_time_ms
+
+token_usage
+
+cost
+
+---
+
+Table 18 — node_templates
+
+Reusable node definitions.
+
+template_id UUID PK
+
+template_name
+
+category
+
+configuration_json
+
+version
+
+---
+
+Table 19 — intelligence_graph
+
+Knowledge flow graph.
+
+graph_edge_id UUID PK
+
+source_node
+
+target_node
+
+relationship
+
+weight
+
+---
+
+Table 20 — intelligence_products
+
+Final intelligence artifacts.
+
+product_id UUID PK
+
+decision_case_id
+
+product_type
+
+source_node
+
+object_reference
+
+confidence
+
+created_at
+
+---
+
+7. Node Categories
+
+Acquisition Nodes
+
+Collect raw information.
+
+Examples:
+
+- User Interview
+- API Collection
+- File Import
+- Sensor Collection
+
+---
+
+Analysis Nodes
+
+Interpret information.
+
+Examples:
+
+- Pattern Recognition
+- Classification
+- Clustering
+- Summarization
+
+---
+
+Decision Nodes
+
+Produce choices.
+
+Examples:
+
+- Recommendation
+- Prioritization
+- Ranking
+- Optimization
+
+---
+
+Validation Nodes
+
+Verify outputs.
+
+Examples:
+
+- Fact Verification
+- Logical Verification
+- Consistency Check
+- Constraint Check
+
+---
+
+Learning Nodes
+
+Capture experience.
+
+Examples:
+
+- Outcome Analysis
+- Error Detection
+- Pattern Learning
+- Memory Update
+
+---
+
+8. Relationships
+
+Decision Case
+
+│
+
+├── Intelligence Nodes
+
+│      │
+
+│      ├── Inputs
+
+│      ├── Outputs
+
+│      ├── Evidence
+
+│      ├── Confidence
+
+│      ├── Constraints
+
+│      ├── Assumptions
+
+│      ├── Validation
+
+│      ├── Resources
+
+│      └── Execution History
+
+│
+
+└── Consensus
+
+---
+
+9. Intelligence Flow
+
+Context
+
+↓
+
+Problem
+
+↓
+
+Objectives
+
+↓
+
+Constraints
+
+↓
+
+Research
+
+↓
+
+Knowledge
+
+↓
+
+Hypothesis
+
+↓
+
+Validation
+
+↓
+
+Simulation
+
+↓
+
+Recommendation
+
+↓
+
+Execution Plan
+
+↓
+
+Monitoring
+
+↓
+
+Learning
+
+↓
+
+Memory
+
+Each step may contain one or more collaborating nodes.
+
+---
+
+10. Consensus Strategy
+
+MNIF supports multiple consensus mechanisms:
+
+- Majority voting
+- Weighted voting
+- Confidence-weighted voting
+- Evidence-weighted voting
+- Expert node override
+- Human arbitration
+- Ensemble averaging
+
+Consensus outputs are versioned and auditable.
+
+---
+
+11. Failure Handling
+
+If a node fails:
+
+1. Record failure.
+2. Preserve partial outputs.
+3. Notify ADCOS.
+4. Retry according to policy.
+5. Escalate if retry threshold exceeded.
+6. Route to alternate node if available.
+7. Record recovery outcome.
+
+---
+
+12. Foundation Summary
+
+MNIF transforms intelligence into a distributed network of specialized reasoning nodes. By decomposing complex decisions into modular, verifiable units with explicit contracts, evidence, confidence, and consensus mechanisms, MNIF enables scalable, auditable, and domain-agnostic intelligence processing across the entire Universal Intelligence Operating System.

@@ -1,0 +1,326 @@
+KGE-007 · Knowledge Graph & Knowledge Engine (KGE)
+
+Version: 1.0
+Status: Core Intelligence Engine
+Layer: Knowledge Construction & Reasoning
+Dependencies: Universal Intelligence Kernel (UIK), ADCOS, MNIF, QOF, ARUEV
+
+1. Purpose
+
+The Knowledge Graph & Knowledge Engine (KGE) transforms validated observations, evidence, and research into structured knowledge.
+
+Raw information is not knowledge.
+
+Knowledge exists only after information has been:
+
+Organized
+
+Related
+
+Validated
+
+Contextualized
+
+Versioned
+
+Traceable
+
+The Knowledge Engine answers:
+
+"What do we know, why do we know it, how strongly do we know it, and how is it connected?"
+
+Unlike the Memory Engine (which stores experience), KGE stores verified relationships between concepts.
+
+2. Responsibilities
+
+The Knowledge Engine is responsible for:
+
+Knowledge construction
+
+Ontology mapping
+
+Concept extraction
+
+Entity extraction
+
+Relationship generation
+
+Knowledge graph construction
+
+Knowledge validation
+
+Knowledge versioning
+
+Knowledge querying
+
+Contradiction detection
+
+Semantic reasoning
+
+Knowledge confidence
+
+3. Knowledge Lifecycle
+
+Observations ↓ Evidence ↓ Facts ↓ Concepts ↓ Relationships ↓ Knowledge Objects ↓ Knowledge Graph ↓ Reasoning ↓ Recommendations ↓ Learning 
+
+4. Core Knowledge Model
+
+Knowledge is composed of five components:
+
+Concepts
+
+Facts
+
+Relationships
+
+Context
+
+Confidence
+
+Knowledge is never stored as isolated documents. It is stored as interconnected objects.
+
+5. Database Schema
+
+Table 1 — knowledge_objects
+
+Master knowledge entity.
+
+knowledge_id UUID PK workspace_id FK project_id FK title description knowledge_type confidence status created_at 
+
+Table 2 — concepts
+
+Universal concepts.
+
+concept_id UUID PK concept_name definition ontology_reference category version 
+
+Table 3 — facts
+
+Validated factual statements.
+
+fact_id UUID PK knowledge_id statement truth_status confidence evidence_count validated_at 
+
+Truth status
+
+Proposed
+
+Verified
+
+Disputed
+
+Rejected
+
+Historical
+
+Table 4 — entities
+
+Named entities.
+
+entity_id UUID PK entity_name entity_type canonical_name aliases status 
+
+Examples
+
+Company
+
+Currency
+
+Person
+
+Asset
+
+Country
+
+Machine
+
+Strategy
+
+Product
+
+Table 5 — entity_relationships
+
+Knowledge graph edges.
+
+relationship_id UUID PK source_entity target_entity relationship_type weight confidence 
+
+Examples
+
+Causes
+
+Depends On
+
+Uses
+
+Owns
+
+Produces
+
+Influences
+
+Contradicts
+
+Supports
+
+Table 6 — knowledge_context
+
+Context attached to knowledge.
+
+context_id UUID PK knowledge_id domain industry location time_reference metadata_json 
+
+Table 7 — knowledge_sources
+
+source_id UUID PK knowledge_id evidence_reference source_type source_quality trust_score 
+
+Table 8 — knowledge_versions
+
+version_id UUID PK knowledge_id version change_summary author created_at 
+
+Table 9 — reasoning_paths
+
+Inference chains.
+
+path_id UUID PK knowledge_id starting_fact ending_fact reasoning_method confidence 
+
+Table 10 — inference_rules
+
+Reasoning rules.
+
+rule_id UUID PK rule_name rule_expression priority enabled 
+
+Table 11 — inference_results
+
+result_id UUID PK rule_id knowledge_id generated_fact confidence created_at 
+
+Table 12 — contradictions
+
+Knowledge conflicts.
+
+contradiction_id UUID PK knowledge_a knowledge_b conflict_type resolution_status 
+
+Table 13 — semantic_links
+
+Semantic graph.
+
+semantic_link_id UUID PK source_concept target_concept semantic_type strength 
+
+Table 14 — knowledge_clusters
+
+Topic clustering.
+
+cluster_id UUID PK cluster_name description domain confidence 
+
+Table 15 — cluster_members
+
+member_id UUID PK cluster_id knowledge_id 
+
+Table 16 — knowledge_queries
+
+Knowledge access history.
+
+query_id UUID PK query_text user_id execution_time_ms returned_objects timestamp 
+
+Table 17 — knowledge_metrics
+
+metric_id UUID PK knowledge_id connectivity_score coverage_score freshness_score consistency_score overall_score 
+
+Table 18 — knowledge_dependencies
+
+dependency_id UUID PK knowledge_id depends_on_knowledge dependency_type 
+
+Table 19 — knowledge_graph_snapshots
+
+Graph versions.
+
+snapshot_id UUID PK graph_version node_count edge_count created_at 
+
+Table 20 — knowledge_catalog
+
+Search index.
+
+catalog_id UUID PK knowledge_id keywords classification embedding_reference search_vector 
+
+6. Knowledge Hierarchy
+
+Observation ↓ Evidence ↓ Fact ↓ Concept ↓ Knowledge Object ↓ Knowledge Graph ↓ Reasoning ↓ Decision Support 
+
+7. Relationships
+
+Knowledge Object │ ├── Facts ├── Concepts ├── Entities ├── Relationships ├── Sources ├── Context ├── Versions ├── Metrics ├── Dependencies ├── Inference Results └── Contradictions 
+
+8. Knowledge Quality Dimensions
+
+Each knowledge object is evaluated for:
+
+Correctness
+
+Completeness
+
+Traceability
+
+Consistency
+
+Connectivity
+
+Freshness
+
+Explainability
+
+Reusability
+
+Confidence
+
+These metrics support downstream decision quality assessment.
+
+9. Reasoning Process
+
+Knowledge Request ↓ Locate Relevant Concepts ↓ Traverse Knowledge Graph ↓ Evaluate Rules ↓ Generate Inferences ↓ Check Contradictions ↓ Assign Confidence ↓ Return Knowledge Package 
+
+10. Integration Points
+
+Inputs
+
+QOF (validated observations)
+
+ARUEV (validated evidence)
+
+Research Engine
+
+Memory Engine
+
+External knowledge sources
+
+Outputs
+
+Hypothesis Engine
+
+Recommendation Engine
+
+Simulation Engine
+
+DQS
+
+Learning Engine
+
+ADCOS
+
+The Knowledge Engine never creates decisions directly; it supplies structured knowledge for other engines.
+
+11. Design Principles
+
+Knowledge must be evidence-backed.
+
+Every fact is traceable to its sources.
+
+Relationships are first-class objects.
+
+Contradictions are preserved until resolved.
+
+Knowledge evolves through versioning.
+
+Semantic relationships enable domain-independent reasoning.
+
+Knowledge is reusable across workflows and domains.
+
+Every inference is explainable through its reasoning path.
+
+12. Foundation Summary
+
+The Knowledge Graph & Knowledge Engine provides the semantic foundation of the Universal Intelligence Operating System. By transforming validated observations into interconnected concepts, facts, and relationships, it enables explainable reasoning, reusable intelligence, and domain-agnostic knowledge representation. It serves as the primary source of structured knowledge for all downstream reasoning and decision-making engines.

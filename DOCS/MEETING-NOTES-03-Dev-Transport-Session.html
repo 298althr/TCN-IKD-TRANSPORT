@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MEETING NOTES — DEV TEAM × TRANSPORT DEPARTMENT · TCN IKORODU TRANSPORT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1f5bff;--sky:#6fa0ff;--ink:#05070d;--navy:#071445;
+  --bg:#f3f5f9;--mut:#5a6478;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.big{font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800;letter-spacing:-.045em}
+h1{font-size:clamp(38px,9vw,80px);line-height:.95}
+h2{font-size:clamp(28px,6vw,50px);line-height:1}
+h3{font-size:clamp(15px,1.9vw,20px);letter-spacing:-.02em;line-height:1.15}
+p,li{font-size:clamp(13px,1.4vw,15.5px);line-height:1.55;color:var(--mut);max-width:56ch}
+.d p,.d li,.n p,.n li,.b p,.b li{color:#c9d3ea}
+.s{width:min(100%,794px);margin:0 auto;background:#fff;position:relative;
+   padding:clamp(26px,5.5%,56px);display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px);
+   min-height:min(297mm,130vw);overflow:hidden}
+.s+.s{border-top:6px solid var(--bg)}
+.d{background:var(--ink);color:#fff}
+.n{background:var(--navy);color:#fff}
+.b{background:radial-gradient(120% 120% at 15% 0%,#3d7bff 0,#1f5bff 40%,#0a2cc4 100%);color:#fff}
+.b p,.b li{color:#dbe5ff}
+.tag{font:500 10.5px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.09em;color:var(--blue)}
+.d .tag,.n .tag{color:var(--sky)}.b .tag{color:#fff}
+.ft{font-size:10.5px;color:var(--mut);margin-top:auto;padding-top:10px;border-top:1px solid #edf0f4;max-width:none}
+.d .ft,.n .ft{border-color:rgba(255,255,255,.14);color:#8fa0c4}
+.b .ft{border-color:rgba(255,255,255,.25);color:#c5d4ff}
+.pg{position:absolute;top:clamp(18px,3%,34px);right:clamp(20px,4%,40px);font:500 10px 'JetBrains Mono',monospace;color:var(--mut)}
+.d .pg,.n .pg{color:#7d8fb8}
+.g{display:grid;gap:clamp(12px,2vw,24px);grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.c{border-top:2px solid currentColor;padding-top:12px;display:grid;gap:7px;align-content:start}
+.c p{font-size:13px}
+.q{display:grid;gap:10px;list-style:none;counter-reset:q}
+.q li{counter-increment:q;display:flex;gap:12px;align-items:flex-start;max-width:none;font-size:13.5px}
+.q li::before{content:counter(q,decimal-leading-zero);font:500 11px 'JetBrains Mono',monospace;color:var(--blue);padding-top:2px;flex-shrink:0}
+.n .q li::before,.d .q li::before,.b .q li::before{color:var(--sky)}
+.q li b{color:var(--ink)}
+.n .q li b,.d .q li b,.b .q li b{color:#fff}
+.q li em{font-style:normal;color:var(--mut);display:block;font-size:12px;margin-top:2px}
+.n .q li em,.d .q li em,.b .q li em{color:#9fb0d8}
+.big{font-size:clamp(56px,13vw,110px);line-height:.9;color:var(--blue)}
+.d .big,.n .big{color:var(--sky)}
+.tbl{display:grid;gap:8px}
+.tr{display:grid;grid-template-columns:1.2fr 1fr auto;gap:12px;align-items:center;background:var(--bg);border-radius:14px;padding:12px 16px;font-size:13px}
+.tr .st{font-size:10px;font-weight:700;padding:4px 11px;border-radius:99px;white-space:nowrap;text-align:center;background:#e8eeff;color:var(--blue)}
+.tr .st.warn{background:#fff0d3;color:#9a6b00}
+.tr .st.hot{background:var(--blue);color:#fff}
+.n .tr,.d .tr{background:rgba(255,255,255,.08)}
+.n .tr b,.d .tr b{color:#fff}
+.n .tr>span:not(.st),.d .tr>span:not(.st){color:#9fb0d8}
+.mono-card{background:#0d1530;border:1px solid #22306b;border-radius:16px;padding:18px 20px;font:500 11.5px/1.9 'JetBrains Mono',monospace;color:#cfd8ff}
+.mono-card i{font-style:normal;color:var(--sky)}.mono-card em{font-style:normal;color:#fff}
+.deco{position:absolute;border-radius:50%;pointer-events:none}
+.deco.sky{background:var(--sky)}.deco.blue{background:var(--blue)}.deco.wh{background:rgba(255,255,255,.07)}
+#nav{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px;z-index:9;font:500 11px 'JetBrains Mono',monospace;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-top:1px solid #e8ecf1;color:var(--ink)}
+#printbtn{border:0;background:var(--blue);color:#fff;border-radius:99px;padding:9px 18px;font:700 11px 'JetBrains Mono',monospace;cursor:pointer}
+#nav a{color:inherit;text-decoration:none}
+#nav .up{border:1.5px solid var(--ink);border-radius:99px;padding:7px 14px}
+#pb{position:fixed;top:0;left:0;height:3px;background:var(--blue);z-index:9;transition:width .25s}
+@page{size:A4 portrait;margin:0}
+@media print{
+  body{background:#fff}
+  .s{width:210mm;height:297mm;min-height:0;margin:0;padding:16mm 15mm;border:0;page-break-after:always;break-inside:avoid}
+  .s:last-child{page-break-after:auto}
+  #nav,#pb{display:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="pb"></div>
+
+<!-- 01 · COVER -->
+<section class="s d">
+  <div class="deco blue" style="right:-70px;top:-70px;width:210px;height:210px;opacity:.9"></div>
+  <div class="deco sky" style="left:-45px;bottom:-55px;width:140px;height:140px;opacity:.5"></div>
+  <span class="pg">01</span>
+  <span class="tag">Joint session · internal working notes</span>
+  <svg width="150" height="78" viewBox="0 0 150 78" fill="none" aria-label="Church bus">
+    <rect x="6" y="8" width="138" height="48" rx="14" stroke="#6fa0ff" stroke-width="4"/>
+    <line x1="6" y1="34" x2="144" y2="34" stroke="#6fa0ff" stroke-width="4"/>
+    <line x1="34" y1="14" x2="34" y2="34" stroke="#6fa0ff" stroke-width="3"/>
+    <line x1="62" y1="14" x2="62" y2="34" stroke="#6fa0ff" stroke-width="3"/>
+    <line x1="90" y1="14" x2="90" y2="34" stroke="#6fa0ff" stroke-width="3"/>
+    <line x1="118" y1="8" x2="118" y2="56" stroke="#6fa0ff" stroke-width="3"/>
+    <circle cx="42" cy="62" r="9" stroke="#6fa0ff" stroke-width="4"/>
+    <circle cx="108" cy="62" r="9" stroke="#6fa0ff" stroke-width="4"/>
+    <line x1="6" y1="44" x2="144" y2="44" stroke="#6fa0ff" stroke-width="2" opacity=".45"/>
+  </svg>
+  <div><h1>MEETING NOTES<br><span style="color:var(--sky);font-size:.62em;line-height:1.1">DEV TEAM × TRANSPORT<br>DEPARTMENT</span></h1></div>
+  <div>
+    <p style="font-size:clamp(14px,1.6vw,17px)">What the session surfaced, what it changes, and the question set needed before development proceeds.</p>
+    <p style="margin-top:12px;font-size:12px">TCN Ikorodu Transport Management System · October 10, 2026 · Status: provisional — entries pending confirmation before hardening into the decision log</p>
+  </div>
+  <span class="ft">Scroll ↓ · Print-ready — each page prints to one A4 sheet</span>
+</section>
+
+<!-- 02 · HEADLINES -->
+<section class="s">
+  <span class="pg">02</span>
+  <span class="tag">What the session surfaced</span>
+  <h2>Eight things changed the picture.</h2>
+  <div class="tbl">
+    <div class="tr"><b>No cash payment</b><span>Digital payment path only — reverses the earlier field report that cash was essential</span><span class="st warn">CONFIRM SCOPE</span></div>
+    <div class="tr"><b>Guests / visitors exist</b><span>New rider class — two registration paths raised; members can onboard guests</span><span class="st hot">NEW ENTITY</span></div>
+    <div class="tr"><b>One-way &amp; round-trip</b><span>People who don't take the morning bus may still return on it — legs are real</span><span class="st hot">NEW MODEL</span></div>
+    <div class="tr"><b>Overflow happens</b><span>Overfilled buses are a real scenario needing a defined policy</span><span class="st">OPEN</span></div>
+    <div class="tr"><b>Refund policy unresolved</b><span>The department still needs to work out the policy — formally open</span><span class="st">OPEN</span></div>
+    <div class="tr"><b>First-timers gated by admin</b><span>New-member registration requires admin approval — partially answers the gate question</span><span class="st">DIRECTION SET</span></div>
+    <div class="tr"><b>Priorities named</b><span>Security · ease of use · ease of management — the design bar</span><span class="st">GUIDANCE</span></div>
+    <div class="tr"><b>Stack still undecided</b><span>Church runs PHP + SQL today; this app's stack remains open — pending follow-up</span><span class="st">BLOCKED</span></div>
+  </div>
+</section>
+
+<!-- 03 · WHAT IT CHANGES -->
+<section class="s n">
+  <div class="deco wh" style="right:-50px;bottom:12%;width:160px;height:160px"></div>
+  <span class="pg">03</span>
+  <span class="tag">What it changes in the spec</span>
+  <h2>Three real model shifts.</h2>
+  <div class="g">
+    <div class="c"><h3>Riders aren't just members</h3><p>The membership gate stays — but <b>guests</b> ride too, mostly family and friends of members. The booking model needs a guest class alongside members, with its own registration and accountability rules.</p></div>
+    <div class="c"><h3>A seat has a direction</h3><p>Outbound and return are independent legs. A person can hold a return seat they never used outbound. Capacity, pricing and manifests all become per-leg, not per-trip.</p></div>
+    <div class="c"><h3>The payment model simplifies</h3><p>If "no cash" holds, the manual-payment path, receipt-proof question and cash-attestation audit machinery all shrink or disappear — digital settlement only, one source of truth.</p></div>
+  </div>
+  <span class="ft">⚠ "No cash" needs one confirmation: fully digital, or no cash handling but office transfers still recorded manually?</span>
+</section>
+
+<!-- 04 · GUEST QUESTIONS -->
+<section class="s">
+  <span class="pg">04</span>
+  <span class="tag">Questions to answer — guests</span>
+  <h2>Guests are now a first-class entity.</h2>
+  <p style="font-size:12.5px">Raised in session: two registration paths — <b>public signup requiring admin approval</b>, or <b>link-based signup without approval</b> — plus members onboarding guests directly.</p>
+  <ol class="q">
+    <li><b>Can a guest book and pay for themselves,</b> or do they always ride under the member who brought them?<em>Decides whether guests get real accounts or exist as named riders on a member's booking</em></li>
+    <li><b>Is a guest record one-off or permanent?</b> If a visitor comes twice, do they re-register — and is there a guest → member conversion path?<em>Most first-timers join through family and friends — conversion is the actual journey</em></li>
+    <li><b>Guest caps?</b> Max guests per member per programme — and a guest quota per bus?<em>Prevents a nominally member-gated system becoming open public transport</em></li>
+    <li><b>The link — shared or per-member?</b> A per-member invite link shows who invited whom; a shared link is simpler but loses the referral chain.<em>Determines accountability for who brought whom</em></li>
+    <li><b>On the manifest — "Guest of [member]"?</b> Should marshals see which member is responsible for each guest?</li>
+  </ol>
+</section>
+
+<!-- 05 · TRIP-LEG QUESTIONS -->
+<section class="s b">
+  <span class="pg">05</span>
+  <span class="tag">Questions to answer — trip legs &amp; overflow</span>
+  <h2>Outbound and return are different problems.</h2>
+  <ol class="q">
+    <li><b>Are outbound and return seats counted independently?</b><em>A bus can be full going and have room returning — confirm that matches reality</em></li>
+    <li><b>Does pricing differ by leg?</b> Return-only passengers on a paid programme — full fare, half, free?</li>
+    <li><b>Are legs chosen at booking or on the day?</b> Can someone decide "I'm returning with the bus" without a prior booking — and can the marshal add them on the spot?</li>
+    <li><b>Multiple departure times per leg?</b> One return trip or several?</li>
+    <li><b>When all buses fill — what happens?</b> Extra bus called, people turned away, or priority order (members before guests, first-come)?<em>The overfill answer decides whether a waitlist is in scope at all</em></li>
+  </ol>
+</section>
+
+<!-- 06 · EXCEPTIONS -->
+<section class="s">
+  <span class="pg">06</span>
+  <span class="tag">Questions to answer — exceptions</span>
+  <h2>Run this list past them: "have we missed any?"</h2>
+  <ol class="q">
+    <li>Passenger misses the outbound bus but <b>wants to return on it</b> — covered above, confirm the flow.</li>
+    <li>Passenger returns on a <b>different route</b> than they booked outbound.</li>
+    <li>Member brings an <b>unregistered extra person</b> on the day.</li>
+    <li><b>Marshal doesn't show</b> — who boards passengers?</li>
+    <li>Bus <b>breaks down</b> mid-route or doesn't arrive at all.</li>
+    <li>Person <b>boards the wrong bus</b> — discovered when?</li>
+    <li>Which of these actually happen — and <b>who is authorized to fix each one on the spot?</b></li>
+  </ol>
+</section>
+
+<!-- 07 · GATE / INTEGRATION / REFUND -->
+<section class="s">
+  <span class="pg">07</span>
+  <span class="tag">Questions to answer — gate, integration, refunds</span>
+  <h2>The policy questions still open.</h2>
+  <ol class="q">
+    <li><b>"Admin approves first-timers" — what's the turnaround?</b> If someone registers Friday night for Sunday, does a human realistically act in time?<em>Queue vs. bottleneck — decides whether approval is a gate or a wall</em></li>
+    <li><b>Phone verification (OTP) at signup</b> — or is name + register match enough?<em>Security vs. ease of use, stated priorities in tension</em></li>
+    <li><b>Integration point — be specific.</b> Does the member register live in the existing church SQL database? If yes: does this app read it directly, or receive periodic exports?<em>Direct integration vs. copy-and-sync is a major architecture fork</em></li>
+    <li><b>Who owns the existing PHP/SQL system</b> and is it still maintained?</li>
+    <li><b>Refund policy — who drafts it and by when?</b> Give them the decision points to react to: cutoff timing · group partial refunds · return-leg refunds · what happens when the church cancels a bus.</li>
+    <li><b>Stack decision timing</b> — PHP/SQL exists today but wasn't assumed for this app. Confirm by when the stack call gets made — it blocks all schema and API work.</li>
+  </ol>
+</section>
+
+<!-- 08 · DESIGN SMELL -->
+<section class="s d">
+  <div class="deco blue" style="right:-45px;top:-45px;width:130px;height:130px;opacity:.85"></div>
+  <span class="pg">08</span>
+  <span class="tag">Finding the design smell</span>
+  <h2>Things that look right but break in reality.</h2>
+  <div class="g">
+    <div class="c"><h3>The exercise</h3><p>Walk the prototype live — member and marshal screens on a phone. Each person points at anything that <b>looks correct but would break in their real operation</b>. That's how the cash-payment and guest gaps surfaced.</p></div>
+    <div class="c"><h3>Smells to test against</h3><p>Install gate before a guest can even see a seat? One payment covering legs people may not use? Approval queues stalling weekend registrations? A manifest that assumes everyone boards the same bus both ways?</p></div>
+    <div class="c"><h3>The bar they set</h3><p><b>Security</b> — gated, attributed, correctable. <b>Ease of use</b> — bookable by someone who is not phone-savvy. <b>Ease of management</b> — operable without the person who built it.</p></div>
+  </div>
+  <span class="ft">Design smell = a decision made for convenience that fails under real conditions — catch them now, they're cheap</span>
+</section>
+
+<!-- 09 · STATUS & NEXT -->
+<section class="s n">
+  <span class="pg">09</span>
+  <span class="tag">Status &amp; what happens next</span>
+  <h2>Where this leaves the project.</h2>
+  <div class="tbl">
+    <div class="tr"><b>Guest model</b><span>New entity — registration paths, caps, accountability</span><span class="st">NEW OI</span></div>
+    <div class="tr"><b>Trip-leg model</b><span>Outbound/return capacity, pricing, manifests per leg</span><span class="st">NEW OI</span></div>
+    <div class="tr"><b>Overflow policy</b><span>Waitlist vs. turn-away vs. extra bus</span><span class="st">NEW OI</span></div>
+    <div class="tr"><b>Refund policy</b><span>Department drafting — needs owner + deadline</span><span class="st warn">OPEN</span></div>
+    <div class="tr"><b>Cash path</b><span>D-021 (proposed manual path) challenged — confirm before closing</span><span class="st warn">CONFIRM</span></div>
+    <div class="tr"><b>Membership gate</b><span>First-timers via admin approval — partially resolves AUTH-2</span><span class="st">PROGRESS</span></div>
+    <div class="tr"><b>Stack (D-002)</b><span>Unresolved — now with PHP/SQL context to weigh</span><span class="st">BLOCKED</span></div>
+  </div>
+  <p style="color:#c9d3ea"><b style="color:var(--sky)">Next:</b> answers above get folded into the decision log and open-issue register; the product spec gets a revision pass for guests, legs and the simplified payment model; then the spec returns for review before the final PRD.</p>
+</section>
+
+<div id="nav">
+  <span>MEETING NOTES · 03</span>
+  <button id="printbtn" onclick="window.print()">SAVE AS PDF ↓</button>
+  <a class="up" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false">TOP ↑</a>
+</div>
+<script>
+addEventListener("scroll",()=>{
+  const h=document.documentElement;
+  document.getElementById("pb").style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";
+},{passive:true});
+</script>
+</body>
+</html>

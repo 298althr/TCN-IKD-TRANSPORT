@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Transport sign-off form · TCN Ikorodu Transport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1f5bff;--sky:#6fa0ff;--ink:#05070d;--navy:#071445;--bg:#f3f5f9;--mut:#5a6478;--line:#e3e8f2}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:70px}
+h1,h2,h3{font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+h1{font-size:clamp(28px,6vw,44px)}
+h2{font-size:clamp(22px,4.5vw,30px)}
+.tag{font:500 11px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--blue)}
+.muted{color:var(--mut);font-size:13px}
+header.top{position:sticky;top:0;z-index:5;background:var(--navy);color:#fff;padding:12px 16px 0}
+header.top .row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;max-width:880px;margin:0 auto}
+header.top .title{font:800 15px 'Bricolage Grotesque',Inter,sans-serif;letter-spacing:-.01em}
+header.top .title span{color:var(--sky)}
+.prog{max-width:880px;margin:10px auto 0;height:6px;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--sky);transition:width .3s}
+.stat{max-width:880px;margin:6px auto 10px;font:500 11.5px 'JetBrains Mono',monospace;color:#c5d4ff;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1.5px solid #fff;background:transparent;color:#fff;border-radius:99px;padding:7px 14px;font:600 12px Inter,sans-serif;cursor:pointer}
+.btn.pri{background:var(--blue);border-color:var(--blue)}
+.btn.ghost{border-color:rgba(255,255,255,.4)}
+.btn:hover{filter:brightness(1.12)}
+main{max-width:880px;margin:0 auto;padding:18px 14px;display:grid;gap:16px}
+.card{background:#fff;border-radius:18px;padding:20px 20px 18px;box-shadow:0 1px 0 #e6ebf3}
+.card.intro{background:var(--navy);color:#dbe5ff}
+.card.intro p{color:#dbe5ff;font-size:14px;max-width:70ch}
+.card.intro .tag{color:var(--sky)}
+.sec-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:6px}
+.sec-head p{font-size:13.5px;color:var(--mut);max-width:70ch;margin-top:4px}
+.sec-meta{font:500 11px 'JetBrains Mono',monospace;color:var(--mut);white-space:nowrap}
+.item{border-top:1px solid var(--line);padding:14px 0 12px}
+.item:first-of-type{border-top:0}
+.ihead{display:flex;gap:10px;align-items:flex-start}
+.badge{flex-shrink:0;font:500 10.5px 'JetBrains Mono',monospace;color:#fff;background:var(--blue);border-radius:7px;padding:3px 7px;margin-top:2px}
+.qt{font-weight:600;font-size:15px;line-height:1.35}
+.ctx{font-size:12.5px;color:var(--mut);margin:4px 0 10px 0;padding-left:0}
+.seg-wrap{display:flex;flex-wrap:wrap;gap:7px}
+.seg{border:1.5px solid #cfd8ea;background:#fff;color:var(--ink);border-radius:12px;padding:9px 12px;font:500 13.5px Inter,sans-serif;cursor:pointer;text-align:left;min-height:42px;line-height:1.25}
+.seg:hover{border-color:var(--blue)}
+.seg[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.seg small{display:inline-block;margin-left:6px;font:500 9.5px 'JetBrains Mono',monospace;background:#e8eeff;color:var(--blue);border-radius:99px;padding:1px 6px;vertical-align:middle}
+.seg[aria-pressed="true"] small{background:rgba(255,255,255,.22);color:#fff}
+.note{margin-top:9px;width:100%;border:1.5px solid #cfd8ea;border-radius:10px;padding:9px 11px;font:14px Inter,sans-serif}
+.note[hidden]{display:none}
+.pair{display:grid;gap:9px;grid-template-columns:1fr 1fr}
+.pair label{display:grid;gap:4px;font:500 11px 'JetBrains Mono',monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+select,input[type=text],input[type=date]{width:100%;border:1.5px solid #cfd8ea;border-radius:10px;padding:9px 10px;font:500 14px Inter,sans-serif;background:#fff;color:var(--ink)}
+.pair select{font-weight:500;text-transform:none;letter-spacing:0}
+.sign label.row{display:grid;gap:5px;font:500 11px 'JetBrains Mono',monospace;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;font-weight:500;color:var(--ink);text-transform:none;letter-spacing:0;cursor:pointer;margin-top:4px}
+.check input{width:18px;height:18px;margin-top:1px;accent-color:var(--blue)}
+.sign .ready{margin-top:14px;font:500 12px 'JetBrains Mono',monospace;color:var(--mut)}
+.sign .big{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.btn.big-b{background:var(--blue);color:#fff;border:0;border-radius:14px;padding:13px 18px;font:700 14px Inter,sans-serif;cursor:pointer}
+.btn.big-b.alt{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}
+.btn.big-b:disabled{opacity:.45;cursor:not-allowed}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:99px;font:600 13px Inter,sans-serif;opacity:0;pointer-events:none;transition:.25s;z-index:9}
+.toast.on{opacity:1}
+.saved{font:500 11px 'JetBrains Mono',monospace;color:#c5d4ff}
+@media (max-width:560px){.pair{grid-template-columns:1fr}.seg{flex:1 1 100%}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="row">
+    <div class="title">Transport sign-off <span>· 20 minutes</span></div>
+    <div class="tools">
+      <button class="btn ghost" id="bImport" type="button">Import answers</button>
+      <button class="btn" id="bCopy" type="button">Copy summary</button>
+      <button class="btn pri" id="bExport" type="button">Export answers</button>
+    </div>
+  </div>
+  <div class="prog"><i id="bar"></i></div>
+  <div class="stat"><span id="count">0 of 0 answered</span><span id="saved" class="saved"></span></div>
+</header>
+
+<main>
+  <section class="card intro">
+    <span class="tag">Before you start</span>
+    <h1 style="margin-top:6px">Confirm what the system must do.</h1>
+    <p style="margin-top:10px">Every question is a choice. Pick one option per question. You will not need to write anything except names and, where you change a rule, one short note.</p>
+    <p style="margin-top:10px">Your answers are saved in this browser as you go. When you are finished, press <b>Export answers</b> and send the file to the product manager. The file can be imported again later to update any answer.</p>
+    <p style="margin-top:10px;font-size:12.5px;color:#9fb0d8">The file holds only the answers and your name and role. Do not enter bank or card details anywhere in this form.</p>
+  </section>
+
+  <div id="sections"></div>
+
+  <section class="card sign" id="signSec">
+    <div class="sec-head">
+      <div><span class="tag">Section F · about 1 minute</span><h2 style="margin-top:4px">Sign off</h2>
+      <p>Your name and role are recorded with the file. Signing confirms the answers in this form are yours and accurate.</p></div>
+    </div>
+    <label class="row">Your name<input type="text" id="whoName" placeholder="Full name"></label>
+    <label class="row">Your role
+      <select id="whoRole">
+        <option value="">Choose a role</option>
+        <option>Transport department lead</option>
+        <option>Second trained administrator</option>
+        <option>Finance contact</option>
+        <option>Executive sponsor (approves)</option>
+      </select>
+    </label>
+    <label class="check"><input type="checkbox" id="whoConfirm"> I confirm these answers are accurate and I am the person named above.</label>
+    <div class="ready" id="readyLine"></div>
+    <div class="big">
+      <button class="big-b" id="bSign" type="button" disabled>Export signed answers</button>
+      <button class="big-b alt" id="bSummary" type="button">Copy summary for the decision log</button>
+    </div>
+  </section>
+</main>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fileIn" accept="application/json" hidden>
+
+<script>
+const KEY = 'tcn-signoff-form-1.0';
+const SEG = [
+  {v:'agree',label:'Agree'},{v:'change',label:'Change it'},{v:'unsure',label:'Not sure'}
+];
+const RULES = [
+  {id:'R1',ref:'D-033',text:'Every payment is digital: Paystack and/or OPay. No cash, no POS.',ctx:'Settles the cash question. Drives the payment screens.'},
+  {id:'R2',ref:'D-037, D-041',text:'The rider list locks 30 minutes before departure. Later additions need admin approval with a reason.',ctx:'Sets when marshals can still change the list.'},
+  {id:'R3',ref:'D-032',text:'Cancellation closes 12 hours before departure. An admin can set another time for one programme.',ctx:'Sets the refund cut-off. Refund amounts come from the policy.'},
+  {id:'R4',ref:'D-034',text:'When a bus is full, riders join a waiting list. First-time guests are offered seats first, then other riders in join order.',ctx:'Decides who is offered a seat first.'},
+  {id:'R5',ref:'D-035',text:'A waiting-list offer lasts 2 hours. If it is not taken, the next rider is offered the seat.',ctx:'Sets how long a seat is held for someone waiting.'},
+  {id:'R6',ref:'D-040',text:'No limit on guests at launch. The office watches guest numbers on each bus and reviews after the pilot.',ctx:'Guests may fill a bus before members. Reviewed after the pilot.'},
+  {id:'R7',ref:'D-039',text:'One price per rider for a programme, whichever leg they travel.',ctx:'Simplest pricing. Return-only riders pay the same.'},
+  {id:'R8',ref:'D-042',text:'A special event opens for booking only after a second administrator approves it.',ctx:'Two people must agree before money is taken.'},
+  {id:'R9',ref:'D-044',text:'First-time registrations are decided within 24 hours. The administrator is reminded at 12 hours.',ctx:'Sets the approval deadline. Needs an administrator on rota.'},
+  {id:'R10',ref:'D-038',text:'The department drafts the refund policy. No refund is paid automatically until it is signed.',ctx:'Refunds stay manual until the policy exists.'}
+].map(r=>({...r,kind:'seg',opts:SEG,note:'What should it say instead?'}));
+
+const NOTSURE = 'Not sure';
+const SCEN = [
+  {id:'S1',ref:'E01',text:'A bus is 40 minutes late. What usually happens?',ctx:'Sets how long riders wait, and what the marshal sees.',opts:['Leaves on time','Waits about 10 minutes','Waits 20 to 30 minutes','Depends on the marshal']},
+  {id:'S2',ref:'E02',text:'A bus does not come at all. What do the riders get?',ctx:'Sets the rule when the church cancels a bus.',opts:['A place on the next bus','A refund or credit','Told only, nothing else','Administrator decides each case']},
+  {id:'S3',ref:'D11',text:'A booked rider does not turn up. What happens to the seat?',ctx:'Decides whether a no-show is refunded and recorded.',opts:['Paid seat, no refund','Refund only if cancelled early','Free seat, no consequence','Marshal decides on the day']},
+  {id:'S4',ref:'A04',text:'A round-trip rider wants the outbound bus, but the return bus is full. What happens?',ctx:'Decides whether one leg can be booked on its own.',opts:['Outbound leg can be booked alone','The whole booking waits','Office decides case by case']},
+  {id:'S5',ref:'B13',text:'A route has three buses and one is full. What happens?',ctx:'Decides whether riders are moved to another bus.',opts:['People move to another bus on the route','Only if they ask the office','They wait for the full bus']},
+  {id:'S6',ref:'F04',text:'A first-timer applies Friday night for Sunday, and the usual administrator is away. Who decides?',ctx:'Sets the approval backup when the administrator is unavailable.',opts:['Second administrator decides','Waits until the administrator returns','Office phone decides']},
+  {id:'S7',ref:'E17',text:'Are children ever carried without a parent or guardian?',ctx:'Decides whether a children rule is needed before the pilot.',opts:['Never','Sometimes, with written consent','Sometimes, with the marshal agreeing']},
+  {id:'S8',ref:'C12',text:'A member cannot pay online. What happens today?',ctx:'Cash is not accepted under the digital rule. This sets the support route.',opts:['Office helps them pay online','They do not travel','They pay later through the office']}
+].map(s=>({...s,kind:'seg',opts:[...s.opts,NOTSURE].map(o=>({v:o,label:o})),note:'What actually happens?'}));
+
+const FACTS = [
+  {id:'F1',ref:'Bus setup',text:'Buses per programme',ctx:'Sets how many buses the system is set up for.',opts:['One','Two','Three','Four or more','It varies']},
+  {id:'F2',ref:'Pickup points',text:'Pickup points',ctx:'Fixed lists load once; frequent changes need updates.',opts:['Fixed','Change a few times a year','Change most weeks']},
+  {id:'F3',ref:'Marshals',text:'When marshals are named',ctx:'Decides when a marshal can open a bus duty.',opts:['Before the day','On the day','Not decided']},
+  {id:'F4',ref:'Administrators',text:'Two trained administrators',ctx:'Two are needed for approvals and travel-day cover.',opts:['Both ready','One ready, one in training','Only one available']},
+  {id:'F5',ref:'Finance contact',text:'Finance contact for payment problems',ctx:'Payment problems are routed to this person.',opts:['Church treasurer','Finance secretary','Someone named later']},
+  {id:'F6',ref:'Finance period',text:'Finance period for keeping payment records',ctx:'Sets how long payment records are kept.',opts:['Financial year','Calendar year','Other','Not decided']},
+  {id:'F7',ref:'Register',text:'Who keeps the membership register',ctx:'The register steward approves changes to membership.',opts:['Church office','Transport department','Someone else, named later']},
+  {id:'F8',ref:'Calendar',text:'Programme calendar',ctx:'Needed to set up the first programmes.',opts:['Next six Sundays entered','Some entered','None yet']},
+  {id:'F9',ref:'Contact',text:'Transport office contact for riders',ctx:'Used for the WhatsApp and phone links in the app.',opts:['Existing WhatsApp number','New number','Phone only']},
+  {id:'F10',ref:'Tickets',text:'Name shown on tickets and notices',ctx:'Appears on every ticket and message.',opts:['Church name','Transport department','Other, to confirm']},
+  {id:'F11',ref:'Access',text:'Riders needing step-free access',ctx:'Sets how many accessible places the bus plan needs.',opts:['None known','1 to 5','More than 5','Unknown']},
+  {id:'F12',ref:'Children',text:'Children travelling',ctx:'If any travel without a parent, a children rule is needed (P-16).',opts:['Always with a parent','Some without a parent','Not sure']}
+].map(f=>({...f,kind:'seg',opts:f.opts.map(o=>({v:o,label:o}))}));
+
+const CHOICES = [
+  {id:'Q-027',ref:'OI-040',text:'Which programme is the pilot?',ctx:'The first programme set up and tested with real riders.',opts:[{v:'A',label:'Next Sunday service only (free)'},{v:'B',label:'One special event first (paid)'},{v:'C',label:'Sunday first, then one special event',rec:true}]},
+  {id:'Q-028',ref:'P-04',text:'How long does a late bus wait?',ctx:'The rule for riders who arrive late.',opts:[{v:'A',label:'Leaves on time'},{v:'B',label:'Waits up to 10 minutes',rec:true},{v:'C',label:'Waits up to 20 minutes'},{v:'D',label:'Marshal decides with the administrator'}]},
+  {id:'Q-029',ref:'P-06',text:'Round trip, one leg full: what can the rider book?',ctx:'Whether a half booking is possible.',opts:[{v:'A',label:'Nothing; choose another bus or wait'},{v:'B',label:'The open leg only; the full leg goes on the waiting list',rec:true},{v:'C',label:'Both legs, only when both are open'}]},
+  {id:'Q-030',ref:'P-05',text:'Waiting riders, if no bus can be found: what are they told?',ctx:'The message sent to people left waiting.',opts:[{v:'A',label:'No seat; we will contact you if a bus is added',rec:true},{v:'B',label:'Same, and a refund is offered after the window'},{v:'C',label:'The administrator phones each rider'}]},
+  {id:'Q-031',ref:'P-07',text:'Repeated no-shows: what follows?',ctx:'Whether no-shows carry any consequence.',opts:[{v:'A',label:'Recorded only'},{v:'B',label:'Warning after three in twelve months',rec:true},{v:'C',label:'Booking limit after repeats'},{v:'D',label:'Decide after the pilot'}]},
+  {id:'Q-032',ref:'P-03',text:'The church cancels a bus: what is offered?',ctx:'The default for riders on a cancelled bus.',opts:[{v:'A',label:'A place on the next bus; refund only if asked'},{v:'B',label:'Refund offered automatically; another bus optional',rec:true},{v:'C',label:'Refund only'},{v:'D',label:'Administrator decides each case'}]}
+].map(q=>({...q,kind:'seg',opts:q.opts}));
+
+const POLICIES_PILOT = [
+  ['P-01','Refunds','Who is eligible, how much, exceptions, who approves'],
+  ['P-03','Bus does not come or breaks down','Notice, replacement, cost, refund or rebooking'],
+  ['P-04','Late bus','How long it waits; what late riders do'],
+  ['P-05','Full buses','What waiting riders are told when no bus can be found'],
+  ['P-06','Round trips','Booking one leg when the other is full; leg cancellation'],
+  ['P-07','No-shows and removal','What counts; repeats; who removes a rider'],
+  ['P-09','Guests','Who may bring guests; invite links; host responsibility'],
+  ['P-10','Membership changes','Bookings when a member is suspended or leaves'],
+  ['P-11','Special events','Changes after booking; price changes; cancelling paid events'],
+  ['P-12','Payment failures','Late payment; help for members who cannot pay online'],
+  ['P-13','Prices and fees','Fees on refunds; walk-on fees; waivers'],
+  ['P-14','Marshal duties','What marshals may and may not do; disputes at the bus'],
+  ['P-15','Incidents and emergencies','Who calls for help; families; reporting'],
+  ['P-16','Children','Travel without a parent or guardian; who collects them'],
+  ['P-17','Accessibility','Step-free access; accessible bus allocation'],
+  ['P-18','Privacy notice and consent','What is collected and why; corrections'],
+  ['P-19','Retention','Finance period; attendance; support reports'],
+  ['P-20','Membership register','Who keeps it; updates; who changes membership'],
+  ['P-21','Corrections and disputes','Who may correct a record; appeals'],
+  ['P-22','Administrator access','Two administrators; leaving the role; travel-day rota'],
+  ['P-23','Support','Who answers each problem type; response targets'],
+  ['P-24','Messages to members','Which messages go out; quiet hours; group messages'],
+  ['P-25','Programme cancelled on the day','Who decides; announcement; refunds'],
+  ['P-28','Business continuity','Printed list; who prints it; what to do when the app is down'],
+  ['P-29','Financial controls','Refund limits; checks against the provider statement']
+];
+const POLICIES_BUILD = [
+  ['P-02','Group refunds','One rider leaves a paid group'],
+  ['P-08','Booking limits','How many seats one person may hold at once'],
+  ['P-26','Pickup and route changes','Notice period; rights to withdraw'],
+  ['P-27','Audit review','How often the record is checked, and by whom']
+];
+const OWNERS = ['Transport department lead','Second trained administrator','Finance contact','Church treasurer or finance office','Marshal lead','Executive sponsor','Decide later'];
+const TIMING = ['Within 2 weeks','Within 4 weeks','6 to 8 weeks','After the pilot (default applies)'];
+const POLS = [...POLICIES_PILOT.map(p=>({id:p[0],ref:p[0],text:p[1],ctx:p[2],kind:'pair'})),...POLICIES_BUILD.map(p=>({id:p[0],ref:p[0],text:p[1]+' (build)',ctx:p[2],kind:'pair'}))];
+
+const SECTIONS = [
+  {key:'A',title:'The ten rules',time:'about 3 minutes',intro:'These rules come from your answers so far. Agree, change or mark as not sure. "Accept all as written" fills every rule with Agree; you can still change any of them.',items:RULES,acceptAll:true},
+  {key:'B',title:'Eight situations',time:'about 5 minutes',intro:'Pick what usually happens. "Not sure" is a full answer and is flagged for a walkthrough.',items:SCEN},
+  {key:'C',title:'Facts only your team holds',time:'about 4 minutes',intro:'Pick the closest answer. Names and contact numbers are added later, after the decision.',items:FACTS},
+  {key:'D',title:'Six choices',time:'about 3 minutes',intro:'The option marked Suggested is used when no answer is given.',items:CHOICES},
+  {key:'E',title:'Policy owners and timing',time:'about 5 minutes',intro:'For each policy, pick who owns the draft and when it is due. Use "After the pilot" if it is not needed yet. The four build policies can wait.',items:POLS}
+];
+const ALL = SECTIONS.flatMap(s=>s.items);
+const TOTAL = ALL.length + 1;
+
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let S = load();
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY));return x&&typeof x==='object'?x:{a:{},n:{},who:{}}}catch(e){return{a:{},n:{},who:{}}}}
+function save(){localStorage.setItem(KEY,JSON.stringify(S));document.getElementById('saved').textContent='Saved on this device '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}
+function done(it){const a=S.a[it.id];return it.kind==='pair'?!!(a&&a.owner&&a.timing):a!==undefined&&a!==''}
+function optsHTML(list,sel,lab){return '<option value="">Choose</option>'+list.map(o=>`<option${o===sel?' selected':''}>${esc(o)}</option>`).join('')}
+
+function itemHTML(it){
+  const head=`<div class="ihead"><span class="badge">${esc(it.ref)}</span><span class="qt">${esc(it.text)}</span></div><div class="ctx">${esc(it.ctx)}</div>`;
+  if(it.kind==='pair'){
+    const a=S.a[it.id]||{};
+    return `<div class="item" data-id="${esc(it.id)}">${head}<div class="pair"><label>Owner<select data-k="owner">${optsHTML(OWNERS,a.owner)}</select></label><label>Draft due<select data-k="timing">${optsHTML(TIMING,a.timing)}</select></label></div></div>`;
+  }
+  const buttons=it.opts.map(o=>`<button type="button" class="seg" data-v="${esc(o.v)}" aria-pressed="${S.a[it.id]===o.v}">${esc(o.label)}${o.rec?'<small>Suggested</small>':''}</button>`).join('');
+  const note=it.note?`<input type="text" class="note" data-note placeholder="${esc(it.note)}" value="${esc(S.n[it.id]||'')}" ${S.a[it.id]==='change'||it.id.startsWith('S')?'':'hidden'}>`:'';
+  return `<div class="item" data-id="${esc(it.id)}">${head}<div class="seg-wrap">${buttons}</div>${note}</div>`;
+}
+function renderSections(){
+  document.getElementById('sections').innerHTML=SECTIONS.map(s=>`<section class="card" data-sec="${s.key}"><div class="sec-head"><div><span class="tag">Section ${s.key} · ${esc(s.time)}</span><h2 style="margin-top:4px">${esc(s.title)}</h2><p>${esc(s.intro)}</p></div><span class="sec-meta" data-meta="${s.key}"></span></div>${s.acceptAll?'<div style="margin:10px 0 2px"><button type="button" class="btn" data-acceptall style="background:#e8eeff;color:var(--blue);border-color:#e8eeff;font-weight:700">Accept all as written</button></div>':''}${s.items.map(itemHTML).join('')}</section>`).join('');
+}
+function refresh(){
+  let n=0;
+  for(const s of SECTIONS){
+    const c=s.items.filter(done).length; n+=c;
+    const m=document.querySelector(`[data-meta="${s.key}"]`); if(m) m.textContent=`${c} of ${s.items.length}`;
+  }
+  const signed=!!(S.who.name&&S.who.role&&S.who.confirm); if(signed) n++;
+  document.getElementById('count').textContent=`${n} of ${TOTAL} answered`;
+  document.getElementById('bar').style.width=(n/TOTAL*100)+'%';
+  const left=TOTAL-n; document.getElementById('readyLine').textContent=left? `${left} item${left>1?'s':''} still to answer. The file will mark them as missing.`:'Everything answered. Ready to export.';
+  document.getElementById('bSign').disabled=!signed;
+  document.querySelectorAll('[data-id]').forEach(el=>{
+    const it=ALL.find(x=>x.id===el.dataset.id); if(!it) return;
+    el.querySelectorAll('.seg').forEach(b=>b.setAttribute('aria-pressed',String(S.a[it.id]===b.dataset.v)));
+    const note=el.querySelector('[data-note]'); if(note) note.hidden=!(it.id.startsWith('S')||S.a[it.id]==='change');
+  });
+  const wn=document.getElementById('whoName'); if(wn.value!==(S.who.name||'')) wn.value=S.who.name||'';
+  document.getElementById('whoRole').value=S.who.role||'';
+  document.getElementById('whoConfirm').checked=!!S.who.confirm;
+}
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2200)}
+
+document.getElementById('sections').addEventListener('click',e=>{
+  const acc=e.target.closest('[data-acceptall]');
+  if(acc){RULES.forEach(r=>{if(S.a[r.id]===undefined) S.a[r.id]='agree'});save();refresh();toast('Rules accepted as written');return}
+  const b=e.target.closest('.seg'); if(!b) return;
+  const id=b.closest('[data-id]').dataset.id; S.a[id]=b.dataset.v; save(); refresh();
+});
+document.getElementById('sections').addEventListener('change',e=>{
+  const sel=e.target.closest('select'); if(!sel) return;
+  const id=sel.closest('[data-id]').dataset.id; S.a[id]={...(S.a[id]||{}),[sel.dataset.k]:sel.value}; save(); refresh();
+});
+document.getElementById('sections').addEventListener('input',e=>{
+  const n=e.target.closest('[data-note]'); if(!n) return;
+  const id=n.closest('[data-id]').dataset.id; S.n[id]=n.value; save();
+});
+document.getElementById('whoName').addEventListener('input',e=>{S.who.name=e.target.value;save();refresh()});
+document.getElementById('whoRole').addEventListener('change',e=>{S.who.role=e.target.value;save();refresh()});
+document.getElementById('whoConfirm').addEventListener('change',e=>{S.who.confirm=e.target.checked;save();refresh()});
+
+function build(){
+  const items=ALL.map(it=>{
+    const a=S.a[it.id];
+    const answer=it.kind==='pair'?(a?{owner:a.owner||null,timing:a.timing||null}:null):(a??null);
+    const row={id:it.id,ref:it.ref,question:it.text,answer};
+    if(S.n[it.id]) row.note=S.n[it.id];
+    return row;
+  });
+  const missing=ALL.filter(it=>!done(it)).map(it=>it.id);
+  const signed=!!(S.who.name&&S.who.role&&S.who.confirm);
+  return {form:'transport-signoff',version:'1.0',exported:new Date().toISOString(),respondent:{name:S.who.name||'',role:S.who.role||'',confirmed:!!S.who.confirm},complete:signed&&missing.length===0,missing,items};
+}
+function summary(){
+  const d=build(); const lines=[`Transport sign-off, form 1.0, exported ${d.exported.slice(0,10)}`,`Respondent: ${d.respondent.name||'(not signed)'}, ${d.respondent.role||'no role'}`,`Missing: ${d.missing.length? d.missing.join(', ') : 'none'}`,''];
+  for(const s of SECTIONS){lines.push(`## ${s.key}. ${s.title}`);for(const it of s.items){const r=d.items.find(x=>x.id===it.id);const ans=r.answer==null?'(no answer)':(typeof r.answer==='object'?`owner: ${r.answer.owner||'-'}; due: ${r.answer.timing||'-'}`:r.answer);lines.push(`- ${it.id} (${it.ref}) ${it.text}: ${ans}${r.note?' · note: '+r.note:''}`)}lines.push('')}
+  return lines.join('\n');
+}
+function download(name,text){const u=URL.createObjectURL(new Blob([text],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),500)}
+function exportNow(){const d=build();const stamp=new Date().toISOString().slice(0,10);download(`transport-signoff-${stamp}${d.complete?'-signed':'-draft'}.json`,JSON.stringify(d,null,2));toast(d.complete?'Signed file exported':`Exported with ${d.missing.length} missing`)}
+
+document.getElementById('bExport').addEventListener('click',exportNow);
+document.getElementById('bSign').addEventListener('click',exportNow);
+const copyText=t=>{if(!navigator.clipboard){toast('Copy not available here; use Export');return}navigator.clipboard.writeText(t).then(()=>toast('Summary copied'),()=>toast('Copy blocked by the browser; use Export'))};
+document.getElementById('bSummary').addEventListener('click',()=>copyText(summary()));
+document.getElementById('bCopy').addEventListener('click',()=>copyText(summary()));
+document.getElementById('bImport').addEventListener('click',()=>document.getElementById('fileIn').click());
+document.getElementById('fileIn').addEventListener('change',e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const d=JSON.parse(r.result); if(d.form!=='transport-signoff') throw new Error('not a sign-off file');
+      S.a={};S.n={};
+      for(const row of d.items||[]){ if(row.answer!=null){S.a[row.id]=row.answer} if(row.note) S.n[row.id]=row.note }
+      if(d.respondent){S.who={name:d.respondent.name||'',role:d.respondent.role||'',confirm:!!d.respondent.confirmed}}
+      save();renderSections();refresh();toast('Answers imported');
+    }catch(err){toast('Could not import: '+err.message)}
+  };
+  r.readAsText(f); e.target.value='';
+});
+
+renderSections(); refresh();
+</script>
+</body>
+</html>

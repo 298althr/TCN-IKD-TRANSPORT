@@ -1,0 +1,11 @@
+{
+  "rooms": [
+    {
+      "id": "sample",
+      "title": "Sample Room — Weekly Sync Format Demo",
+      "status": "closed",
+      "created_by": "pm",
+      "note": "Reference room demonstrating the closed-state render + recap artifact."
+    }
+  ]
+}

@@ -1,0 +1,284 @@
+ADCOS-002 · Adaptive Decision-Centric Operating System (ADCOS)
+
+Version: 1.0
+Status: Core Intelligence Engine
+Layer: Decision Orchestration
+Dependencies: Universal Intelligence Kernel (UIK)
+
+1. Purpose
+
+ADCOS is the orchestration engine of the Universal Intelligence Operating System.
+
+It does not generate intelligence itself. Instead, it coordinates every intelligence engine, determines execution order, enforces validation gates, routes data between engines, and maintains the lifecycle of every decision.
+
+ADCOS answers one question:
+
+"Given the current state of knowledge, what engine should execute next?"
+
+2. Responsibilities
+
+ADCOS is responsible for:
+
+Decision lifecycle management
+
+Workflow orchestration
+
+Engine routing
+
+State transitions
+
+Pipeline construction
+
+Execution policies
+
+Human approval gates
+
+AI approval gates
+
+Failure recovery
+
+Dependency resolution
+
+Parallel execution
+
+Context propagation
+
+ADCOS never performs research, simulation, or recommendation directly. Those responsibilities belong to specialized engines.
+
+3. High-Level Architecture
+
+Universal Kernel │ ADCOS Orchestrator │ ┌──────────────────────────────────────────┐ │ │ │ Context Engine │ │ Problem Engine │ │ Knowledge Engine │ │ Research Engine │ │ Hypothesis Engine │ │ Validation Engine │ │ Simulation Engine │ │ Recommendation Engine │ │ Execution Engine │ │ Monitoring Engine │ │ Learning Engine │ │ Memory Engine │ └──────────────────────────────────────────┘ 
+
+4. Decision Lifecycle
+
+Context ↓ Problem Definition ↓ Information Collection ↓ Knowledge Construction ↓ Hypothesis ↓ Validation ↓ Simulation ↓ Recommendation ↓ Approval ↓ Execution ↓ Monitoring ↓ Learning ↓ Memory 
+
+ADCOS owns this lifecycle.
+
+5. Core Concepts
+
+Decision
+
+A unit requiring action.
+
+Stage
+
+A logical phase of a decision.
+
+Workflow
+
+An ordered sequence of stages.
+
+Route
+
+A transition between stages.
+
+Gate
+
+A validation checkpoint.
+
+Policy
+
+Rules controlling progression.
+
+6. Database Schema
+
+Table 1 — decision_cases
+
+Root object for every decision.
+
+decision_case_id UUID PK workspace_id FK project_id FK title description decision_type priority status current_stage owner_id created_at updated_at 
+
+Relationship
+
+Decision Case
+
+↓
+
+Workflow
+
+↓
+
+Stages
+
+Table 2 — decision_workflows
+
+workflow_id UUID PK decision_case_id FK workflow_name workflow_version status started_at completed_at 
+
+Table 3 — workflow_stages
+
+Defines available stages.
+
+stage_id UUID PK workflow_id FK stage_name stage_order engine_name required parallel_allowed status 
+
+Table 4 — stage_execution
+
+Execution history.
+
+execution_id UUID PK stage_id FK engine_instance status started_at finished_at duration_ms result_reference 
+
+Table 5 — stage_dependencies
+
+Defines execution prerequisites.
+
+dependency_id UUID PK stage_id FK depends_on_stage dependency_type required 
+
+Dependency types
+
+Complete
+
+Success
+
+Approval
+
+Threshold
+
+External Event
+
+Table 6 — routing_rules
+
+Engine routing logic.
+
+routing_rule_id UUID PK workflow_type current_stage condition_expression next_stage priority enabled 
+
+Table 7 — transition_history
+
+transition_id UUID PK decision_case_id from_stage to_stage trigger actor timestamp 
+
+Table 8 — approval_gates
+
+approval_gate_id UUID PK decision_case_id gate_name approval_type required_role status approved_by approved_at 
+
+Approval types
+
+Human
+
+AI
+
+Dual Approval
+
+Committee
+
+Automatic
+
+Table 9 — execution_policies
+
+policy_id UUID PK workflow_type policy_name max_retries timeout_seconds rollback_enabled parallel_execution enabled 
+
+Table 10 — rollback_actions
+
+rollback_id UUID PK execution_id rollback_strategy reason status executed_at 
+
+Strategies
+
+Retry
+
+Rewind
+
+Restart Stage
+
+Restart Workflow
+
+Manual Recovery
+
+Table 11 — engine_registry
+
+Registered engines.
+
+engine_id UUID PK engine_name engine_version capabilities status health registered_at 
+
+Table 12 — engine_capabilities
+
+capability_id UUID PK engine_id FK capability_name description input_schema output_schema 
+
+Table 13 — execution_queue
+
+Pending work.
+
+queue_id UUID PK decision_case_id stage_id engine_id priority scheduled_time status 
+
+Table 14 — pipeline_templates
+
+Reusable workflows.
+
+template_id UUID PK template_name domain workflow_json version active 
+
+Table 15 — execution_metrics
+
+metric_id UUID PK decision_case_id stage_id execution_time_ms retry_count failure_count success_rate recorded_at 
+
+Table 16 — workflow_exceptions
+
+exception_id UUID PK decision_case_id stage_id exception_type message resolution resolved timestamp 
+
+Table 17 — decision_outputs
+
+Final outputs.
+
+output_id UUID PK decision_case_id output_type reference_object confidence created_at 
+
+Table 18 — orchestration_events
+
+ADCOS internal events.
+
+event_id UUID PK decision_case_id event_type source_engine target_engine payload_json created_at 
+
+7. Relationships
+
+Decision Case ├── Workflow │ ├── Stages │ │ ├── Execution │ │ ├── Dependencies │ │ └── Metrics │ ├── Approval Gates ├── Policies ├── Queue ├── Outputs ├── Exceptions └── Events 
+
+8. State Machine
+
+Created ↓ Context Gathering ↓ Problem Defined ↓ Research ↓ Knowledge Ready ↓ Hypothesis ↓ Validation ↓ Simulation ↓ Recommendation ↓ Approval ↓ Execution ↓ Monitoring ↓ Completed ↓ Learning Archived 
+
+Failure at any state triggers rollback according to policy.
+
+9. Engine Communication Contract
+
+Each engine must expose:
+
+Engine ID
+
+Version
+
+Supported inputs
+
+Supported outputs
+
+Health status
+
+Execution timeout
+
+Retry policy
+
+Confidence score
+
+Error schema
+
+ADCOS uses this contract to orchestrate execution without depending on engine internals.
+
+10. Execution Rules
+
+Every workflow begins with a decision case.
+
+Every stage has an owner engine.
+
+Stages execute only after dependencies are satisfied.
+
+Validation gates may halt progression.
+
+Every transition is recorded.
+
+Every failure produces an exception.
+
+Rollback follows execution policy.
+
+Outputs become inputs to downstream engines.
+
+All events are published through the Universal Intelligence Kernel.
+
+Completed workflows are immutable and archived for learning.
+
+11. Foundation Summary
+
+ADCOS is the orchestration layer that transforms independent intelligence engines into a coherent operating system. It manages workflows, routing, approvals, execution policies, dependencies, failures, and lifecycle transitions while remaining independent of domain-specific logic. Every decision processed by the Universal Intelligence Operating System passes through ADCOS, making it the central coordinator for all intelligent execution.

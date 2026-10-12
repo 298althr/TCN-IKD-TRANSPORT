@@ -1,0 +1,393 @@
+index.md
+
+Universal Intelligence Operating System (UIOS)
+
+Architecture Navigation Guide
+
+Version: 1.0
+
+Purpose of this Repository
+
+This repository is not a collection of independent documents.
+
+It is a single interconnected architecture describing a Universal Intelligence Operating System (UIOS).
+
+Every document depends on concepts introduced elsewhere.
+
+Reading documents in isolation will produce an incomplete understanding.
+
+The objective is to progressively construct a complete mental model of the system.
+
+Reading Philosophy
+
+Do not read this repository like a book.
+
+Do not read it from beginning to end only once.
+
+Instead, read it like studying an operating system or a large software codebase.
+
+Understanding is built through multiple passes.
+
+Each pass reveals relationships that were invisible during the previous pass.
+
+Four-Pass Learning Strategy
+
+Pass 1 — Build the Mental Model
+
+Goal:
+
+Understand what each engine exists to do.
+
+Ignore implementation details.
+
+Read only:
+
+UIK
+
+ADCOS
+
+MNIF
+
+MSA (Final Document)
+
+At this stage ask only:
+
+What is this engine responsible for?
+
+Why does it exist?
+
+Where does it sit inside the architecture?
+
+Do not attempt to memorize schemas.
+
+Pass 2 — Learn the Intelligence Pipeline
+
+Read the engines in execution order.
+
+Problem ↓ Quality ↓ Knowledge ↓ Decision ↓ Validation ↓ Hypothesis ↓ Simulation ↓ Recommendation ↓ Governance ↓ Execution ↓ Monitoring ↓ Learning ↓ Memory ↓ Explainability 
+
+After finishing one engine ask:
+
+What data enters this engine?
+
+What data leaves it?
+
+Which engine consumes its output?
+
+Which previous engine supplies it?
+
+Draw the pipeline yourself.
+
+Pass 3 — Study the Data
+
+Ignore the text.
+
+Read only the schemas.
+
+For every engine identify:
+
+Primary entities
+
+Foreign keys
+
+Shared objects
+
+Metadata
+
+Relationships
+
+Questions to answer:
+
+What does this engine own?
+
+What does it reference?
+
+What does it publish?
+
+What does it consume?
+
+Build an Entity Relationship Diagram (ERD) while reading.
+
+Pass 4 — Study Cross-Engine Relationships
+
+Read every document again.
+
+This time focus only on:
+
+Dependencies
+
+Shared entities
+
+Common concepts
+
+Lifecycle
+
+Event flow
+
+You should constantly jump between documents.
+
+Example:
+
+Recommendation Engine ↓ Execution Engine ↓ Monitoring Engine ↓ Learning Engine ↓ Recommendation Engine 
+
+Notice the feedback loop.
+
+Repeat until every dependency becomes obvious.
+
+Navigation Rules
+
+Every document should be read with at least three other documents open.
+
+Example:
+
+Reading Recommendation Engine?
+
+Also open:
+
+Simulation Engine
+
+Governance Engine
+
+Execution Engine
+
+Reading Learning Engine?
+
+Also open:
+
+Monitoring Engine
+
+Memory Engine
+
+Knowledge Engine
+
+Reading Explainability?
+
+Also open:
+
+Recommendation Engine
+
+Decision Engine
+
+Governance Engine
+
+Never study an engine alone.
+
+Context Gathering Protocol
+
+Whenever beginning work on the repository:
+
+Step 1
+
+Read MSA.
+
+Understand the whole system.
+
+Step 2
+
+Locate the engine responsible for your task.
+
+Step 3
+
+Identify:
+
+Inputs
+
+Outputs
+
+Dependencies
+
+Consumers
+
+Shared entities
+
+Step 4
+
+Open every dependent engine.
+
+Study them together.
+
+Step 5
+
+Return to the original engine.
+
+Your understanding will now be significantly deeper.
+
+Repeat until no new relationships are discovered.
+
+Reading Loop
+
+Use this loop continuously.
+
+Read ↓ Question ↓ Navigate ↓ Compare ↓ Return ↓ Update Understanding ↓ Repeat 
+
+Do not continue reading until the current engine makes sense within the entire system.
+
+Relationship Discovery
+
+For every engine ask the same questions.
+
+Identity
+
+What objects belong here?
+
+Responsibility
+
+Why does this engine exist?
+
+Dependencies
+
+Which engines does it require?
+
+Consumers
+
+Who uses its outputs?
+
+Data
+
+What tables belong here?
+
+Events
+
+What events are emitted?
+
+What events are consumed?
+
+Lifecycle
+
+Where does this engine sit in the global workflow?
+
+Failure
+
+What happens if this engine fails?
+
+Governance
+
+Who authorizes its work?
+
+Explainability
+
+Can every output be reconstructed?
+
+Implementation Order
+
+Do not implement the repository in document order.
+
+Recommended implementation sequence:
+
+Foundation
+
+UIK
+
+Identity
+
+Shared Metadata
+
+Event Bus
+
+IOE
+
+UAIE
+
+Intelligence
+
+PRE
+
+QOF
+
+KGE
+
+DQS
+
+ARUEV
+
+HVE
+
+SME
+
+RGE
+
+Operations
+
+GCE
+
+EXE
+
+MOE
+
+Intelligence Growth
+
+LME
+
+MME
+
+XTE
+
+AI Agent Reading Protocol
+
+Every AI agent working in this repository must follow these rules.
+
+Before modifying any engine:
+
+Read the Master System Architecture (MSA).
+
+Read the target engine.
+
+Read every engine listed in the target engine's dependencies.
+
+Read every engine that consumes the target engine's outputs.
+
+Identify affected shared entities.
+
+Confirm changes preserve cross-engine contracts.
+
+Verify no lifecycle stage is bypassed.
+
+Verify explainability and governance remain intact.
+
+Update documentation if structural changes are introduced.
+
+No implementation should be performed from a single document alone.
+
+Repository Philosophy
+
+This repository represents one intelligence system expressed across multiple documents.
+
+Every engine is intentionally isolated for clarity but interconnected by design.
+
+A modification in one engine can influence many others.
+
+Always reason globally before acting locally.
+
+Definition of Understanding
+
+You understand this architecture when you can answer the following without referring to the documentation:
+
+Where does every piece of data originate?
+
+Which engine owns each object?
+
+Which engine validates it?
+
+Which engine consumes it?
+
+Which engine governs it?
+
+Which engine executes it?
+
+Which engine monitors it?
+
+Which engine learns from it?
+
+Which engine stores it?
+
+Which engine explains it?
+
+How can a complete decision be reconstructed from beginning to end?
+
+If any answer is unclear, continue navigating between documents until the relationships are fully understood.
+
+Final Principle
+
+Do not memorize documents. Build a mental graph.
+
+The documents are merely views of the same system. True understanding comes from recognizing the relationships between engines, entities, workflows, and data as a single interconnected intelligence architecture.

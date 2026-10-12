@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TCN Transport — Admin Dashboard (Prototype)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#ff5722;--yellow:#ffd369;--ink:#263742;--mut:#667380;--bg:#f3f5f9;--teal:#10c7a0;--lilac:#8f7ff5;--aqua:#37c4e5;--peach:#ffb59e;--red:#e5484d;--card:#fff;--line:#e9edf2;--shadow:0 24px 50px -22px rgba(38,55,66,.28)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh}
+h1,h2,h3{font-weight:800;letter-spacing:-.03em}
+button{font-family:inherit;cursor:pointer;border:0}
+input,select,textarea{font-family:inherit;font-size:13.5px}
+.card{background:var(--card);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
+.eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 20px;border-radius:99px;font-weight:800;font-size:13px}
+.btn.primary{background:var(--orange);color:#fff}.btn.dark{background:var(--ink);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.teal{background:var(--teal);color:#fff}.btn.red{background:var(--red);color:#fff}
+.btn.sm{padding:8px 14px;font-size:12px}
+.chip{display:inline-flex;align-items:center;font-size:10px;font-weight:800;padding:4px 10px;border-radius:99px}
+.chip.g{background:#d9f7ef;color:#0a8a6d}.chip.o{background:#fff0d3;color:#9a6b00}.chip.r{background:#ffe1e3;color:#b03038}.chip.b{background:#e8eeff;color:#2f56d6}.chip.k{background:#efeaff;color:#6a56d9}
+.pill{padding:8px 14px;border-radius:99px;background:#fff;border:1.5px solid var(--line);font-size:12px;font-weight:700}
+.pill.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.field{display:grid;gap:5px}.field label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)}
+.field input,.field select,.field textarea{padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:#fff;outline:none;width:100%}
+.row{display:flex;align-items:center;gap:10px}.spread{justify-content:space-between}
+.stack{display:grid;gap:12px}.muted{color:var(--mut);font-size:12px;line-height:1.5}
+.hair{height:1px;background:var(--line)}
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);padding:8px 10px;border-bottom:1.5px solid var(--line)}
+.tbl td{padding:11px 10px;border-bottom:1px solid #f0f3f6;vertical-align:middle}
+.tbl tr:hover td{background:#fafbfc}
+.cap{height:7px;border-radius:99px;background:#eef1f5;overflow:hidden;width:80px}
+.cap i{display:block;height:100%;border-radius:99px;background:var(--teal)}
+.cap i.warn{background:var(--yellow)}.cap i.full{background:var(--orange)}
+.toggle{width:44px;height:25px;border-radius:99px;background:#d5dbe1;position:relative;transition:.2s}
+.toggle::after{content:"";position:absolute;width:19px;height:19px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.toggle.on{background:var(--teal)}.toggle.on::after{left:22px}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 22px;border-radius:99px;font-size:13px;font-weight:700;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.3s;z-index:90;white-space:nowrap}
+.toast.on{opacity:1}
+.sheet{position:fixed;inset:0;background:rgba(38,55,66,.5);display:none;align-items:flex-end;justify-content:center;z-index:80}
+.sheet.on{display:flex}.sheet .inner{background:#fff;width:100%;max-width:520px;border-radius:26px 26px 0 0;padding:24px;max-height:86dvh;overflow:auto}
+.grip{width:44px;height:5px;border-radius:99px;background:var(--line);margin:0 auto 16px}
+.stat{background:#fff;border-radius:18px;padding:16px;position:relative;overflow:hidden}
+.stat b{font-size:26px;display:block}
+.stat .ic{position:absolute;right:12px;top:12px;width:38px;height:38px;border-radius:12px;display:grid;place-items:center}
+
+/* layout: sidebar ≥760px, bottom nav below */
+.shell{max-width:1180px;margin:0 auto;min-height:100dvh;display:block}
+.view{display:none;padding:20px;animation:fade .25s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sidebar{display:none}
+.mobilenav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;overflow-x:auto;padding:8px 6px calc(8px + env(safe-area-inset-bottom));z-index:70}
+.mobilenav button{flex:1;min-width:64px;display:grid;place-items:center;gap:3px;font-size:9.5px;font-weight:700;color:var(--mut);background:none;padding:6px 4px;border-radius:12px;white-space:nowrap}
+.mobilenav button.sel{color:var(--orange)}
+.mobilenav svg{width:19px;height:19px}
+@media(min-width:760px){
+  .shell{display:grid;grid-template-columns:230px 1fr}
+  .mobilenav{display:none}
+  .sidebar{display:flex;flex-direction:column;background:var(--ink);min-height:100dvh;padding:22px 14px;position:sticky;top:0;height:100dvh}
+  .sidebar .logo{color:#fff;font-weight:900;font-size:17px;padding:0 10px 20px;letter-spacing:-.02em}
+  .sidebar .logo span{color:var(--yellow)}
+  .sidebar button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:14px;color:#9db0b8;font-size:13px;font-weight:700;background:none;text-align:left}
+  .sidebar button.sel{background:rgba(255,255,255,.09);color:#fff}
+  .sidebar button svg{width:18px;height:18px;flex-shrink:0}
+  .sidebar .foot{margin-top:auto;padding:10px 12px;color:#5f7078;font-size:10.5px}
+  .view{padding:28px 32px}
+}
+.grid2{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+/* skeleton loading state */
+.skb{background:#e8edf2;border-radius:16px;position:relative;overflow:hidden}
+.skb::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.85) 50%,transparent 75%);animation:shim 1.1s infinite}
+@keyframes shim{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.grid4{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ============ SIDEBAR (wide) ============ -->
+<aside class="sidebar" id="snav">
+  <div class="logo">TCN<span>·</span>Transport</div>
+  <!-- nav injected by JS -->
+  <div class="foot">Admin Console v0.3 · Prototype</div>
+</aside>
+
+<main>
+
+<!-- ============ V-SKEL : loading state ============ -->
+<div class="view" id="v-skel">
+  <div class="skb" style="height:28px;width:34%;margin-bottom:20px"></div>
+  <div class="grid4" style="margin-bottom:14px"><div class="skb" style="height:92px"></div><div class="skb" style="height:92px"></div><div class="skb" style="height:92px"></div><div class="skb" style="height:92px"></div></div>
+  <div class="skb" style="height:120px;margin-bottom:12px"></div>
+  <div class="skb" style="height:120px;margin-bottom:12px"></div>
+  <div class="skb" style="height:120px"></div>
+</div>
+
+<!-- ============ V-AUTH ============ -->
+<div class="view" id="v-auth" style="max-width:420px;margin:0 auto;padding-top:10vh">
+  <div class="card" style="background:var(--ink);color:#fff;position:relative;overflow:hidden;padding:26px">
+    <div style="position:absolute;width:120px;height:120px;border-radius:50%;background:var(--yellow);right:-40px;top:-40px"></div>
+    <span class="eyebrow" style="color:var(--yellow)">Transport admin</span>
+    <h2 style="font-size:26px;margin:8px 0 4px">Operations Room</h2>
+    <p style="font-size:13px;color:#c9d3d8">Programmes · buses · payments · marshals · records</p>
+  </div>
+  <div class="stack" style="margin-top:16px">
+    <div class="field"><label>Admin email</label><input value="admin@tcn-ikorodu.church"></div>
+    <div class="field"><label>Password</label><input type="password" value="••••••••"></div>
+    <button class="btn primary" style="width:100%" onclick="go('v-overview')">Sign In</button>
+    <p class="muted" style="text-align:center;font-size:11px">Every admin action is recorded in the audit log</p>
+  </div>
+</div>
+
+<!-- ============ V-OVERVIEW ============ -->
+<div class="view" id="v-overview">
+  <div class="row spread" style="margin-bottom:16px"><div><h2 style="font-size:24px">Overview</h2><span class="muted">Sunday, Oct 12 · live</span></div><button class="btn primary sm" onclick="go('v-broadcast')">+ Broadcast</button></div>
+  <div class="grid4">
+    <div class="stat"><b>148</b><span class="muted" style="font-size:11px">Bookings today</span><div class="ic" style="background:#ffe0d6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ff5722" stroke-width="2"><path d="M5 4h14v16l-2.3-1.7L14.4 20l-2.4-1.7L9.6 20l-2.3-1.7L5 20z"/></svg></div></div>
+    <div class="stat"><b>94%</b><span class="muted" style="font-size:11px">Boarding rate</span><div class="ic" style="background:#d9f7ef"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a8a6d" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg></div></div>
+    <div class="stat"><b>₦182k</b><span class="muted" style="font-size:11px">Revenue this month</span><div class="ic" style="background:#fff3d6"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c99400" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.5c-.6-1-1.7-1.5-3-1.5-1.8 0-3 1-3 2.4 0 3.4 6 1.6 6 4.9 0 1.4-1.2 2.4-3 2.4-1.3 0-2.4-.5-3-1.5"/></svg></div></div>
+    <div class="stat"><b>7</b><span class="muted" style="font-size:11px">Need attention</span><div class="ic" style="background:#ffe1e3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e5484d" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16.5v.5"/></svg></div></div>
+  </div>
+  <h3 style="font-size:15px;margin:20px 0 10px">Needs attention</h3>
+  <div class="stack" id="attention"></div>
+  <h3 style="font-size:15px;margin:20px 0 10px">Member &amp; marshal reports</h3>
+  <div class="stack" id="reportslist"></div>
+</div>
+
+<!-- ============ V-PROGRAMMES ============ -->
+<div class="view" id="v-programmes">
+  <div class="row spread" style="margin-bottom:16px"><h2 style="font-size:24px">Programmes</h2><button class="btn primary sm" onclick="sheetOpen('v-newprog')">+ New Special Event</button></div>
+  <h3 style="font-size:14px;margin-bottom:10px;color:var(--mut)">RECURRING</h3>
+  <div class="stack" id="proglist-rec" style="margin-bottom:18px"></div>
+  <h3 style="font-size:14px;margin-bottom:10px;color:var(--mut)">SPECIAL EVENTS — created by you</h3>
+  <div class="stack" id="proglist"></div>
+</div>
+
+<!-- ============ V-FLEET ============ -->
+<div class="view" id="v-fleet">
+  <div class="row spread" style="margin-bottom:16px"><h2 style="font-size:24px">Routes &amp; Buses</h2><div class="row" style="gap:8px"><button class="btn ghost sm" onclick="sheetOpen('v-newroute')">+ Route</button><button class="btn primary sm" onclick="sheetOpen('v-newbus')">+ Bus</button></div></div>
+  <div class="stack" id="fleetlist"></div>
+</div>
+
+<!-- ============ V-BOOKINGS ============ -->
+<div class="view" id="v-bookings">
+  <h2 style="font-size:24px;margin-bottom:14px">Bookings &amp; Passengers</h2>
+  <div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div class="card" style="padding:10px 14px;flex:1;min-width:200px;display:flex;align-items:center;gap:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#667380" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input placeholder="Search name, ref, phone…" style="border:0;outline:none;flex:1;background:none"></div>
+    <div class="row" style="gap:6px;flex-wrap:wrap"><button class="pill sel">All</button><button class="pill">Confirmed</button><button class="pill">Held</button><button class="pill">Cancelled</button><button class="pill">No-show</button><button class="pill">Guests</button></div>
+  </div>
+  <div class="card" style="padding:6px 0;overflow-x:auto"><table class="tbl" id="bktbl"></table></div>
+</div>
+
+<!-- ============ V-PAYMENTS ============ -->
+<div class="view" id="v-payments">
+  <h2 style="font-size:24px;margin-bottom:14px">Payments &amp; Refunds</h2>
+  <div class="card" style="margin-bottom:14px;display:flex;gap:12px;align-items:center;border-left:4px solid var(--teal)">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a8a6d" stroke-width="2.2" style="flex-shrink:0"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 018 0v3"/></svg>
+    <div style="flex:1"><b style="font-size:13px">Providers: Paystack + OPay — member is redirected to pay</b><p class="muted" style="font-size:11.5px">No card data touches church systems (PCI-compliant). Members choose a provider at checkout; confirmation returns via webhook.</p></div>
+  </div>
+  <div class="grid4" style="margin-bottom:14px">
+    <div class="stat"><b>₦182,500</b><span class="muted" style="font-size:11px">Collected (Oct)</span></div>
+    <div class="stat"><b>₦7,500</b><span class="muted" style="font-size:11px">Refunded</span></div>
+    <div class="stat"><b>2</b><span class="muted" style="font-size:11px">Refund requests</span></div>
+    <div class="stat"><b>1</b><span class="muted" style="font-size:11px">Unreconciled</span></div>
+  </div>
+  <h3 style="font-size:15px;margin-bottom:10px">Refund queue</h3>
+  <div class="stack" style="margin-bottom:18px" id="refundq"></div>
+  <h3 style="font-size:15px;margin-bottom:10px">Recent transactions</h3>
+  <div class="card" style="padding:6px 0;overflow-x:auto"><table class="tbl" id="txtbl"></table></div>
+</div>
+
+<!-- ============ V-PEOPLE ============ -->
+<div class="view" id="v-people">
+  <h2 style="font-size:24px;margin-bottom:14px">Members &amp; Guests</h2>
+  <div class="card" style="margin-bottom:14px;border-left:4px solid var(--yellow)">
+    <div class="row spread" style="margin-bottom:10px"><b style="font-size:14.5px">First-timer approvals (4)</b><span class="chip o">QUEUE</span></div>
+    <div class="stack" id="approveq"></div>
+  </div>
+  <div class="row" style="margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div class="card" style="padding:10px 14px;flex:1;min-width:200px;display:flex;align-items:center;gap:8px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#667380" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input placeholder="Search the register…" style="border:0;outline:none;flex:1;background:none"></div>
+    <button class="btn dark sm" onclick="toast('Register export (CSV) downloaded')">Export register</button>
+  </div>
+  <div class="card" style="padding:6px 0;overflow-x:auto"><table class="tbl" id="membertbl"></table></div>
+</div>
+
+<!-- ============ V-MARSHALS ============ -->
+<div class="view" id="v-marshals">
+  <div class="row spread" style="margin-bottom:16px"><h2 style="font-size:24px">Marshals</h2><button class="btn primary sm" onclick="sheetOpen('v-assign')">+ Assign</button></div>
+  <div class="stack" id="marshallist"></div>
+</div>
+
+<!-- ============ V-REPORTS ============ -->
+<div class="view" id="v-reports">
+  <div class="row spread" style="margin-bottom:16px"><h2 style="font-size:24px">Reports</h2><button class="btn ghost sm" onclick="toast('Report pack exported (PDF)')">Export</button></div>
+  <div class="grid2">
+    <div class="card"><span class="eyebrow">Utilization — October</span>
+      <div style="display:flex;align-items:flex-end;gap:8px;height:120px;margin-top:14px" id="chart1"></div>
+      <div class="row spread" style="margin-top:8px"><span class="muted" style="font-size:10px">Oct 4</span><span class="muted" style="font-size:10px">Oct 11</span><span class="muted" style="font-size:10px">Oct 18</span><span class="muted" style="font-size:10px">Oct 25</span></div>
+    </div>
+    <div class="card"><span class="eyebrow">No-show rate by route</span>
+      <div class="stack" style="margin-top:14px" id="nschart"></div>
+    </div>
+    <div class="card"><span class="eyebrow">Attendance trend</span><b style="font-size:30px;display:block;margin-top:8px">↑ 18%</b><p class="muted" style="font-size:12px">vs. September — driven by Hallelujah Night demand</p></div>
+    <div class="card"><span class="eyebrow">Guest share of seats</span><b style="font-size:30px;display:block;margin-top:8px">22%</b><p class="muted" style="font-size:12px">First-timers riding under member hosts — watch for conversion</p></div>
+  </div>
+  <div class="card" style="margin-top:14px"><span class="eyebrow">Weekly digest preview</span>
+    <p class="muted" style="font-size:12.5px;margin-top:8px">Auto-generated every Monday to leadership: bookings, boarding rate, revenue, no-shows, pending approvals, refund activity, and any unusual admin actions.</p>
+    <button class="btn dark sm" style="margin-top:12px" onclick="toast('Digest sent to leadership mailing list')">Send this week's now</button>
+  </div>
+</div>
+
+<!-- ============ V-AUDIT ============ -->
+<div class="view" id="v-audit">
+  <h2 style="font-size:24px;margin-bottom:6px">Audit Trail</h2>
+  <p class="muted" style="font-size:12.5px;margin-bottom:14px">Append-only record — every action attributed. Corrections appear as new entries pointing at the original; nothing is erased.</p>
+  <div class="row" style="gap:6px;margin-bottom:12px;flex-wrap:wrap"><button class="pill sel">All</button><button class="pill">Bookings</button><button class="pill">Payments</button><button class="pill">Admin edits</button><button class="pill">Corrections</button></div>
+  <div class="stack" id="auditlist"></div>
+</div>
+
+<!-- ============ V-BROADCAST ============ -->
+<div class="view" id="v-broadcast" style="max-width:560px">
+  <h2 style="font-size:24px;margin-bottom:14px">Send a Broadcast</h2>
+  <div class="stack">
+    <div class="field"><label>Audience</label><select id="bc-aud"><option>All booked members — this Sunday</option><option>All marshals on duty</option><option>Members on a specific route</option><option>Everyone (programme-wide)</option></select></div>
+    <div class="field"><label>Route (if applicable)</label><select id="bc-route"><option>—</option><option>Ikorodu Garage</option><option>Isawo / Agric</option><option>Owutu / Bayeku</option></select></div>
+    <div class="field"><label>Message</label><textarea id="bc-msg" rows="4" placeholder="e.g. Bus 1 departure moved to 6:15 AM — please arrive 15 mins early"></textarea></div>
+    <div class="field"><label>Channels</label><select id="bc-chan"><option>Push + Email</option><option>Push only</option><option>Email only</option></select></div>
+    <button class="btn primary" style="width:100%" onclick="sendBroadcast()">Send Broadcast</button>
+    <p class="muted" style="font-size:11.5px;text-align:center">Logged in the audit trail with your admin name</p>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ============ SHEETS ============ -->
+<div class="sheet" id="sh-v-newprog"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:14px">New Special Event</h3><div class="stack">
+  <div class="field"><label>Name</label><input id="np-name" placeholder="e.g. Crossover Service"></div>
+  <div class="row"><div class="field" style="flex:1"><label>Date</label><input id="np-date" type="date"></div><div class="field" style="flex:1"><label>Departure</label><input id="np-time" type="time"></div></div>
+  <div class="field"><label>Type</label><select id="np-type"><option>Free (Sunday service)</option><option>Paid (special programme)</option></select></div>
+  <div class="field"><label>Price per seat (if paid)</label><input id="np-price" placeholder="₦"></div>
+  <div class="row"><div class="field" style="flex:1"><label>Booking opens</label><input id="np-open" type="date"></div><div class="field" style="flex:1"><label>Booking closes</label><input id="np-close" type="date"></div></div>
+  <button class="btn primary" style="width:100%" onclick="createProg()">Create Programme</button>
+</div></div></div>
+
+<div class="sheet" id="sh-v-newroute"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:14px">New Route</h3><div class="stack">
+  <div class="field"><label>Route name</label><input id="nr-name" placeholder="e.g. Ebute / Majidun"></div>
+  <div class="field"><label>Pickup points (one per line)</label><textarea id="nr-points" rows="3" placeholder="Ebute ferry terminal&#10;Majidun junction"></textarea></div>
+  <button class="btn primary" style="width:100%" onclick="createRoute()">Create Route</button>
+</div></div></div>
+
+<div class="sheet" id="sh-v-newbus"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:14px">Add Bus</h3><div class="stack">
+  <div class="field"><label>Bus label</label><input id="nb-name" placeholder="e.g. Bus 5 — Coaster"></div>
+  <div class="field"><label>Capacity</label><input id="nb-cap" type="number" placeholder="e.g. 18"></div>
+  <div class="field"><label>Assign to route</label><select id="nb-route"></select></div>
+  <button class="btn primary" style="width:100%" onclick="createBus()">Add Bus</button>
+</div></div></div>
+
+<div class="sheet" id="sh-v-assign"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:14px">Assign Marshal</h3><div class="stack">
+  <div class="field"><label>Marshal</label><select id="as-marshal"></select></div>
+  <div class="field"><label>Bus</label><select id="as-bus"></select></div>
+  <div class="field"><label>Programme</label><select id="as-prog"></select></div>
+  <button class="btn primary" style="width:100%" onclick="doAssign()">Assign</button>
+</div></div></div>
+
+<div class="sheet" id="sh-v-bkdetail"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:10px" id="bd-title">Booking</h3>
+  <div class="stack" id="bd-body"></div></div></div>
+
+<!-- ============ MOBILE NAV ============ -->
+<nav class="mobilenav" id="mnav" style="display:none"></nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const NAV=[
+ ['v-overview','Overview','M3 10.5L12 3l9 7.5V21h-6v-6h-6v6H3z'],
+ ['v-programmes','Programmes','M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 012 2v14H3V6a2 2 0 012-2z'],
+ ['v-fleet','Fleet','M3 4h18v13H3zM3 10h18M8 21h.01M16 21h.01'],
+ ['v-bookings','Bookings','M5 4h14v16l-2.3-1.7L14.4 20l-2.4-1.7L9.6 20l-2.3-1.7L5 20z'],
+ ['v-payments','Payments','M12 2a10 10 0 100 20 10 10 0 000-20zM12 7v10M15 9.5c-.6-1-1.7-1.5-3-1.5'],
+ ['v-people','People','M9 4.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM2.5 20c.8-3.4 3.4-5 6.5-5s5.7 1.6 6.5 5M17.5 6.5a2.5 2.5 0 100 5'],
+ ['v-marshals','Marshals','M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z'],
+ ['v-reports','Reports','M4 20V10M10 20V4M16 20v-8M22 20H2'],
+ ['v-audit','Audit','M12 8v5M12 16.5v.5M12 21a9 9 0 100-18 9 9 0 000 18z']];
+function buildNav(){const svg=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="${p}"/></svg>`;
+  $('snav').insertAdjacentHTML('beforeend',NAV.map((n,i)=>`<button class="${i===0?'sel':''}" data-v="${n[0]}" onclick="go('${n[0]}')">${svg(n[2])}${n[1]}</button>`).join(''));
+  $('mnav').innerHTML=NAV.map((n,i)=>`<button class="${i===0?'sel':''}" data-v="${n[0]}" onclick="go('${n[0]}')">${svg(n[2])}${n[1]}</button>`).join('')}
+/* views that "fetch" data — flash skeleton first, then hydrate */
+const LAZY={'v-overview':1,'v-programmes':1,'v-fleet':1,'v-bookings':1,'v-payments':1,'v-people':1,'v-marshals':1,'v-reports':1,'v-audit':1};
+let sklT=0;
+function _show(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));$(v).classList.add('on');window.scrollTo(0,0);
+  document.querySelectorAll('#snav button,#mnav button').forEach(b=>b.classList.toggle('sel',b.dataset.v===v));
+  $('mnav').style.display=v==='v-auth'?'none':'flex';$('snav').style.display=v==='v-auth'?'none':''}
+function _hydrate(v){const h={'v-overview':renderAttention,'v-programmes':renderProgs,'v-fleet':renderFleet,'v-bookings':renderBookings,'v-payments':renderPayments,'v-people':renderPeople,'v-marshals':renderMarshals,'v-audit':renderAudit};if(h[v])h[v]()}
+function go(v){clearTimeout(sklT);
+  if(LAZY[v]){_show('v-skel');sklT=setTimeout(()=>{_show(v);_hydrate(v)},480)}
+  else{_show(v);_hydrate(v)}}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
+function sheetOpen(v){$('sh-'+v).classList.add('on')}
+function sheetClose(){document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'))}
+document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)s.classList.remove('on')}));
+function tog(el,name){el.classList.toggle('on');toast(name+' — booking '+(el.classList.contains('on')?'OPENED':'CLOSED')+' · logged')}
+
+/* ================= MOCK BACKEND (in-memory DB) ================= */
+const DB={
+ programmes:[
+  {n:'Sunday Service',d:'Weekly · next Oct 12 · 7:30 AM',p:'FREE',st:'OPEN',buses:4,bk:148,cp:.82,kind:'recurring'},
+  {n:'Hallelujah Night',d:'Oct 31 · 9:00 PM',p:'₦2,500',st:'OPENS FRI',buses:3,bk:61,cp:.55,kind:'special'},
+  {n:'Crossover Service',d:'Dec 31 · 10:00 PM',p:'₦3,000',st:'DRAFT',buses:0,bk:0,cp:0,kind:'special'}],
+ reports:[
+  {who:'A. Okafor (member)',cat:'Marked no-show wrongly',msg:'I boarded Bus 1 — marshal may have tapped the wrong name.',when:'Today 07:12',st:'open'},
+  {who:'T. Olanrewaju (marshal)',cat:'App bug',msg:'Manifest froze after adding a walk-on — had to reload.',when:'Yesterday',st:'open'}],
+ routes:[
+  {r:'Ikorodu Garage',buses:[{n:'Bus 1',cap:14,bk:12,open:true,m:'T. Olanrewaju'},{n:'Bus 2',cap:14,bk:6,open:true,m:'S. Ade'}]},
+  {r:'Isawo / Agric',buses:[{n:'Bus 3',cap:14,bk:0,open:false,m:'—'}]},
+  {r:'Owutu / Bayeku',buses:[{n:'Bus 4',cap:14,bk:14,open:false,m:'K. Uche'}]}],
+ bookings:[
+  {n:'Adaeze Okafor +2',ref:'TCN-8F3K2',pp:'Sunday · Garage B1',leg:'Round',st:'CONFIRMED',sc:'g',hist:'Oct 9 14:22 — booked (member)<br>Oct 9 14:22 — confirmed · free programme<br>Oct 10 09:11 — guest added: Emeka Okafor'},
+  {n:'Kunle Adewale',ref:'TCN-3D9M1',pp:'Sunday · Agric B3',leg:'Out only',st:'CONFIRMED',sc:'g',hist:'Oct 10 08:11 — booked · confirmed'},
+  {n:'Tunde Ajayi',ref:'TCN-1M6X0',pp:'Sunday · Garage B1',leg:'Round',st:'GUEST',sc:'k',hist:'Oct 10 09:11 — added under host A. Okafor'},
+  {n:'Sister Amara',ref:'TCN-7W1Q3',pp:'Sun · Owutu B4',leg:'Round',st:'CONFIRMED',sc:'g',hist:'Oct 9 16:44 — booked · confirmed'},
+  {n:'Hallelujah Grp (4)',ref:'TCN-9J4L7',pp:'Oct 31 · Garage B1',leg:'Round',st:'HELD',sc:'o',hist:'Oct 10 18:02 — hold created · awaiting payment (14:12 left)'},
+  {n:'Deacon Femi',ref:'TCN-4T8R6',pp:'Sunday · Garage B1',leg:'Out only',st:'CONFIRMED',sc:'g',hist:'Oct 9 15:30 — booked · confirmed<br>Oct 10 09:55 — CORRECTION: no-show reverted (marshal mis-tap)'},
+  {n:'Mrs. Falade',ref:'TCN-6Q2W7',pp:'Sunday · Garage B1',leg:'Return only',st:'CONFIRMED',sc:'g',hist:'Oct 10 07:20 — return-leg-only booking'},
+  {n:'J. Etim',ref:'TCN-2R5T8',pp:'Oct 31 · Mile 12 B3',leg:'Round',st:'CANCELLED',sc:'r',hist:'Oct 8 11:00 — booked<br>Oct 10 20:14 — cancelled by member · refund pending'},
+  {n:'Bro. Ikenna',ref:'TCN-3Z8L5',pp:'Sunday · Garage B1',leg:'Return only',st:'CONFIRMED',sc:'g',hist:'Oct 10 19:40 — return-leg-only booking'}],
+ refunds:[
+  {n:'J. Etim — TCN-2R5T8',d:'Hallelujah Night · cancelled Oct 10 · before event day',amt:'₦2,500'},
+  {n:'Grp: R. Eze — TCN-6F1K9',d:'Partial cancel — 1 of 4 riders · refund goes to host',amt:'₦2,500'}],
+ txns:[
+  ['Paystack · 88412','A. Okafor (host ×3)','₦7,500','SUCCESS','g'],
+  ['Paystack · 88398','F. Balogun','₦2,500','SUCCESS','g'],
+  ['Paystack · 88377','Grp R. Eze (×4)','₦10,000','SUCCESS','g'],
+  ['Paystack · 88455','K. Adewale','₦2,500','PENDING','o'],
+  ['Paystack · 88461','Refund → J. Etim','−₦2,500','PROCESSING','b']],
+ approvals:[
+  {n:'Chidi Nwosu',w:'Invited by D. Femi · 2d ago'},
+  {n:'Blessing Aminu',w:'No inviter listed · 1d ago'},
+  {n:'Samuel Okon',w:'Invited by A. Okafor · 18h ago'},
+  {n:'Mrs. R. Taiwo',w:'Invited by Pst. R. Eze · 6h ago'}],
+ members:[
+  {n:'Adaeze Okafor',t:'Member',c:'+234 801••5678',a:'12 bookings',sc:'g',st:'ACTIVE'},
+  {n:'Kunle Adewale',t:'Member',c:'+234 803••2211',a:'4 bookings',sc:'g',st:'ACTIVE'},
+  {n:'Tunde Ajayi',t:'Guest',c:'of A. Okafor',a:'2 bookings',sc:'k',st:'GUEST'},
+  {n:'Mrs. Bassey',t:'Guest',c:'of A. Okafor',a:'1 booking',sc:'k',st:'GUEST'},
+  {n:'F. Balogun',t:'Member',c:'+234 805••9902',a:'8 bookings',sc:'g',st:'ACTIVE'},
+  {n:'Old Member X',t:'Member',c:'—',a:'0 bookings',sc:'r',st:'INACTIVE'}],
+ marshals:[
+  {n:'Tobi Olanrewaju',b:'Bus 1 — Ikorodu Garage',s:'9/14 boarded',live:true},
+  {n:'S. Ade',b:'Bus 2 — Ikorodu Garage',s:'6/14 boarded',live:true},
+  {n:'K. Uche',b:'Bus 4 — Owutu / Bayeku',s:'14/14 boarded',live:true},
+  {n:'—',b:'Bus 3 — Isawo / Agric',s:'NO MARSHAL ASSIGNED',live:false}],
+ audit:[
+  ['10:42','S. Ade (marshal)','Boarded: Funke Balogun — Bus 1 manifest','g'],
+  ['10:31','Admin: Pastor I.','Opened booking — Bus 2 (Ikorodu Garage)','b'],
+  ['10:18','System','Seat hold expired — TCN-5K1P0 released to pool','o'],
+  ['09:55','Admin: Pastor I.','CORRECTION: reverted no-show on TCN-4T8R6 — marshal mis-tap, reason logged','k'],
+  ['09:31','System','Paystack webhook — payment 88412 confirmed (₦7,500, host ×3)','g'],
+  ['09:12','A. Okafor (member)','Booked 3 seats — Sunday Service, Bus 1','b'],
+  ['08:47','Admin: Pastor I.','Approved first-timer: Samuel Okon','g'],
+  ['Yesterday','Admin: Pastor I.','Reassigned T. Olanrewaju Bus 3 → Bus 1','b']],
+ curBk:-1};
+
+const now=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
+function audit(who,what,sc){DB.audit.unshift([now(),who,what,sc||'b']);renderAudit()}
+
+/* ---------- overview ---------- */
+function renderAttention(){const unass=DB.routes.flatMap(r=>r.buses).filter(b=>b.m==='—');
+  const a=[];if(unass.length)a.push({c:'var(--orange)',t:unass.map(b=>b.n).join(', ')+' has no marshal assigned',s:'Routes with unstaffed buses — boarding can\'t run',v:'v-marshals',b:'Assign'});
+  if(DB.approvals.length)a.push({c:'var(--yellow)',t:DB.approvals.length+' first-timer registration'+(DB.approvals.length>1?'s':'')+' awaiting approval',s:'Members can\'t book until approved',v:'v-people',b:'Review'});
+  if(DB.refunds.length)a.push({c:'var(--lilac)',t:DB.refunds.length+' refund request'+(DB.refunds.length>1?'s':'')+' in queue',s:'Eligible — cancelled before event day',v:'v-payments',b:'Process'});
+  const openRep=DB.reports.filter(r=>r.st==='open');
+  if(openRep.length)a.push({c:'#2f56d6',t:openRep.length+' member/marshal report'+(openRep.length>1?'s':'')+' to review',s:'Problems submitted from the apps — see below',v:'v-overview',b:'Review'});
+  $('attention').innerHTML=a.length?a.map(x=>`<div class="card" style="padding:14px;display:flex;align-items:center;gap:12px;border-left:4px solid ${x.c}"><div style="flex:1"><b style="font-size:13.5px">${x.t}</b><p class="muted" style="font-size:12px">${x.s}</p></div><button class="btn sm dark" onclick="go('${x.v}')">${x.b}</button></div>`).join(''):'<div class="card" style="padding:16px;text-align:center"><b style="font-size:13.5px;color:var(--teal)">All clear — nothing needs attention</b></div>';
+  $('reportslist').innerHTML=DB.reports.length?DB.reports.map((r,i)=>`<div class="card" style="padding:14px"><div class="row spread"><b style="font-size:13px">${r.who}</b><span class="chip ${r.st==='open'?'o':'g'}">${r.st.toUpperCase()}</span></div><p class="muted" style="font-size:12px;margin-top:4px"><b>${r.cat}:</b> ${r.msg}</p><div class="row spread" style="margin-top:8px"><span class="muted" style="font-size:10.5px">${r.when}</span>${r.st==='open'?`<button class="btn ghost sm" onclick="resolveReport(${i})">Mark resolved</button>`:''}</div></div>`).join(''):'<div class="card" style="padding:16px;text-align:center"><b style="font-size:13px;color:var(--teal)">No reports — all quiet</b></div>'}
+function resolveReport(i){DB.reports[i].st='resolved';renderAttention();audit('Admin: Pastor I.','Resolved report from '+DB.reports[i].who+': '+DB.reports[i].cat,'g');toast('Report resolved — member notified')}
+
+/* ---------- programmes ---------- */
+function progCard(p,i){return `<div class="card"><div class="row spread"><div><b style="font-size:15px">${p.n}</b><p class="muted" style="font-size:12px;margin-top:3px">${p.d} · ${p.buses} buses · ${p.bk} bookings</p></div>
+  <div style="text-align:right"><span class="chip ${p.st==='OPEN'?'g':p.st==='DRAFT'?'k':p.st==='CANCELLED'?'r':'o'}">${p.st}</span><b style="display:block;margin-top:5px;font-size:13px">${p.p}</b></div></div>
+  <div class="row" style="margin-top:12px;gap:8px"><div class="cap" style="flex:1"><i class="${p.cp>0.75?'warn':''}" style="width:${p.cp*100}%"></i></div><button class="btn ghost sm" onclick="go('v-fleet')">Buses</button><button class="btn ghost sm" onclick="editProg(${i})">${p.st==='DRAFT'?'Open booking':'Edit'}</button>${p.kind!=='recurring'&&p.st!=='CANCELLED'?`<button class="btn ghost sm" style="color:var(--red)" onclick="cancelProg(${i})">Cancel event</button>`:''}</div></div>`}
+function renderProgs(){$('proglist-rec').innerHTML=DB.programmes.map((p,i)=>p.kind==='recurring'?progCard(p,i):'').join('');
+  const sp=DB.programmes.map((p,i)=>p.kind==='special'?progCard(p,i):'').join('');
+  $('proglist').innerHTML=sp||'<div class="card" style="padding:18px;text-align:center"><b style="font-size:13px;color:var(--mut)">No special events yet — create one above</b></div>'}
+function createProg(){const n=$('np-name').value.trim();if(!n){toast('Event needs a name');return}
+  const paid=$('np-type').value.startsWith('Paid');
+  DB.programmes.push({n,d:($('np-date').value||'TBD')+' · '+($('np-time').value||'TBD'),p:paid?'₦'+($('np-price').value||'0'):'FREE',st:'DRAFT',buses:0,bk:0,cp:0,kind:'special'});
+  renderProgs();renderMarshals();audit('Admin: Pastor I.','Created special event: '+n+' ('+(paid?'paid':'free')+')','b');sheetClose();toast(n+' created — assign buses in Fleet, then open booking');$('np-name').value=''}
+function editProg(i){const p=DB.programmes[i];p.st=p.st==='DRAFT'?'OPEN':p.st;renderProgs();audit('Admin: Pastor I.',(p.st==='OPEN'?'Opened booking for ':'Updated ')+p.n,'b');toast(p.n+(p.st==='OPEN'?' — booking now OPEN':' updated'))}
+function cancelProg(i){const p=DB.programmes[i];p.st='CANCELLED';renderProgs();
+  audit('Admin: Pastor I.','CANCELLED programme: '+p.n+' — '+p.bk+' members being notified','r');toast(p.n+' cancelled — '+p.bk+' members notified, refunds queued')}
+
+/* ---------- fleet ---------- */
+function renderFleet(){let h='';DB.routes.forEach((rt,ri)=>{h+=`<div class="card"><div class="row spread" style="margin-bottom:10px"><b style="font-size:15px">${rt.r}</b><span class="muted" style="font-size:11.5px">${rt.buses.length} bus(es)</span></div><div class="stack">`;
+  rt.buses.forEach((b,bi)=>{const pct=b.cap?Math.round(b.bk/b.cap*100):0,full=pct>=100;
+    h+=`<div class="row" style="padding:12px;background:var(--bg);border-radius:14px;gap:12px">
+      <div style="flex:1"><b style="font-size:13px">${b.n}</b><div class="muted" style="font-size:11px">${b.cap} seats · Marshal: ${b.m}</div></div>
+      <div class="cap"><i class="${full?'full':pct>70?'warn':''}" style="width:${pct}%"></i></div><b style="font-size:11.5px;width:38px">${b.bk}/${b.cap}</b>
+      <div style="text-align:center"><div class="toggle ${b.open?'on':''}" onclick="togBus(${ri},${bi},this)"></div><span class="muted" style="font-size:9px">booking</span></div></div>`});
+  h+='</div></div>'});$('fleetlist').innerHTML=h;
+  $('nb-route').innerHTML=DB.routes.map(r=>`<option>${r.r}</option>`).join('');
+  $('bc-route').innerHTML='<option>—</option>'+DB.routes.map(r=>`<option>${r.r}</option>`).join('')}
+function togBus(ri,bi,el){const b=DB.routes[ri].buses[bi];b.open=!b.open;el.classList.toggle('on',b.open);
+  audit('Admin: Pastor I.',b.n+' booking '+(b.open?'OPENED':'CLOSED')+' ('+DB.routes[ri].r+')','b');toast(b.n+' — booking '+(b.open?'OPENED':'CLOSED'))}
+function createRoute(){const n=$('nr-name').value.trim();if(!n){toast('Route needs a name');return}
+  DB.routes.push({r:n,buses:[]});renderFleet();audit('Admin: Pastor I.','Created route: '+n,'b');sheetClose();toast(n+' created');$('nr-name').value='';$('nr-points').value=''}
+function createBus(){const n=$('nb-name').value.trim(),cap=parseInt($('nb-cap').value)||14,ri=$('nb-route').selectedIndex;
+  if(!n){toast('Bus needs a label');return}
+  DB.routes[ri].buses.push({n,cap,bk:0,open:false,m:'—'});renderFleet();renderAttention();
+  audit('Admin: Pastor I.','Added '+n+' ('+cap+' seats) to '+DB.routes[ri].r,'b');sheetClose();toast(n+' added — booking closed by default');$('nb-name').value='';$('nb-cap').value=''}
+
+/* ---------- bookings ---------- */
+function renderBookings(){$('bktbl').innerHTML='<tr><th>Passenger</th><th>Ref</th><th>Programme / Bus</th><th>Leg</th><th>Status</th><th></th></tr>'+DB.bookings.map((b,i)=>`<tr><td><b>${b.n}</b></td><td style="font-family:monospace;font-size:11px">${b.ref}</td><td class="muted">${b.pp}</td><td class="muted">${b.leg}</td><td><span class="chip ${b.sc}">${b.st}</span></td><td><button class="btn ghost sm" onclick="viewBooking(${i})">View</button></td></tr>`).join('')}
+function viewBooking(i){DB.curBk=i;const b=DB.bookings[i];$('bd-title').textContent='Booking '+b.ref;
+  $('bd-body').innerHTML=`<div class="card" style="padding:14px;box-shadow:none;border:1.5px solid var(--line)">
+    <div class="row spread"><b style="font-size:14px">${b.n}</b><span class="chip ${b.sc}">${b.st}</span></div>
+    <p class="muted" style="font-size:12px;margin-top:4px">${b.pp} · ${b.leg} trip</p></div>
+  <div class="card" style="padding:14px;box-shadow:none;border:1.5px solid var(--line)"><b style="font-size:13px">History</b><p class="muted" style="font-size:11.5px;margin-top:6px">${b.hist}</p></div>
+  <div class="field"><label>Correction reason (required)</label><input id="bd-reason" placeholder="e.g. marshal mis-tap, member requested name fix"></div>
+  <div class="row" style="gap:8px"><button class="btn ghost sm" style="flex:1" onclick="correctBooking()">Log correction</button><button class="btn red sm" style="flex:1" onclick="cancelBooking()">Cancel booking</button></div>
+  <p class="muted" style="font-size:11px;text-align:center">Corrections are appended with a reason — never edited silently</p>`;
+  sheetOpen('v-bkdetail')}
+function correctBooking(){const b=DB.bookings[DB.curBk],r=$('bd-reason').value.trim();
+  if(!r){toast('A reason is required for corrections');return}
+  b.hist+='<br>'+now()+' — CORRECTION: '+r+' (Admin)';
+  audit('Admin: Pastor I.','CORRECTION on '+b.ref+': '+r,'k');sheetClose();toast('Correction appended to '+b.ref)}
+function cancelBooking(){const b=DB.bookings[DB.curBk];b.st='CANCELLED';b.sc='r';
+  b.hist+='<br>'+now()+' — cancelled by admin · member notified';
+  renderBookings();audit('Admin: Pastor I.','Cancelled booking '+b.ref+' — member notified','r');sheetClose();toast(b.ref+' cancelled — member notified')}
+
+/* ---------- payments ---------- */
+function renderPayments(){$('refundq').innerHTML=DB.refunds.length?DB.refunds.map((r,i)=>`<div class="card" style="padding:14px;display:flex;align-items:center;gap:12px"><div style="flex:1"><b style="font-size:13px">${r.n}</b><p class="muted" style="font-size:11.5px">${r.d}</p></div><b style="font-size:14px">${r.amt}</b><button class="btn teal sm" onclick="approveRefund(${i})">Approve</button><button class="btn ghost sm" onclick="denyRefund(${i})">Deny</button></div>`).join(''):'<div class="card" style="padding:16px;text-align:center"><b style="font-size:13px;color:var(--teal)">Refund queue is empty</b></div>';
+  $('txtbl').innerHTML='<tr><th>Txn</th><th>Payer</th><th>Amount</th><th>Status</th></tr>'+DB.txns.map(t=>`<tr><td style="font-family:monospace;font-size:11px">${t[0]}</td><td><b>${t[1]}</b></td><td>${t[2]}</td><td><span class="chip ${t[4]}">${t[3]}</span></td></tr>`).join('')}
+function approveRefund(i){const r=DB.refunds.splice(i,1)[0];
+  DB.txns.unshift(['Paystack · '+(88000+Math.floor(Math.random()*900)),'Refund → '+r.n.split(' — ')[0],'−'+r.amt,'PROCESSING','b']);
+  renderPayments();renderAttention();audit('Admin: Pastor I.','Approved refund '+r.n+' ('+r.amt+') — Paystack auto-refund','g');toast('Refund approved — auto-refund initiated')}
+function denyRefund(i){const r=DB.refunds.splice(i,1)[0];renderPayments();renderAttention();
+  audit('Admin: Pastor I.','DENIED refund '+r.n+' — reason logged','r');toast('Refund denied — reason logged')}
+
+/* ---------- people ---------- */
+function renderPeople(){$('approveq').innerHTML=DB.approvals.length?DB.approvals.map((a,i)=>`<div class="row" style="padding:10px 12px;background:var(--bg);border-radius:14px"><div style="flex:1"><b style="font-size:13px">${a.n}</b><div class="muted" style="font-size:11px">${a.w}</div></div><button class="btn teal sm" onclick="approvePerson(${i})">Approve</button><button class="btn ghost sm" onclick="holdPerson(${i})">Hold</button></div>`).join(''):'<p class="muted" style="text-align:center;font-size:12px;padding:8px">Queue clear — no pending registrations</p>';
+  $('membertbl').innerHTML='<tr><th>Name</th><th>Type</th><th>Contact / Host</th><th>Activity</th><th>Status</th><th></th></tr>'+DB.members.map((m,i)=>`<tr><td><b>${m.n}</b></td><td class="muted">${m.t}</td><td class="muted">${m.c}</td><td class="muted">${m.a}</td><td><span class="chip ${m.sc}">${m.st}</span></td><td><button class="btn ghost sm" onclick="toggleMember(${i})">${m.st==='INACTIVE'?'Activate':'Deactivate'}</button></td></tr>`).join('')}
+function approvePerson(i){const a=DB.approvals.splice(i,1)[0];
+  DB.members.unshift({n:a.n,t:'Member',c:'+234 ••• ••••',a:'0 bookings',sc:'g',st:'ACTIVE'});
+  renderPeople();renderAttention();audit('Admin: Pastor I.','Approved first-timer: '+a.n,'g');toast(a.n+' approved — welcome notification sent')}
+function holdPerson(i){audit('Admin: Pastor I.','Held registration for review: '+DB.approvals[i].n,'o');toast('Held — follow-up logged');renderPeople()}
+function toggleMember(i){const m=DB.members[i];m.st=m.st==='INACTIVE'?'ACTIVE':'INACTIVE';m.sc=m.st==='INACTIVE'?'r':(m.t==='Guest'?'k':'g');
+  renderPeople();audit('Admin: Pastor I.',(m.st==='INACTIVE'?'Deactivated ':'Reactivated ')+m.n,'o');toast(m.n+' is now '+m.st.toLowerCase())}
+
+/* ---------- marshals ---------- */
+function renderMarshals(){$('marshallist').innerHTML=DB.marshals.map((m,i)=>`<div class="card" style="padding:15px;display:flex;align-items:center;gap:12px;${m.live?'':'border-left:4px solid var(--red)'}">
+  <div style="width:40px;height:40px;border-radius:50%;background:${m.live?'var(--teal)':'#d5dbe1'};display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px">${m.live?m.n.split(' ').map(x=>x[0]).join('').slice(0,2):'?'}</div>
+  <div style="flex:1"><b style="font-size:13.5px">${m.n==='—'?'Unassigned':m.n}</b><p class="muted" style="font-size:11.5px">${m.b}</p></div>
+  <span class="chip ${m.live?'g':'r'}">${m.s}</span><button class="btn dark sm" onclick="sheetOpen('v-assign')">${m.live?'Reassign':'Assign'}</button></div>`).join('');
+  const pool=DB.marshals.filter(m=>m.live).map(m=>m.n);pool.push('New marshal…');
+  $('as-marshal').innerHTML=pool.map(m=>`<option>${m}</option>`).join('');
+  const buses=[];DB.routes.forEach(r=>r.buses.forEach(b=>buses.push(b.n+' — '+r.r)));
+  $('as-bus').innerHTML=buses.map(b=>`<option>${b}</option>`).join('');
+  $('as-prog').innerHTML=DB.programmes.map(p=>`<option>${p.n}</option>`).join('')}
+function doAssign(){const m=$('as-marshal').value,b=$('as-bus').value;
+  const slot=DB.marshals.find(x=>x.b===b);
+  if(slot){slot.n=m==='New marshal…'?'New Marshal':m;slot.live=true;slot.s='0/'+((DB.routes.flatMap(r=>r.buses).find(x=>b.startsWith(x.n))||{}).cap||14)+' expected'}
+  else DB.marshals.push({n:m==='New marshal…'?'New Marshal':m,b,s:'just assigned',live:true});
+  const bus=DB.routes.flatMap(r=>r.buses).find(x=>b.startsWith(x.n));if(bus)bus.m=m==='New marshal…'?'New Marshal':m;
+  renderMarshals();renderFleet();renderAttention();
+  audit('Admin: Pastor I.','Assigned '+(m==='New marshal…'?'New Marshal':m)+' → '+b,'b');sheetClose();toast(m+' assigned to '+b+' — notified')}
+
+/* ---------- broadcast ---------- */
+function sendBroadcast(){const msg=$('bc-msg').value.trim();if(!msg){toast('Write a message first');return}
+  const aud=$('bc-aud').value;
+  audit('Admin: Pastor I.','Broadcast → '+aud+' ["'+msg.slice(0,48)+(msg.length>48?'…':'')+'"]','b');
+  $('bc-msg').value='';toast('Broadcast sent to: '+aud)}
+
+/* ---------- audit + charts ---------- */
+function renderAudit(){$('auditlist').innerHTML=DB.audit.map(a=>`<div class="card" style="padding:13px 16px;display:flex;gap:12px;align-items:center"><span class="muted" style="font-size:10.5px;width:52px;flex-shrink:0">${a[0]}</span><div style="flex:1;font-size:12.5px"><b>${a[1]}</b><div class="muted" style="font-size:11.5px">${a[2]}</div></div><span class="chip ${a[3]}">${a[2].startsWith('CORRECTION')?'FIX':'LOG'}</span></div>`).join('')}
+(function(){const d=[62,78,88,94];$('chart1').innerHTML=d.map(v=>`<div style="flex:1;background:linear-gradient(180deg,var(--orange),#ff8a5c);border-radius:8px 8px 3px 3px;height:${v}%;position:relative"><span style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9.5px;font-weight:800;color:var(--mut)">${v}%</span></div>`).join('');
+  const ns=[['Ikorodu Garage',4],['Isawo / Agric',11],['Owutu / Bayeku',7]];$('nschart').innerHTML=ns.map(n=>`<div><div class="row spread"><span style="font-size:12px;font-weight:700">${n[0]}</span><b style="font-size:12px">${n[1]}%</b></div><div class="cap" style="width:100%;margin-top:5px"><i class="warn" style="width:${n[1]*4}%"></i></div></div>`).join('')})();
+
+buildNav();renderAttention();renderProgs();renderFleet();renderBookings();renderPayments();renderPeople();renderMarshals();renderAudit();go('v-auth');
+</script>
+</body>
+</html>

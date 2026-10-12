@@ -1,0 +1,245 @@
+# ============================================================================
+# TEAM REGISTRY MODULE — TCN Ikorodu Transport Booking & Management App
+# Version: 1.0 | Status: CANONICAL — machine-readable team registry
+# Purpose: every agent = a profile. Single registry for identity, mailbox,
+#          ownership, reporting line, and delivery-lane assignment.
+# Consumed by: AGENT-COMMUNICATIONS-WORKFLOW.md, CANONICAL-PROJECT-LIFECYCLE.yaml,
+#              AGENTS.md bootstrap, any orchestration layer.
+# Registry authority: Product Manager (vlthrlab-pm@agentmail.to)
+# ============================================================================
+
+registry:
+  schema_version: "1.0"
+  updated: "2026-10-07"
+  project: TCN Ikorodu Transport Booking & Management App
+
+# ----------------------------------------------------------------------------
+# GOVERNANCE MODEL — registered from sponsor's org chart + SDLC swimlane
+# ----------------------------------------------------------------------------
+governance:
+
+  # --- Org chart mapping -------------------------------------------------
+  # Sponsor's chart: PO/BA -> PM/Scrum Master -> [Developers | UI/UX | QA] + DevOps (cross-lane)
+  # Our model maps onto it 1:1; names differ, structure identical.
+  hierarchy:
+    - level: 1
+      chart_title: "Product Owner / Business Analyst"
+      maps_to: executive_product_sponsor
+      note: "Executive product authority. In our model, final sponsor; PM carries PO/BA function operationally."
+    - level: 2
+      chart_title: "Project Manager / Scrum Master"
+      maps_to: product_manager
+      note: "Hub: coordination, decision arbitration, delivery gates. Secretary (Ufuoma) assists on onboarding/coordination traffic."
+    - level: 3
+      chart_title: "Delivery lanes"
+      lanes:
+        developers:  [frontend, backend, fullstack]   # chart's three dev specialisations
+        design:      [uiux]
+        qa:          [qa_manual, qa_auto]             # chart splits QA into Manual + Auto
+        cross_lane:  [devops]                          # DevOps spans all lanes per chart
+      note: "Our finer-grained roles (database, security, integrations, data_science, liaison, secretary) slot into lanes below per profile.lane."
+
+  # --- SDLC swimlane (registered) -----------------------------------------
+  # Product Manager: Define Requirements -> Prioritise Backlog
+  # Design:          Create Wireframes   -> Develop Prototypes
+  # Engineering:     Implement Features  -> Conduct Code Review
+  # QA:              Perform Testing     -> Pass? -> Deploy & Monitor (pass)
+  #                                        | Fail -> back to Implement Features
+  delivery_flow:
+    stages:
+      - {id: define,      lane: product_manager, acts: [define_requirements, prioritise_backlog]}
+      - {id: design,      lane: uiux,            acts: [create_wireframes, develop_prototypes]}
+      - {id: engineer,    lane: developers,      acts: [implement_features, conduct_code_review]}
+      - {id: qa_gate,     lane: qa,              acts: [perform_testing, pass_fail_gate]}
+      - {id: deploy,      lane: devops,          acts: [deploy, monitor]}
+    fail_loop: "QA fail returns to 'engineer' stage — never skips code review on the way back"
+    overlays:   "our pre-SDLC gates still apply upstream: Gate 0 (OI-001 reconvene) before 'define' is complete for engineering"
+
+  # --- Decision & escalation rights ---------------------------------------
+  escalation_ladder:
+    L1: "agent-to-agent [Q] thread — 48h working SLA"
+    L2: "unresolved/disagreement -> [B] to PM -> PM arbitrates or opens OI"
+    L3: "executive-level (budget, church policy, launch auth, direction) -> [E] to Sponsor via PM"
+  reopen_rule: "REOPEN DECISION requires new evidence of material impact; PM decides whether reopened"
+  tie_break: "D-012 — conflicting respondents reconvene; PM does NOT tie-break"
+
+# ----------------------------------------------------------------------------
+# PROFILES — one entry per agent
+# ----------------------------------------------------------------------------
+profiles:
+
+  - id: sponsor
+    title: Executive Product Sponsor
+    name: "(human — sponsor)"
+    mailbox: null                      # uses real email; no AgentMail inbox required
+    org: null
+    api_key: null
+    lane: executive
+    owns: [executive_decisions, budget, church_policy, launch_authorization, final_product_direction]
+    reports_to: null
+    downstream: [product_manager]
+    status: live
+    current_task: "resolve OI-001 reconvene + executive items"
+
+  - id: product_manager
+    title: Product Manager / Product Owner
+    name: Devin (PM)
+    mailbox: vlthrlab-pm@agentmail.to
+    org: edcd2158-2db0-4bd6-b0cd-fd288f18e421
+    api_key: AGENTMAIL_PM_SCOPED       # inbox-scoped, whitelist perms — verified 2026-10-07
+    metadata: {role: product-manager, scope: pm-duties+broadcast, protocol: tcn-mail-v1}
+    lane: level_2_hub
+    owns: [decision_log, open_issue_register, scope_classification, roadmap, synthesis, broadcast, prd_readiness_gate]
+    reports_to: sponsor
+    downstream: [all_domain_agents]
+    status: live
+    current_task: "OI-001 reconvene scheduling; gate releases"
+
+  - id: secretary
+    title: Secretary — Onboarding & Coordination
+    name: Ufuoma
+    mailbox: vlthr-secretary@agentmail.to
+    org: "(sponsor's second AgentMail account — different organization_id)"
+    api_key: null                      # managed on second org; this org's master key cannot mint it
+    lane: level_2_support              # assists PM/scrum-master coordination function
+    owns: [onboarding_welcomes, agent_directory, coordination_broadcasts]
+    reports_to: sponsor                # provisioned directly by sponsor
+    downstream: [all_agents]
+    status: live
+    note: "Discovered via WELCOME broadcast 2026-10-07. Handles agent onboarding intros."
+
+  - id: data_science
+    title: Data Science / Analytics
+    mailbox: vlthr-asset-generator@agentmail.to
+    org: edcd2158-2db0-4bd6-b0cd-fd288f18e421
+    api_key: scoped                    # AGENTMAIL_DS_SCOPED minted — msg/draft/webhook perms only
+    lane: qa_support                   # analysis/verification-adjacent; downstream of transactional systems
+    owns: [demand_forecasting, utilization_analytics, kpi_definitions, cohort_analysis, experiment_measurement, pm_economics_support]
+    reports_to: product_manager
+    upstream: [database, backend]      # consumes schema + production data
+    downstream: [product_manager, devops]
+    status: live                       # onboarded; direction decided via D-022
+    current_task: "utilization-dashboard metric spec (schema-agnostic) — D-022"
+    needs: [final_domain_schema, data_dictionary, anonymised_pilot_data]   # OI-011
+
+  - id: qa
+    title: QA / Test Engineer
+    name: Victoria
+    mailbox: victoria-3416@agentmail.to
+    org: edcd2158-2db0-4bd6-b0cd-fd288f18e421
+    api_key: scoped                    # AGENTMAIL_QA_SCOPED minted — msg/draft/webhook perms only
+    lane: qa                           # chart splits QA: Manual + Auto — Victoria covers both initially
+    owns: [acceptance_criteria, traceability, state_machine_verification, concurrency_testing, webhook_edge_cases, rbac_parity, uat, release_gates]
+    reports_to: product_manager
+    upstream: [backend, frontend, integrations, security]
+    downstream: [product_manager]      # gate sign-off feeds PRD readiness
+    status: live                       # inbox live; onboarded, 3 questions answered (D-019/D-020)
+    current_task: "test-plan skeleton vs booking state machine + 6 named QA risks"
+
+  # --- Pending mailboxes (route through PM inbox until provisioned) --------
+  - id: liaison
+    title: Church Transport Department Liaison
+    mailbox: vlthrlabs@gmail.com       # human participant — real email, no AgentMail inbox
+    org: external (human)
+    api_key: null                      # receives mail as normal recipient; no API access
+    lane: domain_truth
+    owns: [operational_truth, refund_cutoff_reality, membership_roll, per_bus_realities]
+    reports_to: sponsor
+    status: live
+    current_task: "onboarded 2026-10-07; delivered 6 operational truths; next: membership-roll export format once AUTH-2 resolves"
+    note: "Addressed directly in To/CC on threads; questions to liaison in plain language only"
+
+  - id: uiux
+    title: UI/UX Designer
+    mailbox: uiux-expert@agentmail.to
+    org: "(sponsor's second AgentMail account — different organization_id)"
+    api_key: managed-second-org
+    lane: design
+    owns: [journeys, notification_pwa_design_doc, install_flow]
+    reports_to: product_manager
+    downstream: [frontend, fullstack]
+    status: live
+    current_task: "OI-004 install-gating + canonical Notification/PWA design doc (D-009)"
+
+  - id: database
+    title: Database / Data Architect
+    mailbox: sayveeyhur@agentmail.to
+    org: "(sponsor's second AgentMail account — different organization_id)"
+    api_key: managed-second-org
+    lane: developers
+    owns: [schema, migrations, namespacing, capacity_model, audit_tables]
+    reports_to: product_manager
+    downstream: [backend, data_science]
+    status: live
+    blocked_by: [OI-001/D-002, D-003]
+    current_task: "review D-001/D-008/D-013 schema implications (pre-work allowed)"
+
+  - id: backend
+    title: Backend / Systems Engineer
+    name: Saviour
+    mailbox: saviour-backend-engineer@agentmail.to
+    org: "(sponsor's second AgentMail account — different organization_id)"
+    api_key: managed-second-org        # keys minted on that org's master key
+    lane: developers
+    owns: [booking_state_machine, payments, scheduler, api_contracts, rate_limits]
+    reports_to: product_manager
+    status: live
+    blocked_by: [OI-001/D-002, D-003]
+    current_task: "Paystack sandbox integration (D-006) — unblocked"
+
+  - id: fullstack
+    title: Full Stack Engineer
+    mailbox: fullstack-guy@agentmail.to
+    org: "(sponsor's second AgentMail account — different organization_id)"
+    api_key: managed-second-org
+    lane: developers                   # chart's 'Fullstack' dev specialisation
+    owns: [end_to_end_features, frontend_backend_bridge, integration_implementation]
+    reports_to: product_manager
+    upstream: [database, backend, uiux]
+    downstream: [qa, devops]
+    status: live
+    note: "Covers frontend lane until/unless a dedicated frontend agent is assigned"
+
+  - id: integrations
+    title: Integrations Specialist
+    mailbox: pending
+    lane: developers                   # chart's 'fullstack' slot covers integration eng
+    owns: [paystack, webhooks, notification_vendors, mail_service]
+    status: pending_assignment
+    current_task: "Paystack merchant onboarding (D-006)"
+
+  - id: security
+    title: Security & Compliance Lead
+    mailbox: pending
+    lane: qa                           # verification-adjacent lane in chart terms
+    owns: [rbac, audit_policy, immutability, rate_limit_policy, privacy_gate]
+    status: pending_assignment
+    current_task: "OI-003 first-pass mutable/immutable entity list"
+
+  - id: devops
+    title: DevOps / Infrastructure Engineer
+    mailbox: pending
+    lane: cross_lane                   # chart: DevOps spans all lanes
+    owns: [hosting, cicd, backups_dr, monitoring, mailbox_provisioning]
+    status: pending_assignment
+    current_task: "RISK-001 backup contingency plans for both D-002 outcomes"
+
+  - id: frontend
+    title: Frontend Engineer
+    mailbox: pending
+    lane: developers                   # chart's 'frontend' specialisation
+    owns: [member_dashboard, admin_dashboard, marshal_dashboard, pwa_install_flow]
+    status: pending_assignment
+    blocked_by: [OI-004]
+    current_task: "awaiting contracts + OI-004 resolution"
+
+# ----------------------------------------------------------------------------
+# REGISTRY RULES
+# ----------------------------------------------------------------------------
+rules:
+  - "mailbox: pending = route via vlthrlab-pm@ (subject grammar + labels carry routing)"
+  - "scoped keys minted per inbox by that org's master key only — cross-org keys impossible"
+  - "humans (sponsor, liaison) may hold real email instead of AgentMail inboxes"
+  - "profile.status: live | pending_assignment | blocked | paused"
+  - "lane assignment follows sponsor's org chart: developers | design | qa | cross_lane"
+  - "PM owns this registry — changes land via [D]-type decision, then this file is updated"

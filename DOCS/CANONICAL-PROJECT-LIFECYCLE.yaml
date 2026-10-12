@@ -1,0 +1,138 @@
+# ============================================================================
+# CANONICAL PROJECT LIFECYCLE — TCN Ikorodu Transport Booking & Management App
+# Version: 1.0 | Status: CANONICAL — all agents read this first
+# Supersedes: nothing. Defers to: PM-DECISION-LOG-AND-ROADMAP.md for live state.
+# This file is the constitution. The decision log is the current state.
+# ============================================================================
+
+meta:
+  project: TCN Ikorodu Transport Booking & Management App
+  product_type: single-congregation transport management (NOT multi-tenant SaaS)
+  pm_role: Product Manager / Product Owner
+  sponsor: Executive Product Sponsor
+  version: "1.0"
+  last_updated_by: PM (post Meeting-02 + sponsor answers)
+
+# ----------------------------------------------------------------------------
+# SOURCES OF TRUTH — read order for any new agent
+# ----------------------------------------------------------------------------
+sources_of_truth:
+  1: BRD for TCN Ikorodu Transport App.md          # business requirements
+  2: PRD_TCN_Ikorodu_Transport_App.md              # engineering framing
+  3: DECISION-LOGS/MEETING-MINUTES-02-Systems-Scope.md  # raw notes (narrative history)
+  4: DECISION-LOGS/PM-DECISION-LOG-AND-ROADMAP.md  # CANONICAL decisions + open issues
+  5: SYSTEMS-MAPPING.md                            # UIOS → product mapping
+  6: CANONICAL-PROJECT-LIFECYCLE.yaml              # this file
+  rule: "On conflict between a narrative doc and the Decision Log, the Decision Log wins."
+
+# ----------------------------------------------------------------------------
+# LIFECYCLE — three phases, each with gates. No skipping gates.
+# ----------------------------------------------------------------------------
+lifecycle:
+
+  design:
+    status: ACTIVE (we are here — D-002/003/007 blocked at Gate 0)
+    purpose: Resolve decisions, classify scope, produce transferable artifacts before code.
+    stages:
+      - problem_capture:      # PRE-equivalent
+          rule: "No solution before the problem is sufficiently understood."
+          artifact: BRD + decision brief (done)
+      - decision_resolution:  # ARUEV/DQS-equivalent
+          rule: "Conflicts become Decision Records with owners, not loose threads."
+          current_gate: OI-001 — respondent reconvene on D-002, D-003, D-007/AUTH-2
+      - contract_definition:  # UAIE-equivalent
+          rule: "Interfaces between domains are defined before implementation."
+          artifact: data model + state machine + API contracts (blocked on OI-001)
+    exit_gate: "OI-001 closed + schema design can start"
+
+  development:
+    status: QUEUED (behind design exit gate)
+    phases:
+      phase_A_foundation:    # CORE only
+        includes: [schema, auth+membership-gate, booking state machine, capacity engine, payment integration]
+        note: "Paystack merchant onboarding starts NOW — not blocked by OI-001"
+      phase_B_mvp_completion:
+        includes: [bulk booking + receipts, refund automation, 3 dashboards, reporting, basic audit trail, push+email notifications, forced-install flow]
+      phase_C_launch_readiness:
+        gates: [concurrency test pass, payment webhook retry test pass, UAT with real marshals, RISK-001 backup verified]
+    standards:
+      engineering: ponytail-decision-ladder  # YAGNI → reuse → native → dep → one-liner → MVP
+      safety_invariants: SKILLS/04-SAFETY-INVARIANTS.md  # non-negotiable
+      review_protocol: SKILLS/03-REVIEW-PROTOCOL.md      # delete:/stdlib:/native:/yagni:/shrink: + net metric
+    invariants:                # UIOS laws we import (see SYSTEMS-MAPPING §2)
+      - kernel_identity: "UUID keys, versioned, never hard-deleted"
+      - message_envelope: "{id, correlation_id, type, source, target, timestamp, payload, metadata}"
+      - explicit_state_machines: "named states + legal transitions only"
+      - validated_input_only: "no external input becomes state without validation"
+      - attributable_actions: "every transition stores actor + timestamp + prior state"
+      - failures_are_objects: "retry queue + designed rollback before happy path"
+      - reversible_by_default: "schema namespacing now (transport.*), no premature tenancy"
+
+  scaling:
+    status: FUTURE
+    triggers:                # what would actually justify scaling work
+      budget: "D-010 — paid tiers only after real usage data exists"
+      tenancy: "OI-008 — only if a second product is concretely planned, not speculated"
+      load: "rate-limit tuning (RATE-2) once real traffic measured; waitlist only if capacity demand proven"
+    explicit_non_goals:      # ponytail fence — these stay OFF the table unless evidence forces them
+      - multi-branch/multi-congregation support
+      - native app store builds (forced-PWA-install is the substitute)
+      - knowledge-graph/simulation/Monte-Carlo machinery
+      - self-serve marshal claim pools
+
+# ----------------------------------------------------------------------------
+# TEAM — roles, ownership, and what each must not do
+# ----------------------------------------------------------------------------
+team:
+  pm:              {owns: "scope, decision arbitration, roadmap", gates: "all scope classification"}
+  backend:         {owns: "state machine, payments, scheduler, API", blocked_by: "D-002, D-003"}
+  database:        {owns: "schema, migrations, namespacing", blocked_by: "D-002"}
+  frontend:        {owns: "3 dashboards, install flow", blocked_by: "OI-004"}
+  devops:          {owns: "hosting, CI/CD, backups (RISK-001)", blocked_by: "none — contingency-plan both D-002 outcomes now"}
+  security:        {owns: "RBAC, audit, immutability, rate-limits", task_now: "OI-003 first-pass entity mutability list"}
+  integrations:    {owns: "Paystack + notification vendors", task_now: "Paystack merchant onboarding (D-006) — immediate"}
+  qa:              {owns: "concurrency/webhook/UAT tests", task_now: "pre-build test plans from PRD §6 edge cases"}
+  ui_ux:           {owns: "canonical Notification & PWA design doc", task_now: "OI-004 + design doc (D-009)"}
+  liaison:         {owns: "domain truth — refund cutoff, membership roll, per-bus reality", task_now: "OI-002 manual-fallback verdict"}
+  rule: "Cross-domain boundaries are negotiated via Decision Records, never quietly absorbed."
+
+# ----------------------------------------------------------------------------
+# GOVERNANCE — how decisions and issues move
+# ----------------------------------------------------------------------------
+governance:
+  decision_record:   {required_fields: [id, decision, status, owner, reason, evidence, alternatives, chosen, consequences, affected_systems, next_action]}
+  open_issue:        {required_fields: [id, description, why_it_matters, domain, owner, agents_required, options, recommended_resolution, decision_required_from, deadline_gate, status]}
+  reopen_rule: "Existing decisions reopen only on new evidence of material impact (D-012: respondents reconvene, PM does not tie-break)"
+  scope_tiers: [CORE, MVP, PHASE_2, FUTURE, OUT_OF_SCOPE]
+  single_source: "PM-DECISION-LOG-AND-ROADMAP.md is the live register; minutes are history"
+
+# ----------------------------------------------------------------------------
+# COMMUNICATION — see AGENT-COMMUNICATIONS-WORKFLOW.md for the full protocol
+# ----------------------------------------------------------------------------
+communication:
+  medium: AgentMail email (LIVE — org edcd2158-…, free tier: 3 inboxes, 3k/mo, 100/day)
+  envelope: UAIE standard message envelope (YAML block at top of body)
+  conventions: "subject = [TYPE][ISSUE-ID], labels = [type, entity, status-*], thread = open issue"
+  key_model: "inbox-scoped keys per agent (whitelist perms); org master key stays with sponsor"
+  escalation: "blocked > 48h → escalate to PM; blocked decision → Executive Product Sponsor"
+  live_mailboxes:
+    pm:              vlthrlab-pm@agentmail.to          # PM duties + broadcast (scoped key live)
+    data_science:    vlthr-asset-generator@agentmail.to # AGENTMAIL_DS_SCOPED minted
+    qa:              victoria-3416@agentmail.to         # AGENTMAIL_QA_SCOPED minted
+    secretary:       vlthr-secretary@agentmail.to       # sponsor's second org — onboarding/coordination
+    unassigned_roles: "route through pm inbox until more mailboxes exist (second org planned)"
+  receive_model: "webhooks/WebSockets — never poll (429 risk)"
+  secrets: "references only — never secret values in mail"
+  local_mirror: "DOCS/MAIL/<ROLE>/THREAD-*.md — one doc per thread, replies appended"
+  team_registry: "DOCS/REGISTRY/team-registry.yaml — agent profiles, governance model, delivery lanes"
+
+# ----------------------------------------------------------------------------
+# CONSTRAINTS — the walls the whole product lives inside
+# ----------------------------------------------------------------------------
+constraints:
+  budget: "$0 at launch, revisit post-launch with usage data (D-010)"
+  timeline: "soft target, no hard launch-forcing event (D-011)"
+  access: "church members only — membership gate (AUTH-1) is non-negotiable"
+  payment_scope: "Sunday service always free; only special programmes paid (PAY-1)"
+  refund_window: "strictly before programme date (PAY-6)"
+  distribution: "PWA only, forced install is the front door (D-009)"

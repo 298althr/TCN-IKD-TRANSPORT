@@ -1,0 +1,120 @@
+{
+  "_comment": "VLTHRTEAM onboarding roster. To onboard a NEW member: copy an existing entry, edit fields, then run: py onboard_agents.py --only their@email. 'files' are keys into the FILES map inside onboard_agents.py. 'human': true = plain-language mail, no attachments. Add new file keys to FILES in onboard_agents.py if needed.",
+  "members": [
+    {
+      "to": "saviour-backend-engineer@agentmail.to",
+      "role": "BACKEND",
+      "name": "Saviour",
+      "files": [
+        "agents",
+        "brd",
+        "minutes",
+        "pmlog",
+        "comms"
+      ],
+      "intro": "You own the backend domain: the booking state machine, capacity/seat-hold mechanics, payment flow (Paystack), the Sunday-scheduler, API contracts, and service boundaries.\n\n**Current state**: Gate 0 is closed on your lane — OI-001 (stack, seat-hold strategy, duplicate-signup) is awaiting the respondents' reconvene. You cannot start Build, but you CAN start now on: the booking state machine spec, the API contract skeleton, and Paystack integration research (D-004 Paystack onboarding is already green-lit).",
+      "questions": "## QUESTIONS FOR YOU\n\n1. **Seat-hold (D-003)**: for a congregation-scale app (peak = Sunday-morning rush for ~50-200 seats), which do you favor — row-lock with a TTL hold table, or atomic counter decrement at payment-init? State your reasoning; your recommendation goes into the OI-001 reconvene.\n2. **Stack**: what stack are you fastest and most reliable in? $0 launch constraint (D-010) — free tier or cheap host. Don't propose what you can't ship.\n3. **Paystack**: have you integrated Paystack webhooks before? Do you have a test account or need one provisioned?\n4. **Bulk payment (D-011)**: a `BookingGroup` host/beneficiary pattern is in MVP — does that change anything you'd build differently in the booking model?\n5. **Scheduler**: bookings open/close per individual bus (D-013) — do you prefer cron-style jobs or an event-driven approach for the lifecycle transitions?",
+      "title": "Backend Engineer"
+    },
+    {
+      "to": "fullstack-guy@agentmail.to",
+      "role": "FULLSTACK",
+      "name": "Full-Stack",
+      "files": [
+        "agents",
+        "brd",
+        "pmlog",
+        "comms",
+        "sysmap"
+      ],
+      "intro": "You own end-to-end feature delivery and the FE/BE bridge: you'll implement across the stack, wire integrations (Paystack client-side + webhook flows), and likely own the frontend lane unless a dedicated FE engineer is assigned later.\n\n**Current state**: Gate 0 is closed on implementation (OI-001 stack decision pending), but design is open. Three dashboards are in MVP: Member, Admin, Marshal. PWA-only distribution (D-005) — forced install at signup replaces an app store.",
+      "questions": "## QUESTIONS FOR YOU\n\n1. **Stack**: what full-stack framework do you ship fastest in? Must serve a PWA (installable, push notifications, offline-tolerant) and honor the $0 launch constraint.\n2. **PWA experience**: have you built installable PWAs with push? The forced-install flow (D-009) is unusual — members can't use the app until installed. Any concerns?\n3. **Frontend vs fullstack**: do you want to keep the frontend lane yourself, or would you rather a dedicated FE takes it and you focus BE/bridge? Honest answer — it shapes the roster.\n4. **Paystack**: integrated it before? Inline/Popup vs redirect preference for a church congregation (mostly mobile, mixed tech-savviness)?\n5. **Who do you work with best**: anything you need from me, UI/UX, or the DB architect sequenced before you start?",
+      "title": "Full-Stack Engineer"
+    },
+    {
+      "to": "sayveeyhur@agentmail.to",
+      "role": "DATABASE",
+      "name": "Database",
+      "files": [
+        "agents",
+        "brd",
+        "minutes",
+        "pmlog",
+        "comms"
+      ],
+      "intro": "You own the data domain: schema, migrations, capacity model, audit tables, and future namespacing. You're the critical-path role — everything in Phase A flows through the schema the moment Gate 0 clears.\n\n**Current state**: you can start NOW on pre-work: reviewing the schema implications of D-001 (route/bus relationship), D-008, D-013 (per-bus open/close), D-011 (BookingGroup for bulk payment), and the append-only audit design (OI-003). Actual migration work is gated until OI-001 resolves the stack.",
+      "questions": "## QUESTIONS FOR YOU\n\n1. **Route/Bus model (D-001)**: the decision set routes ↔ buses as a real relationship with per-bus booking windows — walk me through your initial entity sketch (Route, Bus/Trip, Booking, BookingGroup, SeatHold). Any relationships you think are missing?\n2. **Audit (OI-003)**: append-only audit trail is decided; what's undecided is which entities are immutable vs mutable. Draft your classification — which tables are write-once, which get mutable state columns, and where does the audit row get written (trigger vs application)?\n3. **Seat-hold**: same question I asked Backend — how would you model the hold (TTL rows vs counter)? Schema-level view only.\n4. **Namespacing (§3.9)**: shared-database readiness is a Future capability with one MVP guardrail — schema/table namespacing now. Any objection to prefixing (e.g., `trn_`) or a dedicated schema?\n5. **Stack preference**: OI-001 is unresolved — Postgres vs MySQL vs other: your pick and why, given $0 launch and this domain (transactions, capacity enforcement, audit append)?",
+      "title": "Database / Data Architect"
+    },
+    {
+      "to": "uiux-expert@agentmail.to",
+      "role": "UIUX",
+      "name": "UI/UX",
+      "files": [
+        "agents",
+        "brd",
+        "minutes",
+        "pmlog",
+        "comms"
+      ],
+      "intro": "You own design: user journeys, the three dashboards' information hierarchy, and the canonical Notification/PWA design doc (D-009 / OI-004) — including the forced-install flow.\n\n**The hard problem you own**: this congregation's only digital habit is WhatsApp. Members range across age and tech-savviness. Your design must be more trustworthy-feeling than the manual process it replaces, or nobody retires WhatsApp.\n\n**Current state**: fully unblocked — design work has no Gate 0 dependency.",
+      "questions": "## QUESTIONS FOR YOU\n\n1. **Forced install (D-009/OI-004)**: members can't book until the PWA is installed. Design the least-friction install-gating UX — how do we get a non-technical member from a shared link to an installed app icon without losing them?\n2. **Three dashboards**: Member (book/pay/track), Admin (capacity/refunds/reports), Marshal (boarding manifest, check-in). What does the Marshal screen look like in a car park at 6am — what survives that environment?\n3. **Payment UX**: Paystack for paid programmes, free for Sundays. How do we make payment status unmistakably clear — especially for the bulk-payment Host who paid for 8 beneficiaries?\n4. **WhatsApp displacement**: what single design choice most reduces \"I'll just message the admin instead\"?\n5. **Deliverables**: what do you produce — wireframes, Figma, user flows — and what do you need from me before you start each?",
+      "title": "UI/UX Designer"
+    },
+    {
+      "to": "vlthr-asset-generator@agentmail.to",
+      "role": "DATA-SCIENCE",
+      "name": "Data Science",
+      "files": [
+        "agents",
+        "pmlog",
+        "comms",
+        "brd",
+        "sysmap"
+      ],
+      "intro": "You own analytics and data products: utilization reporting, demand forecasting, and the quota/workrate model (§3.7 in Meeting Minutes 02 — per-profile quotas derived from real workrate data, powering rate limits).\n\n**Current state**: no Gate 0 dependency for analysis design. You already introduced yourself on the welcome thread — this is your formal onboarding with the full doc set.",
+      "questions": "## QUESTIONS FOR YOU\n\n1. **Workrate/quota model (§3.7)**: quotas must derive from observed activity, not guesses. What signals would you collect to compute Member/Host/Marshal/Admin workrate, and over what window?\n2. **Reports that matter**: the Admin needs utilization (who books, who no-shows, which routes/buses fill). Rank the first three reports you'd build and the data each needs.\n3. **No-show forecasting**: worth modeling? If yes, what minimum data history before it's credible rather than noise?\n4. **Data access**: you'll need schema + a data dictionary + anonymized extracts. Any specific format or tooling you want the pipeline in?\n5. **Privacy line**: church membership data — what's your anonymization standard, and is there anything you'd refuse to compute?",
+      "title": "Data Science"
+    },
+    {
+      "to": "victoria-3416@agentmail.to",
+      "role": "QA",
+      "name": "Victoria",
+      "files": [
+        "agents",
+        "brd",
+        "pmlog",
+        "comms",
+        "sysmap"
+      ],
+      "intro": "You own quality end-to-end — currently both manual and automation seats (the governance model splits them when volume justifies). Your domain covers the QA gate in the SDLC: build → code review → QA pass/fail, where fail loops back to Implement.\n\n**Current state**: no Gate 0 dependency for test planning. The nastiest test surfaces are known: seat-hold race conditions under concurrent booking, webhook idempotency/replay, capacity edge cases, and the refund-before-event cutoff logic.",
+      "questions": "## QUESTIONS FOR YOU\n\n1. **Race conditions**: capacity enforcement is THE critical invariant — two members, one seat left, simultaneous payment. How do you test that? What tooling?\n2. **Webhook testing**: Paystack webhooks must be idempotent against replay/duplicates. Your approach to simulating that?\n3. **Cutoff logic**: refund-before-event-only — how do you test time-boundary behavior (booking at 23:59 vs 00:01)?\n4. **Environment**: what do you need — staging env, seeded test data, a test Paystack account? List it and I'll get it on the provisioning list.\n5. **Automation split**: the governance model anticipates Manual + Auto QA as separate seats eventually. What would you automate first, and what should stay manual?",
+      "title": "QA / Test Engineer"
+    },
+    {
+      "to": "vlthr-secretary@agentmail.to",
+      "role": "SECRETARY",
+      "name": "Ufuoma",
+      "files": [
+        "agents",
+        "comms",
+        "registry",
+        "pmlog",
+        "vlthrteam"
+      ],
+      "intro": "You're the team coordinator — you ran the welcome onboarding and you're effectively the directory/broadcast function. This is your formal registration: you now hold the full picture of how the team actually operates.\n\n**Your lane** (from the registry): onboarding welcomes, coordination, meeting minutes, thread hygiene. You do NOT own decisions — you route them.",
+      "questions": "## QUESTIONS FOR YOU\n\n1. **Mail hygiene**: each agent mirrors threads locally under `DOCS/MAIL/<role>/` (see comms doc §retention). Do you want to own chasing agents for mirrors, or is each agent self-mirroring?\n2. **Broadcast list**: current live roster is 9 agents + 1 human liaison (vlthrlabs@gmail.com — plain language only, he's the church transport dept. contact). Do you maintain a broadcast alias list?\n3. **Escalation**: per protocol, L1 is direct agent-to-agent, L2 is me (PM), L3 is sponsor. Do you want to be a monitoring layer (seeing all threads) or stay send-only coordination?\n4. **Cadence**: any regular digest you plan (daily unread summary, weekly status rollup)? If so, what format?\n5. Anything you need from me to do the coordination job properly?",
+      "title": "Secretary / Coordinator"
+    },
+    {
+      "to": "vlthrlabs@gmail.com",
+      "role": "LIAISON",
+      "name": "Liaison",
+      "human": true,
+      "files": [],
+      "intro": "You're the church Transport Department liaison — the team's window into how things actually work today on the ground.\n\nWe're building the transport booking & management app for TCN Ikorodu: members book seats for programmes online, pay where needed, marshals check boarding from a manifest. You don't need to read any technical docs — what we need from you is operational truth we can't get anywhere else.",
+      "questions": "## QUESTIONS FOR YOU — plain answers are perfect, no format needed\n\n1. **Today's process**: when a member wants a bus seat for a programme, what literally happens step by step today? Who do they contact, who records it, how is payment collected?\n2. **Payment proof**: if we build the app to require payment BEFORE the trip, is there a real need to also allow \"cash on the day / pay the admin manually\"? (i.e. will some members genuinely never use online payment?)\n3. **Membership roll**: is there an existing list of members — register, spreadsheet, anything — we could use to pre-load accounts, or do people self-register?\n4. **Buses**: how many buses/routes run per programme typically? Does each bus have a fixed route/pickup point, or does it change?\n5. **Refund reality**: when someone pays then doesn't show — what actually happens today? Is money ever refunded?\n6. **Marshals**: who checks people in at boarding today, and how? Paper list? Memory?",
+      "title": "Church Transport Liaison"
+    }
+  ]
+}

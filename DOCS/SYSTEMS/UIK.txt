@@ -1,0 +1,496 @@
+UIK-001 · Universal Intelligence Kernel (UIK)
+
+Version: 1.0
+Status: Foundation Specification
+Layer: Core Kernel
+Dependencies: None
+
+1. Purpose
+
+The Universal Intelligence Kernel (UIK) is the foundational layer beneath every intelligence engine.
+
+Every engine—ADCOS, MNIF, DQS, QOF, ARUEV, Research, Knowledge, Simulation, Learning, Governance, Execution, Validation, Recommendation, Monitoring, Memory, and future engines—communicates only through the Kernel.
+
+The Kernel never solves problems.
+
+It only provides universal infrastructure.
+
+It is domain agnostic.
+
+Whether solving:
+
+Finance
+
+Trading
+
+Healthcare
+
+Manufacturing
+
+Government
+
+Law
+
+Robotics
+
+Energy
+
+Education
+
+Agriculture
+
+the Kernel remains unchanged.
+
+2. Responsibilities
+
+The Kernel provides:
+
+Universal IDs
+
+Workspaces
+
+Projects
+
+Objects
+
+Metadata
+
+Relationships
+
+Versioning
+
+Events
+
+Permissions
+
+Configuration
+
+Ontology
+
+Taxonomy
+
+Time
+
+Audit
+
+Storage contracts
+
+No business logic exists inside the Kernel.
+
+3. High-Level Architecture
+
+USER │ Universal API │ ┌─────────────────────────────┐ │ Universal Intelligence │ │ Kernel (UIK) │ └─────────────────────────────┘ │ ├──────── ADCOS ├──────── DQS ├──────── MNIF ├──────── QOF ├──────── ARUEV ├──────── Research ├──────── Knowledge ├──────── Learning ├──────── Validation ├──────── Simulation ├──────── Recommendation ├──────── Execution ├──────── Governance ├──────── Monitoring └──────── Memory 
+
+Every engine communicates through Kernel IDs.
+
+4. Universal Object Model
+
+Everything inside the system is treated as an Object.
+
+Examples
+
+Problem
+
+Solution
+
+Person
+
+Company
+
+Decision
+
+Trade
+
+Strategy
+
+Risk
+
+Dataset
+
+Simulation
+
+Question
+
+Answer
+
+Evidence
+
+Policy
+
+Workflow
+
+Memory
+
+Model
+
+Every object shares identical infrastructure.
+
+5. Universal Entity Hierarchy
+
+Workspace ├── Projects ├── Objects ├── Relationships ├── Metadata ├── Events ├── Versions ├── Permissions ├── Audit 
+
+6. Universal Identity Standard
+
+Every record uses UUID.
+
+Example
+
+wrk_xxxxxxxxx prj_xxxxxxxxx obj_xxxxxxxxx usr_xxxxxxxxx evt_xxxxxxxxx cfg_xxxxxxxxx rel_xxxxxxxxx aud_xxxxxxxxx 
+
+IDs are immutable.
+
+7. Kernel Database Schema
+
+The Kernel owns the following tables.
+
+Table 1 — workspaces
+
+Purpose
+
+Top-level isolation boundary.
+
+Fields
+
+workspace_id UUID PK name slug description owner_id status visibility default_language default_timezone configuration_id created_at updated_at deleted_at 
+
+Relationships
+
+Workspace
+
+→ Projects
+
+→ Users
+
+→ Configurations
+
+→ Audit
+
+Table 2 — projects
+
+Purpose
+
+Logical grouping.
+
+Fields
+
+project_id UUID PK workspace_id FK name description status industry domain version created_at updated_at 
+
+Relationship
+
+Workspace
+
+1
+
+↓
+
+Many Projects
+
+Table 3 — universal_objects
+
+Every engine stores references here.
+
+Fields
+
+object_id UUID PK workspace_id FK project_id FK object_type title description owner status priority visibility lifecycle_state created_at updated_at 
+
+Examples
+
+Problem
+
+Decision
+
+Trade
+
+Simulation
+
+Evidence
+
+Dataset
+
+Policy
+
+Question
+
+Solution
+
+Memory
+
+Table 4 — object_metadata
+
+Stores arbitrary metadata.
+
+metadata_id UUID object_id FK key value data_type created_at 
+
+Unlimited metadata.
+
+Table 5 — relationships
+
+Universal graph.
+
+relationship_id UUID source_object target_object relationship_type weight confidence created_at 
+
+Examples
+
+Problem
+
+→ causes
+
+Risk
+
+Evidence
+
+Decision
+
+→ uses
+
+Policy
+
+Trade
+
+→ generated_from
+
+Signal
+
+Table 6 — versions
+
+version_id UUID object_id version change_summary author parent_version created_at 
+
+Allows complete history.
+
+Table 7 — event_log
+
+Every action generates an event.
+
+event_id UUID workspace_id project_id object_id event_type actor payload_json timestamp 
+
+Example
+
+ProblemCreated
+
+DecisionApproved
+
+SimulationCompleted
+
+ResearchImported
+
+SignalGenerated
+
+TradeExecuted
+
+PolicyUpdated
+
+Table 8 — configurations
+
+configuration_id workspace_id name json_configuration version created_at 
+
+Stores engine settings.
+
+Table 9 — users
+
+user_id workspace_id name email role status created_at 
+
+Table 10 — roles
+
+role_id role_name description 
+
+Example
+
+Administrator
+
+Researcher
+
+Decision Maker
+
+Operator
+
+Reviewer
+
+Auditor
+
+AI Agent
+
+Table 11 — permissions
+
+permission_id role_id resource action allow 
+
+Example
+
+Problem
+
+Read
+
+Decision
+
+Approve
+
+Simulation
+
+Run
+
+Research
+
+Import
+
+Table 12 — audit_log
+
+Immutable history.
+
+audit_id workspace project user action old_value new_value timestamp signature 
+
+Nothing is deleted.
+
+Only archived.
+
+Table 13 — ontology
+
+Universal vocabulary.
+
+ontology_id concept definition parent_concept domain version 
+
+Example
+
+Problem
+
+Decision
+
+Risk
+
+Opportunity
+
+Objective
+
+Constraint
+
+Evidence
+
+Simulation
+
+Recommendation
+
+Execution
+
+Table 14 — taxonomy
+
+Classification tree.
+
+taxonomy_id ontology_id parent label path depth 
+
+Example
+
+Finance
+
+↓
+
+Trading
+
+↓
+
+Gold
+
+↓
+
+Swing Trading
+
+Table 15 — tags
+
+tag_id label color description 
+
+Table 16 — object_tags
+
+object_id tag_id 
+
+Many-to-many.
+
+Table 17 — attachments
+
+attachment_id object_id type storage_uri mime checksum size created_at 
+
+Table 18 — external_sources
+
+source_id provider api credential_reference status created_at 
+
+Examples
+
+Bloomberg
+
+TradingView
+
+OpenAI
+
+GitHub
+
+PostgreSQL
+
+CSV
+
+Excel
+
+REST
+
+GraphQL
+
+Table 19 — notifications
+
+notification_id user type message status created_at 
+
+Table 20 — health_status
+
+System diagnostics.
+
+health_id component status latency cpu memory disk timestamp 
+
+8. Universal Relationships
+
+Workspace ├── Projects │ ├── Users │ ├── Universal Objects │ │ │ ├── Metadata │ ├── Versions │ ├── Relationships │ ├── Events │ ├── Attachments │ └── Tags │ ├── Configuration ├── Audit ├── Notifications ├── Ontology └── Taxonomy 
+
+9. Kernel Principles
+
+Every entity is an Object.
+
+Every object has an ID.
+
+Every change creates an Event.
+
+Every event is audited.
+
+Every relationship is explicit.
+
+Every engine shares the same identity model.
+
+Every object is versioned.
+
+Nothing is permanently deleted.
+
+Every engine remains independent.
+
+The Kernel never contains business logic.
+
+10. Engine Integration Contract
+
+Every engine must:
+
+Register itself with the Kernel.
+
+Use Kernel UUIDs.
+
+Emit Kernel events.
+
+Respect Kernel permissions.
+
+Store audit records.
+
+Follow Kernel ontology.
+
+Use Kernel relationships.
+
+Version all mutable entities.
+
+Never bypass the Kernel.
+
+11. Kernel Event Flow
+
+User Action ↓ Kernel Identity ↓ Permission Check ↓ Object Creation ↓ Relationship Update ↓ Version Snapshot ↓ Event Emitted ↓ Audit Recorded ↓ Notification Published ↓ Subscribed Engines Triggered 
+
+12. Foundation Summary
+
+The Universal Intelligence Kernel is the immutable infrastructure layer for the Universal Intelligence Operating System. It standardizes identity, storage, relationships, governance, events, permissions, ontology, taxonomy, versioning, and auditing. Every higher-level engine depends on these services while remaining independent of each other's internal logic. This establishes a consistent, extensible foundation capable of supporting any problem domain through shared infrastructure rather than domain-specific implementation.

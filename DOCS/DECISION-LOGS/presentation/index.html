@@ -1,0 +1,231 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TCN Ikorodu — Transport App Decision Brief</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#1f5bff;--sky:#6fa0ff;--ink:#05070d;--navy:#071445;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;background:var(--ink)}
+body{font-family:Inter,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;touch-action:pan-y}
+#t{display:flex;height:100%;transition:transform .6s cubic-bezier(.77,0,.18,1)}
+.s{flex:0 0 100%;height:100%;padding:clamp(22px,4.5vw,64px) clamp(22px,4.5vw,64px) 76px;display:flex;flex-direction:column;justify-content:space-between;gap:20px;overflow-y:auto;position:relative}
+.d{background:var(--ink);color:#fff}.l{background:#fff;color:var(--ink)}.n{background:var(--navy);color:#fff}
+.b{background:radial-gradient(120% 120% at 15% 0%,#3d7bff 0,#1f5bff 40%,#0a2cc4 100%);color:#fff}
+h1,h2,h3,.big{font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800;letter-spacing:-.045em}
+h1{font-size:clamp(46px,10.5vw,150px);line-height:.92}
+h2{font-size:clamp(30px,5.6vw,78px);line-height:.98}
+h3{font-size:clamp(17px,1.7vw,22px);letter-spacing:-.03em;line-height:1.15}
+p,li{font-size:clamp(13px,1.25vw,16.5px);line-height:1.5;opacity:.74;max-width:52ch}
+.tag{font:500 11px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--blue)}
+.d .tag,.n .tag{color:var(--sky)}.b .tag{color:#fff}
+.g{display:grid;gap:clamp(14px,2.4vw,32px);grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:760px){.g3{grid-template-columns:1fr}}
+.two{display:grid;gap:clamp(18px,3vw,48px);grid-template-columns:repeat(auto-fit,minmax(290px,1fr));align-items:center}
+.c{border-top:1.5px solid currentColor;padding-top:14px;display:grid;gap:8px;align-content:start}
+.c h3,.c p{opacity:1}.c p{opacity:.72}
+.big{font-size:clamp(60px,11vw,140px);line-height:.88}
+.ic{width:32px;height:32px;color:var(--blue)}.d .ic,.n .ic{color:var(--sky)}
+.toc{list-style:none}.toc li{font:800 clamp(22px,4.2vw,52px)/1.18 'Bricolage Grotesque',sans-serif;letter-spacing:-.04em;color:#cfd6e6;opacity:1;max-width:none;display:flex;align-items:baseline;gap:14px}
+.toc li.a{color:var(--ink)}.toc li.r{color:var(--blue)}
+.toc b{font:500 13px 'JetBrains Mono',monospace;opacity:.5;letter-spacing:0}
+.nd{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}
+.nd div{flex:1 1 120px;border:1.5px solid #dbe3f5;border-radius:14px;padding:14px;display:grid;gap:6px}
+.nd b{font:500 11px 'JetBrains Mono',monospace;color:var(--blue)}.nd span{font:800 17px 'Bricolage Grotesque';letter-spacing:-.02em}.nd small{font-size:12px;opacity:.65;line-height:1.35}
+.fn{display:grid;gap:8px}.fn div{padding:14px 18px;border-radius:10px;font:800 clamp(14px,1.6vw,20px) 'Bricolage Grotesque';letter-spacing:-.02em;background:linear-gradient(90deg,var(--blue),#3d7bff);color:#fff}
+.fn small{display:block;font:400 12px Inter;opacity:.8;letter-spacing:0;margin-top:2px}
+.card{background:#0d1530;border:1px solid #22306b;border-radius:18px;padding:22px;font:500 clamp(12px,1.3vw,15px)/2 'JetBrains Mono',monospace;color:#cfd8ff}
+.card i{font-style:normal;color:var(--sky)}.card em{font-style:normal;color:#fff}
+.ft{font-size:11px;opacity:.55;max-width:none}
+svg.bg{position:absolute;inset:0;width:100%;height:100%;opacity:.5;pointer-events:none}
+.s>*{position:relative}
+#nav{position:fixed;left:0;right:0;bottom:env(safe-area-inset-bottom,0px);height:60px;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(18px,4.5vw,64px);z-index:9;color:#fff;mix-blend-mode:difference;font:500 12px 'JetBrains Mono',monospace}
+#nav button{all:unset;cursor:pointer;width:40px;height:40px;display:grid;place-items:center;border:1px solid #fff;border-radius:50%;font-size:16px}
+#pb{position:fixed;top:env(safe-area-inset-top,0px);left:0;height:3px;background:var(--blue);z-index:9;transition:width .6s}
+
+.rv{opacity:0;transform:translateY(28px) scale(.985);filter:blur(6px);transition:opacity .7s ease,transform .8s cubic-bezier(.2,.7,.2,1),filter .7s ease}
+.on .rv{opacity:1;transform:none;filter:none;transition-delay:calc(var(--i)*85ms + 280ms)}
+.draw{stroke-dasharray:1;stroke-dashoffset:1}.on .draw{stroke-dashoffset:0;transition:stroke-dashoffset 1.8s ease .5s}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}.draw{stroke-dashoffset:0}#t{transition:none}}
+.win{background:#0d1530;border:1px solid #22306b;border-radius:14px;overflow:hidden;color:#dfe6ff;box-shadow:0 30px 80px rgba(0,0,0,.35);width:100%}
+.wb{display:flex;gap:6px;align-items:center;padding:10px 14px;background:#0a1128;font:500 11px 'JetBrains Mono',monospace;color:#7f8db8}.wb i{width:9px;height:9px;border-radius:50%;background:#2a3769}.wb span{margin-left:10px}
+.wg{display:grid;grid-template-columns:1.25fr 1fr .8fr;gap:1px;background:#22306b}
+.wg>div{background:#0d1530;padding:14px;display:grid;gap:9px;align-content:start;font-size:12px}
+.wg h4,.ph h4{font:500 10px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.08em;color:var(--sky)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:#121c3d}
+.row em{font:800 14px 'Bricolage Grotesque',sans-serif;font-style:normal;color:#fff}
+.chip{font:500 10px 'JetBrains Mono',monospace;padding:3px 7px;border-radius:99px;background:#1f5bff33;color:#9fbcff}
+.m{display:grid;gap:4px;font-size:11px;color:#9aa8d4}.m div{height:6px;border-radius:9px;background:#1b2750}.m u{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,#1f5bff,#6fa0ff)}
+.ph{width:min(285px,100%);margin:auto;background:#0d1530;border:8px solid #1b2750;border-radius:38px;padding:18px 14px;display:grid;gap:12px;color:#dfe6ff;font-size:12px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+@media(max-width:700px){.wg{grid-template-columns:1fr}}
+
+/* decision-option cards + neutral weight chips (no recommendation bias) */
+.opt{border-top:1.5px solid currentColor;padding-top:14px;display:grid;gap:10px;align-content:start}
+.opt h3{opacity:1;display:flex;gap:10px;align-items:baseline}
+.opt h3 b{font:500 12px 'JetBrains Mono',monospace;opacity:.45;letter-spacing:0}
+.opt p{opacity:.72}
+.wt{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.wt span{font:500 9.5px 'JetBrains Mono',monospace;padding:4px 9px;border-radius:99px;border:1px solid currentColor;opacity:.55;white-space:nowrap}
+.dhead{display:flex;justify-content:space-between;align-items:flex-start;gap:3vw;flex-wrap:wrap}
+.dcount{font:500 11px 'JetBrains Mono',monospace;letter-spacing:.1em;text-transform:uppercase;opacity:.55;white-space:nowrap}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="i1" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22l7-8 5 5 7-10 7 7"/><path d="M3 28h26"/></symbol>
+<symbol id="i2" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3l11 4v8c0 7-5 12-11 14C10 27 5 22 5 15V7z"/><path d="M11 16l4 4 6-8"/></symbol>
+<symbol id="i3" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="16" r="12"/><path d="M16 9v7l5 3"/></symbol>
+<symbol id="i4" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="7" width="24" height="18" rx="3"/><path d="M4 13h24M9 19h6"/></symbol>
+<symbol id="i5" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="24" height="14" rx="3"/><circle cx="10" cy="25" r="2.4"/><circle cx="22" cy="25" r="2.4"/><path d="M4 16h24M10 9v7M18 9v7"/></symbol>
+<symbol id="i6" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29s9-9.5 9-16a9 9 0 10-18 0c0 6.5 9 16 9 16z"/><circle cx="16" cy="13" r="3"/></symbol>
+<symbol id="i7" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14V9a3 3 0 013-3h8a3 3 0 013 3v5"/><path d="M7 14h18l-2 11H9z"/><path d="M11 25v3M21 25v3"/></symbol>
+<symbol id="i8" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16a10 10 0 1 1 3.2 7.3"/><path d="M4 23.5v-6h6"/><path d="M12.5 16h7M16 12.5v7"/></symbol>
+<symbol id="i9" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="13" r="5"/><circle cx="22" cy="13" r="5"/><path d="M4 27c0-5.2 4.3-8.5 10.5-8.5M28 27c0-5.2-4.3-8.5-10.5-8.5"/></symbol>
+<symbol id="i10" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4v24"/><path d="M8 6h16l-4.5 5.5L24 17H8"/></symbol>
+<symbol id="i11" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4l13 7-13 7-13-7 13-7z"/><path d="M3 18l13 7 13-7"/><path d="M3 23.5l13 7 13-7"/></symbol>
+<symbol id="i12" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 28h24"/><path d="M8 28V18M15 28V11M22 28V6"/><path d="M4 28l7.5-8.5L17 24l9-11"/></symbol>
+<symbol id="i13" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="16" cy="11" r="5"/><path d="M6 28c0-6.6 4.5-11 10-11s10 4.4 10 11"/></symbol>
+</defs></svg>
+<div id="pb"></div>
+<div id="t">
+
+<section class="s d"><svg class="bg" viewBox="0 0 1200 300" preserveAspectRatio="none" id="c1"></svg>
+<span class="tag">TCN Ikorodu · Transport Booking &amp; Management App</span>
+<div><h1>Eight choices,<br>one transport<br>app<span style="color:var(--blue)">.</span></h1></div>
+<div><p style="font-size:clamp(14px,1.5vw,19px);opacity:.85">Before engineering starts, eight structural decisions need a call from the people who'll live with them — Transport Department and leadership. Each one shapes the data model, the booking logic, the running cost, or how far the system can grow.</p><p class="ft" style="margin-top:14px">Swipe or press → to begin</p></div></section>
+
+<section class="s l"><span class="tag">Contents</span>
+<ul class="toc">
+<li class="a"><b>00</b>How to read this deck</li>
+<li class="a"><b>01</b>Programme · Route · Bus model</li>
+<li class="a"><b>02</b>Technology stack</li>
+<li class="a"><b>03</b>Seat protection during payment</li>
+<li class="a"><b>04</b>Booking-window automation</li>
+<li class="a"><b>05</b>Marshal reassignment</li>
+<li class="a"><b>06</b>Refund automation</li>
+<li class="a"><b>07</b>Duplicate registration</li>
+<li class="a"><b>08</b>No-show tracking</li>
+<li class="r"><b>→</b>The product, in two screens</li>
+</ul>
+<span class="ft">TCN Ikorodu Transport · Decision Brief v1</span></section>
+
+<section class="s b"><span class="tag">How to read this deck</span><h2>Every option carries the same three weights.</h2>
+<div class="g g3"><div class="c"><svg class="ic"><use href="#i12"/></svg><h3>Build effort</h3><p>How much work this option takes relative to the other options in the same decision — not an absolute estimate.</p></div>
+<div class="c"><svg class="ic"><use href="#i2"/></svg><h3>Reversibility</h3><p>How easily the choice can be changed later without a data migration or a rebuild of dependent features.</p></div>
+<div class="c"><svg class="ic"><use href="#i6"/></svg><h3>Scalability</h3><p>Whether the option still holds up if TCN Ikorodu adds branches, more weekly programmes, or more members.</p></div></div>
+<div class="g" style="margin-top:4vh"><div><div class="big" data-n="8">8</div><p>decisions awaiting sign-off</p></div><div><div class="big" data-n="24">24</div><p>options evaluated across all eight</p></div><div><div class="big" data-n="1">1</div><p>booking lifecycle every decision feeds into</p></div><div><div class="big" data-n="0">0</div><p>options pre-selected — every call is yours</p></div></div>
+<span class="ft">Weight labels are descriptive context, not a ranking. No option is marked as preferred.</span></section>
+
+<section class="s l"><div class="dhead"><div><span class="tag">Data model</span><h2>How should Programme, Route and Bus relate?</h2></div><span class="dcount">Decision 01 / 08</span></div>
+<p style="max-width:62ch">This defines the entire capacity engine — how seats are counted, where "available seats" comes from, and how far the schema can stretch before it needs rework.</p>
+<div class="g g3">
+<div class="opt"><h3><svg class="ic" style="width:22px;height:22px"><use href="#i5"/></svg>A</h3><p><b>One route = one bus (1:1).</b> Each route has exactly one bus and one capacity figure, tracked directly on the route.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · Low</span><span>Scalability · Single bus per route only</span></div></div>
+<div class="opt"><h3><svg class="ic" style="width:22px;height:22px"><use href="#i5"/></svg>B</h3><p><b>A route can have multiple buses.</b> A popular route is assigned several buses; capacity is their sum.</p><div class="wt"><span>Effort · Medium</span><span>Reversibility · Medium</span><span>Scalability · Grows with route demand</span></div></div>
+<div class="opt"><h3><svg class="ic" style="width:22px;height:22px"><use href="#i5"/></svg>C</h3><p><b>Buses attach to the programme directly.</b> Routes become pickup labels only, not capacity holders.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · Low</span><span>Scalability · Loses per-route control</span></div></div>
+</div>
+<span class="ft">Touches: DATABASE schema, capacity engine, seat-count reporting.</span></section>
+
+<section class="s d"><div class="dhead"><div><span class="tag">Technology stack</span><h2>What should the build actually run on?</h2></div><span class="dcount">Decision 02 / 08</span></div>
+<p style="max-width:62ch">The PRD recommends an all-TypeScript stack; prior project work leans Python. This choice sets the repository layout, hosting, and who can maintain it later.</p>
+<div class="g g3">
+<div class="opt"><h3><svg class="ic"><use href="#i11"/></svg>A</h3><p><b>Next.js + Supabase.</b> API routes, Postgres, auth and realtime in one TypeScript codebase, hosted on Vercel.</p><div class="wt"><span>Effort · Low (1 codebase)</span><span>Reversibility · Low</span><span>Scalability · Scales via managed tiers</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i11"/></svg>B</h3><p><b>FastAPI + React + Postgres.</b> Python backend, React PWA frontend, self-managed or managed Postgres.</p><div class="wt"><span>Effort · Medium (2 codebases)</span><span>Reversibility · Low</span><span>Scalability · Full infra control</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i11"/></svg>C</h3><p><b>Next.js frontend + FastAPI backend.</b> TypeScript on the client, Python on the API.</p><div class="wt"><span>Effort · High (2 languages)</span><span>Reversibility · Low</span><span>Scalability · Most flexible, most upkeep</span></div></div>
+</div>
+<span class="ft">Touches: BACKEND, FRONTEND, DATABASE, hosting cost, who can contribute later.</span></section>
+
+<section class="s l"><div class="dhead"><div><span class="tag">Booking integrity</span><h2>How are seats protected during checkout?</h2></div><span class="dcount">Decision 03 / 08</span></div>
+<p style="max-width:62ch">The last-seat problem: two members try to book the final seat on a route at the same moment, or one pays and abandons checkout.</p>
+<div class="g g3">
+<div class="opt"><h3><svg class="ic"><use href="#i7"/></svg>A</h3><p><b>TTL hold on booking start.</b> Seat is reserved for a short window once checkout begins; released automatically if payment isn't completed.</p><div class="wt"><span>Effort · Medium</span><span>Reversibility · Medium</span><span>Scalability · Holds under concurrent load</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i7"/></svg>B</h3><p><b>Decrement only on payment success.</b> Seat stays bookable until payment clears.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · Breaks down under concurrent demand</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i7"/></svg>C</h3><p><b>Decrement on booking, manual cleanup.</b> Seat taken immediately; abandoned ones freed by a Marshal or Admin.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · More admin work as volume grows</span></div></div>
+</div>
+<span class="ft">Touches: capacity engine, payment webhook handling, reporting accuracy.</span></section>
+
+<section class="s n"><div class="dhead"><div><span class="tag">Scheduling</span><h2>How is the Friday-6pm booking window handled?</h2></div><span class="dcount">Decision 04 / 08</span></div>
+<p style="max-width:62ch">Sunday-service booking opens Friday 6pm (BRD requirement 6) and should close once a route is full. Who or what enforces that timing?</p>
+<div class="g g3">
+<div class="opt"><h3><svg class="ic"><use href="#i3"/></svg>A</h3><p><b>Scheduler / cron component.</b> A scheduled job opens and closes booking windows automatically per programme configuration.</p><div class="wt"><span>Effort · Medium</span><span>Reversibility · Medium</span><span>Scalability · Handles many programmes at once</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i3"/></svg>B</h3><p><b>On-demand time check.</b> No scheduler — availability is computed from timestamps whenever a member loads the page.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · Fine, but no proactive alerts</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i3"/></svg>C</h3><p><b>Manual admin toggle.</b> Admin opens and closes booking by hand from the dashboard.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · Relies on someone remembering</span></div></div>
+</div>
+<span class="ft">Touches: BACKEND job runner (if any), member-facing availability display, notification timing.</span></section>
+
+<section class="s l"><div class="dhead"><div><span class="tag">Operations</span><h2>How is a Marshal reassigned mid-programme?</h2></div><span class="dcount">Decision 05 / 08</span></div>
+<p style="max-width:62ch">Not specified in the BRD: a Marshal assigned to a route becomes unavailable after bookings have already started coming in.</p>
+<div class="g g3">
+<div class="opt"><h3><svg class="ic"><use href="#i13"/></svg>A</h3><p><b>Admin-triggered reassignment.</b> Admin manually reassigns the route; notifications re-scope to the new Marshal.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · Fine with few concurrent routes</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i13"/></svg>B</h3><p><b>Marshal self-release + claim pool.</b> A Marshal releases a route; any eligible Marshal can claim it.</p><div class="wt"><span>Effort · Medium</span><span>Reversibility · Medium</span><span>Scalability · Scales with more Marshals/routes</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i13"/></svg>C</h3><p><b>No formal flow.</b> Handled by phone call / word of mouth, outside the system.</p><div class="wt"><span>Effort · None</span><span>Reversibility · High</span><span>Scalability · Breaks down past a few routes</span></div></div>
+</div>
+<span class="ft">Touches: notification engine, route-scoped access control, Marshal dashboard.</span></section>
+
+<section class="s d"><div class="dhead"><div><span class="tag">Payments</span><h2>How automated should refunds be?</h2></div><span class="dcount">Decision 06 / 08</span></div>
+<p style="max-width:62ch">BRD Section 16 requires a refund policy for cancelled paid bookings, but leaves the execution mechanism open.</p>
+<div class="g g3">
+<div class="opt"><h3><svg class="ic"><use href="#i8"/></svg>A</h3><p><b>Full-auto refund via Paystack API.</b> Cancellation triggers an automatic refund call, status tracked end to end.</p><div class="wt"><span>Effort · Medium</span><span>Reversibility · Medium</span><span>Scalability · No finance bottleneck at volume</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i8"/></svg>B</h3><p><b>Flagged for manual finance review.</b> System records the refund is owed; a person approves and triggers it.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · Review queue grows with volume</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i8"/></svg>C</h3><p><b>Fully manual.</b> Bank transfer reconciliation outside the app, same as today.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · Does not scale past a handful/month</span></div></div>
+</div>
+<span class="ft">Touches: payment status machine, audit trail, Journey C (member cancellation).</span></section>
+
+<section class="s l"><div class="dhead"><div><span class="tag">Registration</span><h2>How are duplicate registrations handled?</h2></div><span class="dcount">Decision 07 / 08</span></div>
+<p style="max-width:62ch">BRD Section 6 asks the system to "avoid unnecessary duplicate registrations" without defining the match rule — e.g. same person, different phone number.</p>
+<div class="g g3">
+<div class="opt"><h3><svg class="ic"><use href="#i9"/></svg>A</h3><p><b>Auto-merge on email / Google ID match.</b> Matching identity signals merge records automatically.</p><div class="wt"><span>Effort · Medium</span><span>Reversibility · Low (merges are hard to undo)</span><span>Scalability · Clean records at any member count</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i9"/></svg>B</h3><p><b>Flag for admin review, no auto-merge.</b> Possible duplicates are surfaced; a person decides.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · Review queue grows with signups</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i9"/></svg>C</h3><p><b>Block re-registration outright.</b> A detected match prevents a new account from being created.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · Simple, risks locking out real members</span></div></div>
+</div>
+<span class="ft">Touches: registration flow, member data integrity, reporting (first-time vs returning).</span></section>
+
+<section class="s n"><div class="dhead"><div><span class="tag">Reporting</span><h2>How granular should no-show tracking be?</h2></div><span class="dcount">Decision 08 / 08</span></div>
+<p style="max-width:62ch">BRD Section 17 separates "no-shows" in reports, but the booking lifecycle (Section 12) doesn't say whether No-show is its own tracked state.</p>
+<div class="g g3">
+<div class="opt"><h3><svg class="ic"><use href="#i10"/></svg>A</h3><p><b>First-class state in the lifecycle.</b> No-show becomes a tracked terminal state, distinct from Confirmed.</p><div class="wt"><span>Effort · Medium</span><span>Reversibility · Low</span><span>Scalability · Enables demand forecasting</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i10"/></svg>B</h3><p><b>Informal Marshal note.</b> Recorded as a comment, not a structured state.</p><div class="wt"><span>Effort · Low</span><span>Reversibility · High</span><span>Scalability · Reporting stays shallow</span></div></div>
+<div class="opt"><h3><svg class="ic"><use href="#i10"/></svg>C</h3><p><b>No tracking.</b> Absences are not recorded at all.</p><div class="wt"><span>Effort · None</span><span>Reversibility · High</span><span>Scalability · No attendance pattern data, ever</span></div></div>
+</div>
+<span class="ft">Touches: state machine, reporting engine, future capacity planning.</span></section>
+
+<section class="s b"><span class="tag">The product · Marshal dashboard</span><h2>One screen, the whole route.</h2>
+<div class="win"><div class="wb"><i></i><i></i><i></i><span>tcn-transport · marshal</span></div><div class="wg">
+<div><h4>Ikorodu Central · Passengers</h4><div class="row"><b>Adeola F.</b><span class="chip">Booked</span></div><div class="row"><b>Chinedu O.</b><span class="chip">Contacted</span></div><div class="row"><b>Grace A.</b><span class="chip">Confirmed</span></div><div class="row" style="opacity:.4"><b>Tunde K.</b><span class="chip">Cancelled</span></div></div>
+<div><h4>Booking #214</h4><div class="row"><span>Member</span><b>Grace A.</b></div><div class="row"><span>Route</span><b>Ikorodu Central</b></div><div class="row"><span>Payment</span><b>Successful</b></div><div class="row"><span>Status</span><b>Confirmed</b></div></div>
+<div><h4>Capacity</h4><div class="m"><span>Ikorodu Central</span><div><u style="width:82%"></u></div></div><div class="m"><span>Agric Road</span><div><u style="width:54%"></u></div></div><div class="m"><span>Majidun</span><div><u style="width:30%"></u></div></div><span class="chip" style="width:fit-content">● 3 routes active</span></div></div></div>
+<span class="ft">Concept screen, illustrative values — not final UI.</span></section>
+
+<section class="s n"><span class="tag">The product · member booking</span>
+<div class="two"><div style="display:grid;gap:16px"><h2>Book a seat in four taps.</h2><p>Select a programme, see the pickup time and seats left, confirm or pay — the same flow for first-time and returning members.</p><span class="ft">Concept screen, illustrative values — not final UI.</span></div>
+<div class="ph"><div class="row" style="background:none;padding:0"><b>TCN Transport</b><span class="chip">● Booking open</span></div>
+<svg viewBox="0 0 120 120" width="116" style="margin:auto;display:block"><circle cx="60" cy="60" r="48" fill="none" stroke="#1b2750" stroke-width="10"/><circle class="draw" pathLength="1" cx="60" cy="60" r="48" fill="none" stroke="#3d7bff" stroke-width="10" stroke-linecap="round" transform="rotate(-90 60 60)" style="stroke-dasharray:1;--v:.2"/><text x="60" y="62" text-anchor="middle" fill="#fff" font-family="Bricolage Grotesque" font-weight="800" font-size="30">4</text><text x="60" y="80" text-anchor="middle" fill="#9aa8d4" font-size="7.5">SEATS LEFT</text></svg>
+<h4>Your programme</h4><div class="row"><b>Sunday Service</b><span class="chip">9:00 AM</span><em>₦500</em></div>
+<div class="m"><span>Ikorodu Central</span><div><u style="width:80%"></u></div></div><div class="m"><span>Agric Road</span><div><u style="width:45%"></u></div></div>
+<div class="row" style="justify-content:space-around;background:#0a1128;color:#9aa8d4"><span>Programmes</span><span>My Bookings</span><span>Profile</span></div></div></div></section>
+
+<section class="s d"><svg class="bg" viewBox="0 0 1200 300" preserveAspectRatio="none" id="c2" style="opacity:.22"></svg><span class="tag">Next step</span>
+<h1>Your call,<br>our build<span style="color:var(--blue)">.</span></h1>
+<p style="font-size:clamp(14px,1.5vw,19px);opacity:.85;max-width:62ch">Return one choice per decision — options don't need to match a single letter across the board; each was evaluated on its own terms. Once all eight are in, the data model, state machine and API spec get written against them.</p>
+<p class="ft" style="margin-top:14px">TCN Ikorodu Transport · Decision Brief v1 · Illustrative mockups, not final UI.</p></section>
+
+</div>
+<div id="nav"><button id="p" aria-label="Previous">←</button><span id="ct"></span><button id="n" aria-label="Next">→</button></div>
+<script>
+let r=11;const rnd=()=>(r=r*16807%2147483647)/2147483647;
+function routeMap(id,n,col){const e=document.getElementById(id);let h='',pts=[];
+for(let k=0;k<n;k++){const x=k*(1200/(n-1));const y=150+(rnd()-0.5)*170;pts.push([x,y])}
+let d='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' L ');
+h+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2" opacity=".55"/>`;
+pts.forEach((p,k)=>{h+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="${k%4===0?6:3}" fill="${col}"/>`});
+e.innerHTML=h}
+routeMap('c1',18,'#1f5bff');routeMap('c2',18,'#fff');
+const t=document.getElementById('t'),N=t.children.length,ct=document.getElementById('ct'),pb=document.getElementById('pb');let i=0;
+function go(k){i=Math.max(0,Math.min(N-1,k));t.style.transform=`translateX(-${i*100}%)`;ct.textContent=String(i+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');pb.style.width=((i+1)/N*100)+'%';if(window.rev)rev()}
+S=[...t.children];const SEL=':scope>*:not(.bg):not(.g):not(.two):not(.nd):not(.fn),.two>*,.c,.opt,.nd>div,.fn>div';
+S.forEach(s=>s.querySelectorAll(SEL).forEach((e,k)=>{e.classList.add('rv');e.style.setProperty('--i',k)}));
+let rt;function rev(){S.forEach((s,k)=>{if(k===i){s.classList.add('on');s.querySelectorAll('.big').forEach(e=>{const n=+e.dataset.n||+e.textContent;e.dataset.n=n;let t0;const f=q=>{t0=t0||q;const p=Math.min(1,(q-t0)/1100);e.textContent=Math.round(n*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};e.textContent=0;requestAnimationFrame(f)})}});clearTimeout(rt);rt=setTimeout(()=>S.forEach((s,k)=>k!==i&&s.classList.remove('on')),900)}
+
+go(0);
+addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();go(i+1)}if(e.key==='ArrowLeft'){e.preventDefault();go(i-1)}});
+document.getElementById('n').onclick=()=>go(i+1);document.getElementById('p').onclick=()=>go(i-1);
+let x0,y0;addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.3)go(i+(dx<0?1:-1))},{passive:true});
+</script></body></html>

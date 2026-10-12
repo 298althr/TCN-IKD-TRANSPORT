@@ -1,0 +1,11 @@
+{
+  "id": "sample",
+  "title": "Sample Room — Weekly Sync Format Demo",
+  "chair": "vlthrlab-pm@agentmail.to",
+  "status": "closed",
+  "scheduled_for": "demo",
+  "content_url": "content.html",
+  "recap_url": "recap.html",
+  "closed_summary": "Demo meeting ended. This is what participants see — the URL stays alive and serves the recap.",
+  "closed_at": "demo"
+}

@@ -1,0 +1,258 @@
+PRE-008 · Problem & Research Engine (PRE)
+
+Version: 1.0
+Status: Core Intelligence Engine
+Layer: Problem Discovery & Knowledge Acquisition
+Dependencies: Universal Intelligence Kernel (UIK), ADCOS, MNIF, QOF, KGE
+
+1. Purpose
+
+The Problem & Research Engine (PRE) is responsible for transforming ambiguous user requests into well-defined, research-backed problem statements.
+
+Its philosophy is:
+
+No solution should exist before the problem is sufficiently understood.
+
+Every workflow entering the Universal Intelligence Operating System begins here unless an already-defined problem exists.
+
+PRE answers four questions:
+
+What is the real problem?
+
+What information is missing?
+
+What research is required?
+
+When is the problem sufficiently understood?
+
+2. Responsibilities
+
+PRE is responsible for:
+
+Problem discovery
+
+Problem decomposition
+
+Context acquisition
+
+Research planning
+
+Research execution
+
+Evidence collection
+
+Information gap analysis
+
+Stakeholder identification
+
+Requirement elicitation
+
+Problem validation
+
+Problem versioning
+
+Research traceability
+
+3. Problem Lifecycle
+
+Initial Request ↓ Intent Detection ↓ Problem Identification ↓ Context Collection ↓ Research Planning ↓ Evidence Collection ↓ Gap Analysis ↓ Problem Refinement ↓ Problem Validation ↓ Knowledge Engine 
+
+4. Core Principles
+
+Separate symptoms from root problems.
+
+Unknowns are first-class objects.
+
+Every claim requires supporting evidence.
+
+Research is iterative.
+
+The problem definition evolves over time.
+
+Multiple competing problem statements may coexist until validated.
+
+5. Database Schema
+
+Table 1 — problems
+
+Master problem registry.
+
+problem_id UUID PK workspace_id FK project_id FK title description problem_type priority status created_at updated_at 
+
+Table 2 — problem_versions
+
+version_id UUID PK problem_id version summary author created_at 
+
+Table 3 — problem_context
+
+context_id UUID PK problem_id business_context technical_context environment assumptions constraints 
+
+Table 4 — problem_scope
+
+scope_id UUID PK problem_id in_scope out_of_scope boundaries success_definition 
+
+Table 5 — stakeholders
+
+stakeholder_id UUID PK problem_id name role influence interest priority 
+
+Table 6 — objectives
+
+objective_id UUID PK problem_id objective priority measurement target_value 
+
+Table 7 — requirements
+
+requirement_id UUID PK problem_id requirement_type description mandatory status 
+
+Requirement types
+
+Functional
+
+Non-functional
+
+Regulatory
+
+Business
+
+Technical
+
+Operational
+
+Table 8 — research_projects
+
+research_project_id UUID PK problem_id title research_goal owner status created_at 
+
+Table 9 — research_questions
+
+question_id UUID PK research_project_id question category priority status 
+
+Table 10 — research_tasks
+
+task_id UUID PK research_project_id task_name assigned_to deadline status 
+
+Table 11 — research_sources
+
+source_id UUID PK research_project_id source_name source_type credibility accessed_at 
+
+Table 12 — research_findings
+
+finding_id UUID PK research_project_id title summary evidence_reference confidence recorded_at 
+
+Table 13 — information_gaps
+
+gap_id UUID PK problem_id gap_description severity recommended_action resolved 
+
+Table 14 — hypotheses
+
+Early hypotheses generated during research.
+
+hypothesis_id UUID PK problem_id statement confidence status created_at 
+
+Table 15 — root_causes
+
+root_cause_id UUID PK problem_id cause cause_category evidence_strength validated 
+
+Table 16 — dependencies
+
+Problem dependencies.
+
+dependency_id UUID PK problem_id depends_on_problem dependency_type 
+
+Table 17 — problem_metrics
+
+metric_id UUID PK problem_id metric_name metric_value measurement_time 
+
+Table 18 — research_artifacts
+
+artifact_id UUID PK research_project_id artifact_type reference_uri checksum created_at 
+
+Table 19 — problem_reviews
+
+review_id UUID PK problem_id reviewer review_type decision comments reviewed_at 
+
+Table 20 — readiness_assessment
+
+Determines whether research is sufficient.
+
+readiness_id UUID PK problem_id context_complete research_complete evidence_complete stakeholder_complete overall_readiness assessed_at 
+
+6. Problem Decomposition Model
+
+Every problem is decomposed into:
+
+Problem ├── Objectives ├── Context ├── Constraints ├── Requirements ├── Stakeholders ├── Information Gaps ├── Root Causes ├── Research ├── Findings └── Readiness 
+
+7. Research Workflow
+
+Problem ↓ Generate Research Questions ↓ Identify Sources ↓ Collect Information ↓ Validate Information ↓ Generate Findings ↓ Identify Gaps ↓ Refine Problem ↓ Publish Knowledge 
+
+8. Problem Readiness Criteria
+
+A problem is considered research-ready only if:
+
+Objectives are defined.
+
+Scope is established.
+
+Stakeholders are identified.
+
+Required context is collected.
+
+Major information gaps are documented.
+
+Initial evidence exists.
+
+Constraints are understood.
+
+A problem is considered solution-ready only if the readiness assessment exceeds the configured threshold.
+
+9. Integration Points
+
+Inputs
+
+User requests
+
+Existing problems
+
+External documents
+
+APIs
+
+Interviews
+
+Observations from QOF
+
+Outputs
+
+Knowledge Engine
+
+Hypothesis Engine
+
+ARUEV
+
+DQS
+
+Simulation Engine
+
+Recommendation Engine
+
+10. Design Principles
+
+Problems are living objects that evolve.
+
+Research is linked directly to the problem it supports.
+
+Every finding is traceable to its source.
+
+Information gaps are explicitly modeled.
+
+Root causes are distinguished from symptoms.
+
+Multiple hypotheses may exist simultaneously.
+
+Research completion is measurable.
+
+Problems are only promoted when predefined readiness criteria are met.
+
+11. Foundation Summary
+
+The Problem & Research Engine provides the discovery and investigation layer of the Universal Intelligence Operating System. It transforms ambiguous requests into structured, research-backed problem definitions by managing context, requirements, research activities, findings, information gaps, and readiness assessments. This ensures that downstream reasoning engines operate on well-defined problems supported by sufficient evidence rather than assumptions.

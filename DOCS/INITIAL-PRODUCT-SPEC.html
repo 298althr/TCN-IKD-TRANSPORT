@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>INITIAL PRODUCT SPECIFICATION — TCN IKORODU TRANSPORT MANAGEMENT SYSTEM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* ============ VLTHR deck system — blue (per EXAMPLE SLIDE DECK) ============ */
+:root{
+  --blue:#1f5bff;--sky:#6fa0ff;--ink:#05070d;--navy:#071445;
+  --bg:#f3f5f9;--mut:#5a6478;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3,.big{font-family:'Bricolage Grotesque',Inter,sans-serif;font-weight:800;letter-spacing:-.045em}
+h1{font-size:clamp(38px,9vw,80px);line-height:.95}
+h2{font-size:clamp(28px,6vw,50px);line-height:1}
+h3{font-size:clamp(15px,1.9vw,20px);letter-spacing:-.02em;line-height:1.15}
+p,li{font-size:clamp(13px,1.4vw,15.5px);line-height:1.55;color:var(--mut);max-width:56ch}
+.d p,.d li,.n p,.n li,.b p,.b li{color:#c9d3ea}
+
+/* slide = one A4 portrait page */
+.s{width:min(100%,794px);margin:0 auto;background:#fff;position:relative;
+   padding:clamp(26px,5.5%,56px);display:flex;flex-direction:column;gap:clamp(14px,2.2vh,24px);
+   min-height:min(297mm,130vw);overflow:hidden}
+.s+.s{border-top:6px solid var(--bg)}
+.d{background:var(--ink);color:#fff}
+.n{background:var(--navy);color:#fff}
+.b{background:radial-gradient(120% 120% at 15% 0%,#3d7bff 0,#1f5bff 40%,#0a2cc4 100%);color:#fff}
+.b p,.b li{color:#dbe5ff}
+.tag{font:500 10.5px 'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.09em;color:var(--blue)}
+.d .tag,.n .tag{color:var(--sky)}.b .tag{color:#fff}
+.ft{font-size:10.5px;color:var(--mut);margin-top:auto;padding-top:10px;border-top:1px solid #edf0f4;max-width:none}
+.d .ft,.n .ft{border-color:rgba(255,255,255,.14);color:#8fa0c4}
+.b .ft{border-color:rgba(255,255,255,.25);color:#c5d4ff}
+.pg{position:absolute;top:clamp(18px,3%,34px);right:clamp(20px,4%,40px);font:500 10px 'JetBrains Mono',monospace;color:var(--mut)}
+.d .pg,.n .pg{color:#7d8fb8}
+
+/* components — inherited from the deck template */
+.two{display:grid;gap:clamp(16px,3vw,36px);grid-template-columns:repeat(auto-fit,minmax(250px,1fr));align-items:center}
+.g{display:grid;gap:clamp(12px,2vw,24px);grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.c{border-top:2px solid currentColor;padding-top:12px;display:grid;gap:7px;align-content:start}
+.c p{font-size:13px}
+.big{font-size:clamp(56px,13vw,110px);line-height:.9;color:var(--blue)}
+.d .big,.n .big{color:var(--sky)}
+.nd{display:flex;gap:8px;flex-wrap:wrap}
+.nd div{flex:1 1 100px;border:1.5px solid #dbe3f5;border-radius:14px;padding:12px;display:grid;gap:4px}
+.nd b{font:500 10px 'JetBrains Mono',monospace;color:var(--blue)}
+.nd span{font:800 14px 'Bricolage Grotesque';letter-spacing:-.02em}
+.nd small{font-size:11px;color:var(--mut);line-height:1.35}
+.d .nd div,.n .nd div{border-color:#26396e}.d .nd small,.n .nd small{color:#8fa0c4}
+.fn{display:grid;gap:8px}
+.fn div{padding:13px 18px;border-radius:12px;font:800 clamp(14px,1.6vw,18px) 'Bricolage Grotesque';letter-spacing:-.02em;background:linear-gradient(90deg,var(--blue),#3d7bff);color:#fff}
+.fn small{display:block;font:400 11.5px Inter;opacity:.85;margin-top:2px}
+.tbl{display:grid;gap:8px}
+.tr{display:grid;grid-template-columns:1.2fr 1fr auto;gap:12px;align-items:center;background:var(--bg);border-radius:14px;padding:12px 16px;font-size:13px}
+.tr.h{background:none;font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;padding-bottom:0}
+.tr .st{font-size:10px;font-weight:700;padding:4px 11px;border-radius:99px;white-space:nowrap;text-align:center;background:#e8eeff;color:var(--blue)}
+.tr .st.gold{background:#fff0d3;color:#9a6b00}
+.b .tr{background:rgba(255,255,255,.1)}.b .tr b{color:#fff}.b .tr .lbl2{color:#c5d4ff}
+.pill-row{display:flex;gap:8px;flex-wrap:wrap}
+.pill-row span{background:var(--ink);color:#fff;font-size:12px;font-weight:600;padding:8px 15px;border-radius:99px}
+.pill-row span:nth-child(odd){background:var(--blue)}
+.mono-card{background:#0d1530;border:1px solid #22306b;border-radius:16px;padding:18px 20px;font:500 11.5px/1.9 'JetBrains Mono',monospace;color:#cfd8ff}
+.mono-card i{font-style:normal;color:var(--sky)}.mono-card em{font-style:normal;color:#fff}
+.state-flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.state-flow span{background:var(--bg);border-radius:99px;padding:7px 13px;font-size:11.5px;font-weight:700}
+.state-flow span.hot{background:var(--blue);color:#fff}
+.state-flow i{color:var(--mut);font-style:normal;font-size:13px}
+.deco{position:absolute;border-radius:50%;pointer-events:none}
+.deco.sky{background:var(--sky)}.deco.blue{background:var(--blue)}.deco.wh{background:rgba(255,255,255,.07)}
+
+/* nav */
+#nav{position:fixed;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:space-between;
+  padding:10px 18px;z-index:9;font:500 11px 'JetBrains Mono',monospace;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(10px);border-top:1px solid #e8ecf1;color:var(--ink)}
+#printbtn{border:0;background:var(--blue);color:#fff;border-radius:99px;padding:9px 18px;font:700 11px 'JetBrains Mono',monospace;cursor:pointer}
+#nav a{color:inherit;text-decoration:none}
+#nav .up{border:1.5px solid var(--ink);border-radius:99px;padding:7px 14px}
+#pb{position:fixed;top:0;left:0;height:3px;background:var(--blue);z-index:9;transition:width .25s}
+
+/* ============ PRINT — one slide per A4 portrait page ============ */
+@page{size:A4 portrait;margin:0}
+@media print{
+  body{background:#fff}
+  .s{width:210mm;height:297mm;min-height:0;margin:0;padding:16mm 15mm;border:0;page-break-after:always;break-inside:avoid}
+  .s:last-child{page-break-after:auto}
+  #nav,#pb{display:none}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media(max-width:520px){.tr{grid-template-columns:1fr auto;gap:6px}.tr .lbl2{display:none}}
+</style>
+</head>
+<body>
+<div id="pb"></div>
+
+<!-- 01 · COVER -->
+<section class="s d">
+  <div class="deco blue" style="right:-70px;top:-70px;width:210px;height:210px;opacity:.9"></div>
+  <div class="deco sky" style="left:-45px;bottom:-55px;width:140px;height:140px;opacity:.5"></div>
+  <span class="pg">01</span>
+  <span class="tag">For The Covenant Nation · Ikorodu</span>
+  <svg width="150" height="78" viewBox="0 0 150 78" fill="none" aria-label="Church bus">
+    <rect x="6" y="8" width="138" height="48" rx="14" stroke="#6fa0ff" stroke-width="4"/>
+    <line x1="6" y1="34" x2="144" y2="34" stroke="#6fa0ff" stroke-width="4"/>
+    <line x1="34" y1="14" x2="34" y2="34" stroke="#6fa0ff" stroke-width="3"/>
+    <line x1="62" y1="14" x2="62" y2="34" stroke="#6fa0ff" stroke-width="3"/>
+    <line x1="90" y1="14" x2="90" y2="34" stroke="#6fa0ff" stroke-width="3"/>
+    <line x1="118" y1="8" x2="118" y2="56" stroke="#6fa0ff" stroke-width="3"/>
+    <circle cx="42" cy="62" r="9" stroke="#6fa0ff" stroke-width="4"/>
+    <circle cx="108" cy="62" r="9" stroke="#6fa0ff" stroke-width="4"/>
+    <line x1="6" y1="44" x2="144" y2="44" stroke="#6fa0ff" stroke-width="2" opacity=".45"/>
+  </svg>
+  <div><h1>INITIAL PRODUCT SPECIFICATION<br><span style="color:var(--sky);font-size:.62em;line-height:1.1">TCN IKORODU TRANSPORT<br>MANAGEMENT SYSTEM</span></h1></div>
+  <div>
+    <p style="font-size:clamp(14px,1.6vw,17px)">A booking and management platform for church transport — so that every seat, every payment and every boarding is recorded, fair and traceable.</p>
+    <p style="margin-top:12px;font-size:12px">Draft for church review · Prepared by Saviour U. A. · October 2026</p>
+  </div>
+  <span class="ft">This is an Initial spec that requires revision for optimation opportunities</span>
+</section>
+
+<!-- 02 · EXEC SUMMARY — WHAT WAS AGREED -->
+<section class="s">
+  <span class="pg">02</span>
+  <span class="tag">Executive summary — the meeting held · part 1 of 2</span>
+  <h2>What was agreed.</h2>
+  <p>A working session reviewed the whole system scope. These points were settled in the room — this specification is built on them.</p>
+  <div class="g">
+    <div class="c"><h3>Payments</h3><p>Sunday-service seats stay <b>free</b>. Only designated special programmes charge, paid online securely. Refunds are automatic — but only for cancellations made <b>before the event day</b>.</p></div>
+    <div class="c"><h3>Paying for a group</h3><p>One member can book and pay for several people in a single payment. The payer appears on the receipt, and every rider is named — so each person has valid proof of their own seat.</p></div>
+    <div class="c"><h3>How members receive it</h3><p>An installable web app shared by one link — deliberately replacing an app-store listing. Members get push alerts plus email for confirmations, payment results and reminders.</p></div>
+    <div class="c"><h3>Members only</h3><p>Access is gated to congregation members — tied to the church register, not open signup. Signing in with Google proves identity; the register still decides membership.</p></div>
+    <div class="c"><h3>Capacity per bus</h3><p>A route's seats are the sum of its buses. The transport team can open or close booking <b>per individual bus</b> — one bus full doesn't close the route.</p></div>
+    <div class="c"><h3>Booking windows automated</h3><p>Bookings open and close on schedule automatically — with a manual override the team can still use.</p></div>
+    <div class="c"><h3>Three screens, three roles</h3><p>Separate dashboards confirmed for <b>Members</b> (book, pay, receipts), <b>Marshals</b> (boarding), and the <b>Admin/transport team</b> (buses, refunds, reports).</p></div>
+    <div class="c"><h3>Absences counted</h3><p>No-shows become a recorded status — visible for the first time, so attendance can finally be learned from.</p></div>
+  </div>
+</section>
+
+<!-- 03 · EXEC SUMMARY — WHAT WAS SCOPED -->
+<section class="s n">
+  <span class="pg">03</span>
+  <span class="tag">Executive summary — the meeting held · part 2 of 2</span>
+  <h2>What was scoped, and what's still open.</h2>
+  <p>The meeting also mapped everything the platform must cover beyond booking — and honestly flagged what remains undecided.</p>
+  <div class="g">
+    <div class="c"><h3>Security &amp; privacy</h3><p>Protection beyond passwords — the app is the only door to member data; card details are never stored by the church, handled entirely by the payment provider.</p></div>
+    <div class="c"><h3>A permanent record</h3><p>Every booking, payment and admin change logged and attributed — and a review path so leaders can look back.</p></div>
+    <div class="c"><h3>Fairness &amp; safety limits</h3><p>Sensible per-person usage limits so no single account — real or compromised — can block out seats or flood the system.</p></div>
+    <div class="c"><h3>Backup &amp; recovery</h3><p>Automatic backups, a tested restore plan, and a clear difference between recovering a crash and responding to a breach.</p></div>
+    <div class="c"><h3>Receipts &amp; records storage</h3><p>Receipts generated on demand from the live record — always accurate, nothing to lose. Whether proof-of-payment uploads are still needed is being decided.</p></div>
+    <div class="c"><h3>Built for what comes next</h3><p>The foundation is being laid so future church products can share it — reuse membership and records rather than rebuild.</p></div>
+  </div>
+  <p style="color:#c9d3ea"><b style="color:var(--sky)">Still to settle:</b> the build technology, exactly how a seat is protected while someone pays, and how returning members who registered before are handled. These are technical — nothing on the following pages depends on the answer.</p>
+</section>
+
+<!-- 04 · WHY -->
+<section class="s d">
+  <div class="deco wh" style="right:-50px;bottom:15%;width:170px;height:170px"></div>
+  <span class="pg">04</span>
+  <span class="tag">Why we're building this</span>
+  <h2>Today, one person's phone is the whole system.</h2>
+  <div class="g">
+    <div class="c"><h3>Seats promised in chat</h3><p>Booking happens over WhatsApp and calls. Nobody knows a bus is full until people are standing beside it.</p></div>
+    <div class="c"><h3>Payments by hand</h3><p>Money goes to an admin who records names manually — whether a paid seat is actually confirmed lives in one person's memory.</p></div>
+    <div class="c"><h3>Paper at the bus stop</h3><p>Marshals tick names off printed lists. Absences are never recorded, so nothing can be learned or improved.</p></div>
+    <div class="c"><h3>Nothing survives the week</h3><p>No booking history means refund questions, capacity planning and reports all end in "we can't tell."</p></div>
+  </div>
+  <span class="ft">Confirmed with the Transport Department — this is the documented reality today</span>
+</section>
+
+<!-- 05 · WHAT IT IS -->
+<section class="s">
+  <span class="pg">05</span>
+  <span class="tag">What it is</span>
+  <h2>One journey, end to end.</h2>
+  <div class="two">
+    <div>
+      <p>A member opens a link, signs in, picks a programme, chooses a route and bus, sees exactly how many seats remain, books — and pays only when the programme calls for it. A marshal checks them aboard. Everything in between is recorded automatically.</p>
+      <p style="margin-top:10px"><b>The promise:</b> capacity, payment and boarding become provable facts — not someone's recollection.</p>
+    </div>
+    <div class="mono-card"><i>member</i> → <em>sign in</em> → <i>programme</i> → <em>route &amp; pickup</em> → <i>seat held</i> → <em>payment</em> → <i>confirmed</i> → <em>boarded</em><br><br><i>and everything written to a permanent record</i></div>
+  </div>
+</section>
+
+<!-- 06 · WHO -->
+<section class="s n">
+  <span class="pg">06</span>
+  <span class="tag">Who it serves</span>
+  <h2>Built around four kinds of people.</h2>
+  <div class="g">
+    <div class="c"><h3>The Member</h3><p>Books a seat, pays where needed, carries a scannable ticket. Can also book and pay <b>for family or friends</b> in one payment.</p></div>
+    <div class="c"><h3>The Marshal</h3><p>Runs boarding at the pickup point on their phone — live passenger list, one-tap check-in. Assigned by the transport team.</p></div>
+    <div class="c"><h3>The Transport Team</h3><p>Opens and closes bookings per bus, manages refunds, sees live reports. Replaces paper, calls and memory.</p></div>
+    <div class="c"><h3>Church Leadership</h3><p>Sees the reports that matter — attendance, utilization, finances — and approves major policy decisions.</p></div>
+  </div>
+</section>
+
+<!-- 07 · BOOKING -->
+<section class="s b">
+  <span class="pg">07</span>
+  <span class="tag">Booking a seat</span>
+  <h2>Under two minutes, on any phone.</h2>
+  <div class="nd" style="margin-top:4px">
+    <div style="border-color:rgba(255,255,255,.3)"><b style="color:#fff">01</b><span style="color:#fff">Open &amp; sign in</span><small style="color:#c5d4ff">installs like an app</small></div>
+    <div style="border-color:rgba(255,255,255,.3)"><b style="color:#fff">02</b><span style="color:#fff">Choose programme</span><small style="color:#c5d4ff">Sunday or special</small></div>
+    <div style="border-color:rgba(255,255,255,.3)"><b style="color:#fff">03</b><span style="color:#fff">Pick route &amp; bus</span><small style="color:#c5d4ff">live seats left shown</small></div>
+    <div style="border-color:rgba(255,255,255,.3)"><b style="color:#fff">04</b><span style="color:#fff">Confirm or pay</span><small style="color:#c5d4ff">seat held while you pay</small></div>
+    <div style="border-color:rgba(255,255,255,.3)"><b style="color:#fff">05</b><span style="color:#fff">Ticket issued</span><small style="color:#c5d4ff">booking reference + alert</small></div>
+    <div style="border-color:rgba(255,255,255,.3)"><b style="color:#fff">06</b><span style="color:#fff">Board</span><small style="color:#c5d4ff">marshal checks you in</small></div>
+  </div>
+</section>
+
+<!-- 08 · GROUPS -->
+<section class="s">
+  <span class="pg">08</span>
+  <span class="tag">Booking for others</span>
+  <h2>One person pays. Everyone rides.</h2>
+  <div class="two">
+    <div>
+      <p>A member can book seats for family, a cell group or elderly relatives in a single payment — each rider still gets their own name on the manifest and their own seat.</p>
+      <p style="margin-top:10px">This mirrors how church families already travel together — the system just makes it accountable.</p>
+    </div>
+    <div class="mono-card"><i>group booking</i><br><em>payer:      one member</em><br><em>riders:     self + 3 beneficiaries</em><br><em>payment:    one transaction</em><br><em>manifest:   4 names, 4 seats</em><br><em>tickets:    each rider traceable</em></div>
+  </div>
+</section>
+
+<!-- 09 · PAYING -->
+<section class="s">
+  <span class="pg">09</span>
+  <span class="tag">Paying for seats</span>
+  <h2>Simple rules everyone can trust.</h2>
+  <div class="g">
+    <div class="c"><h3>Sundays are free</h3><p>Regular Sunday-service transport stays free — book and you're confirmed instantly.</p></div>
+    <div class="c"><h3>Specials are paid securely</h3><p>Online payment through a trusted Nigerian payment provider (bank card, transfer, USSD). Your seat is held while you complete payment.</p></div>
+    <div class="c"><h3>Cash still works</h3><p>We heard the transport department: some members will always pay in person. A manual-payment option stays available — recorded in the same system, on the same manifest.</p></div>
+    <div class="c"><h3>You always know where you stand</h3><p>Confirmed, pending or cancelled — your booking status is visible and notified, never assumed.</p></div>
+  </div>
+</section>
+
+<!-- 10 · CANCEL/REFUND -->
+<section class="s">
+  <span class="pg">10</span>
+  <span class="tag">Changing your mind</span>
+  <h2>Fair rules, applied the same for everyone.</h2>
+  <div class="fn">
+    <div style="width:100%">Cancel before event day<small>Automatic refund to your payment method — no calls needed</small></div>
+    <div style="width:78%">Cancel after the cutoff<small>Your seat is released to someone waitlisted; payment retained — same as today's norm</small></div>
+    <div style="width:56%">Simply not showing up<small>Recorded as a no-show — non-refundable</small></div>
+  </div>
+  <p>These rules match what the transport department already practices — the difference is they're now applied consistently, and recorded.</p>
+</section>
+
+<!-- 11 · DAY OF TRAVEL -->
+<section class="s d">
+  <div class="deco blue" style="right:-45px;top:-45px;width:130px;height:130px;opacity:.85"></div>
+  <span class="pg">11</span>
+  <span class="tag">Day of travel</span>
+  <h2>Boarding, minus the paper.</h2>
+  <div class="g">
+    <div class="c"><h3>Live manifest</h3><p>The marshal's phone shows the real passenger list for their bus — names, seats, group bookings — updated the moment bookings change.</p></div>
+    <div class="c"><h3>One-tap check-in</h3><p>Boarding is a tap per passenger. Absences are marked as no-shows — finally visible for the first time.</p></div>
+    <div class="c"><h3>Made for the car park</h3><p>Large touch targets, high contrast, works at 6 AM in the sun — and on older phones.</p></div>
+    <div class="c"><h3>Paper as backup</h3><p>A printable manifest stays available for device failures and offline moments.</p></div>
+  </div>
+</section>
+
+<!-- 12 · ADMIN -->
+<section class="s n">
+  <span class="pg">12</span>
+  <span class="tag">For the transport team</span>
+  <h2>The operations room.</h2>
+  <div class="nd">
+    <div><b>01</b><span>Bookings</span><small>see every seat, search, correct errors</small></div>
+    <div><b>02</b><span>Fleet</span><small>routes and buses; open/close booking per bus</small></div>
+    <div><b>03</b><span>Payments</span><small>transactions, refund queue, reconciliation</small></div>
+    <div><b>04</b><span>Marshals</span><small>assignments and live boarding counts</small></div>
+    <div><b>05</b><span>Reports</span><small>attendance, utilization, finances</small></div>
+    <div><b>06</b><span>Record</span><small>permanent log of every action</small></div>
+  </div>
+  <p style="color:#c9d3ea">A working visual prototype already exists — member, marshal and admin screens, ready for your feedback.</p>
+</section>
+
+<!-- 13 · NOTIFICATIONS -->
+<section class="s">
+  <span class="pg">13</span>
+  <span class="tag">Staying informed</span>
+  <h2>The system tells you. You don't chase it.</h2>
+  <div class="g">
+    <div class="c"><h3>Install once</h3><p>The app installs from a link — no app store, no downloads folder, no fuss. It sits on the home screen like any app.</p></div>
+    <div class="c"><h3>Booking confirmations</h3><p>The moment a seat is yours — push notification and email with your reference.</p></div>
+    <div class="c"><h3>Departure reminders</h3><p>Alerts before your bus leaves, and if your booking status ever changes.</p></div>
+    <div class="c"><h3>Works where members are</h3><p>Designed for the phones and habits our congregation actually has — not the ones we wish they had.</p></div>
+  </div>
+</section>
+
+<!-- 14 · TRUST -->
+<section class="s d">
+  <span class="pg">14</span>
+  <span class="tag">Trust &amp; accountability</span>
+  <h2>A record that can't be quietly rewritten.</h2>
+  <div class="g">
+    <div class="c"><h3>Every action is attributed</h3><p>Who booked, who paid, who checked in, who changed what — permanently logged.</p></div>
+    <div class="c"><h3>Corrections, not erasures</h3><p>When something is wrong, a correction is added — pointing at the original. Nothing disappears.</p></div>
+    <div class="c"><h3>Members only</h3><p>Access is tied to the church register — the system knows who belongs.</p></div>
+    <div class="c"><h3>Your data, respected</h3><p>Only what's needed for transport is collected; reporting uses the minimum necessary.</p></div>
+  </div>
+  <span class="ft">Principle we build by: the system cannot be edited in place — so it can always be trusted</span>
+</section>
+
+<!-- 15 · FIELD TRUTH -->
+<section class="s n">
+  <span class="pg">15</span>
+  <span class="tag">What the transport department told us</span>
+  <h2>Designed from reality, not assumptions.</h2>
+  <div class="g">
+    <div class="c"><h3>2–4 buses per programme</h3><p>Semi-fixed routes and landmarks, flexed by turnout — the system supports both.</p></div>
+    <div class="c"><h3>Cash is real</h3><p>In-person payment must survive — so it does, properly recorded.</p></div>
+    <div class="c"><h3>The register exists</h3><p>Member lists can be loaded in — members won't have to re-register from scratch.</p></div>
+    <div class="c"><h3>Refunds as practiced</h3><p>Before-departure cancellation only — now enforced consistently instead of by memory.</p></div>
+  </div>
+</section>
+
+<!-- 16 · BEFORE/AFTER -->
+<section class="s b">
+  <span class="pg">16</span>
+  <span class="tag">What changes</span>
+  <h2>From memory to record.</h2>
+  <div class="tbl">
+    <div class="tr"><b>Seat availability</b><span class="lbl2">was: ask around, hope</span><span class="st">live count</span></div>
+    <div class="tr"><b>Payment proof</b><span class="lbl2">was: screenshot in chat</span><span class="st">system-confirmed</span></div>
+    <div class="tr"><b>Who's boarding</b><span class="lbl2">was: printed list</span><span class="st">live manifest</span></div>
+    <div class="tr"><b>Refunds</b><span class="lbl2">was: case-by-case memory</span><span class="st">rule + auto-refund</span></div>
+    <div class="tr"><b>No-shows</b><span class="lbl2">was: never recorded</span><span class="st">tracked, reportable</span></div>
+    <div class="tr"><b>Reports</b><span class="lbl2">was: "we can't tell"</span><span class="st gold">weekly digest</span></div>
+  </div>
+</section>
+
+<!-- 17 · PHASES -->
+<section class="s">
+  <span class="pg">17</span>
+  <span class="tag">How it rolls out</span>
+  <h2>Proven in stages, not launched on faith.</h2>
+  <div class="fn">
+    <div style="width:100%">Phase 1 — the core<small>Booking, capacity, payments, manifests, records — the full working loop</small></div>
+    <div style="width:80%">Phase 2 — the amplifiers<small>SMS/WhatsApp alerts, smarter reporting, enhanced backup — added once real usage guides them</small></div>
+    <div style="width:60%">Beyond — the foundation<small>The same platform can host future church products without rebuilding</small></div>
+  </div>
+  <p>Each stage is reviewed before the next begins — nothing goes live unproven.</p>
+</section>
+
+<!-- 18 · DECISIONS FOR LEADERSHIP -->
+<section class="s">
+  <span class="pg">18</span>
+  <span class="tag">Decisions we're bringing to leadership</span>
+  <h2>Where we'd value your input.</h2>
+  <div class="g">
+    <div class="c"><h3>Manifest lock time</h3><p>How long before departure should the boarding list freeze? (Asked by the transport team.)</p></div>
+    <div class="c"><h3>Offline boarding</h3><p>Should a printable manifest be mandatory backup for areas with poor signal?</p></div>
+    <div class="c"><h3>Who corrects the record</h3><p>When a check-in is marked wrong, who has authority to fix it — and how does a member appeal?</p></div>
+    <div class="c"><h3>Keeping the register current</h3><p>The member roll drives access — who owns keeping it up to date?</p></div>
+    <div class="c"><h3>Coverage for admins</h3><p>We recommend at least two trained administrators, so the system never rests on one person again.</p></div>
+  </div>
+  <span class="ft">Technical decisions (hosting stack, seat-hold mechanics) are being finalized separately — they don't change anything on these pages</span>
+</section>
+
+<!-- 19 · NEXT -->
+<section class="s d">
+  <div class="deco sky" style="right:-60px;bottom:-60px;width:190px;height:190px;opacity:.5"></div>
+  <div class="deco blue" style="left:-30px;top:20%;width:100px;height:100px;opacity:.85"></div>
+  <span class="pg">19</span>
+  <span class="tag">What happens next</span>
+  <h2>Review. Refine. Build.</h2>
+  <div class="fn">
+    <div style="width:100%">This spec goes to the transport team and leadership for feedback</div>
+    <div style="width:82%">Your input shapes the final Product Requirements Document</div>
+    <div style="width:64%">Working screens are ready for hands-on review</div>
+    <div style="width:46%">Then we build — proven, recorded, accountable</div>
+  </div>
+  <p>Questions and corrections welcome — this document exists to be improved before anything is built.</p>
+  <span class="ft">INITIAL PRODUCT SPEC · TCN IKORODU TRANSPORT MANAGEMENT SYSTEM · October 2026</span>
+</section>
+
+<!-- nav -->
+<div id="nav">
+  <span>TCN TRANSPORT · SPEC</span>
+  <button id="printbtn" onclick="window.print()">SAVE AS PDF ↓</button>
+  <a class="up" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false">TOP ↑</a>
+</div>
+<script>
+addEventListener("scroll",()=>{
+  const h=document.documentElement;
+  document.getElementById("pb").style.width=(h.scrollTop/(h.scrollHeight-h.clientHeight)*100)+"%";
+},{passive:true});
+</script>
+</body>
+</html>

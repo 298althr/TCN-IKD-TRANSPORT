@@ -1,0 +1,290 @@
+MME-015 · Memory & Memory Management Engine (MME)
+
+Version: 1.0
+Status: Core Intelligence Engine
+Layer: Persistent Intelligence & Organizational Memory
+Dependencies: UIK, ADCOS, MNIF, KGE, LME, MOE
+
+1. Purpose
+
+The Memory & Memory Management Engine (MME) is the persistent memory system of the Universal Intelligence Operating System.
+
+Unlike the Knowledge Engine, which represents validated knowledge, the Memory Engine stores everything the organization experiences throughout its lifecycle.
+
+It answers:
+
+"What has happened before, what was learned, and how can previous experience improve future decisions?"
+
+MME is domain-agnostic and supports individuals, enterprises, AI agents, governments, healthcare, finance, robotics, manufacturing, and research systems.
+
+2. Responsibilities
+
+The Memory Engine is responsible for:
+
+Persistent storage
+
+Experience recording
+
+Context retention
+
+Conversation memory
+
+Decision memory
+
+Organizational memory
+
+Long-term memory
+
+Short-term memory
+
+Episodic memory
+
+Semantic memory
+
+Procedural memory
+
+Memory retrieval
+
+Memory compression
+
+Memory expiration
+
+Memory indexing
+
+3. Memory Lifecycle
+
+Event ↓ Capture ↓ Classification ↓ Storage ↓ Indexing ↓ Relationship Mapping ↓ Retrieval ↓ Reuse ↓ Archive ↓ Retention / Expiration 
+
+4. Memory Types
+
+The engine supports multiple forms of memory.
+
+Episodic Memory
+
+Specific events.
+
+Semantic Memory
+
+Facts and concepts.
+
+Procedural Memory
+
+How things are done.
+
+Working Memory
+
+Temporary execution context.
+
+Organizational Memory
+
+Enterprise knowledge.
+
+Agent Memory
+
+AI-specific context.
+
+Historical Memory
+
+Immutable historical record.
+
+5. Database Schema
+
+Table 1 — memory_objects
+
+Master memory registry.
+
+memory_id UUID PK memory_type title summary confidence importance status created_at 
+
+Table 2 — episodic_memory
+
+episode_id UUID PK memory_id event_reference participants location occurred_at 
+
+Table 3 — semantic_memory
+
+semantic_id UUID PK memory_id knowledge_reference concepts relationships version 
+
+Table 4 — procedural_memory
+
+procedure_id UUID PK memory_id workflow_reference steps_reference effectiveness 
+
+Table 5 — working_memory
+
+working_memory_id UUID PK session_id context_json expires_at status 
+
+Table 6 — organizational_memory
+
+organization_memory_id UUID PK organization_reference memory_id department classification 
+
+Table 7 — memory_relationships
+
+relationship_id UUID PK source_memory target_memory relationship_type strength 
+
+Examples
+
+Caused By
+
+Similar To
+
+Depends On
+
+Contradicts
+
+Extends
+
+Derived From
+
+Table 8 — memory_tags
+
+tag_id UUID PK memory_id tag tag_type 
+
+Table 9 — memory_indexes
+
+Search index.
+
+index_id UUID PK memory_id embedding_reference keywords search_vector 
+
+Table 10 — memory_retrievals
+
+retrieval_id UUID PK memory_id request_source retrieval_reason retrieved_at 
+
+Table 11 — memory_usage
+
+usage_id UUID PK memory_id referenced_by_engine reference_count last_used 
+
+Table 12 — memory_versions
+
+version_id UUID PK memory_id version change_summary modified_at 
+
+Table 13 — memory_compression
+
+compression_id UUID PK memory_id compression_method original_size compressed_size executed_at 
+
+Table 14 — retention_policies
+
+policy_id UUID PK policy_name memory_type retention_period archive_policy expiration_policy 
+
+Table 15 — archive_registry
+
+archive_id UUID PK memory_id archive_location archive_reason archived_at 
+
+Table 16 — forgetting_queue
+
+Controlled expiration.
+
+forgetting_id UUID PK memory_id expiration_reason scheduled_date status 
+
+Table 17 — recall_sessions
+
+recall_session_id UUID PK user_reference purpose retrieved_objects duration_ms 
+
+Table 18 — context_packages
+
+Reusable context bundles.
+
+package_id UUID PK package_name included_memories package_type version 
+
+Table 19 — memory_quality
+
+quality_id UUID PK memory_id accuracy_score completeness_score retrievability_score overall_quality 
+
+Table 20 — memory_audit
+
+Immutable history.
+
+audit_id UUID PK memory_id action actor details timestamp 
+
+6. Memory Hierarchy
+
+Memory │ ├── Episodic ├── Semantic ├── Procedural ├── Working ├── Organizational │ ├── Relationships ├── Tags ├── Indexes ├── Versions ├── Compression ├── Retention ├── Archive └── Audit 
+
+7. Retrieval Pipeline
+
+Request ↓ Context Analysis ↓ Memory Search ↓ Ranking ↓ Relationship Expansion ↓ Context Packaging ↓ Delivery ↓ Usage Recording 
+
+The retrieval process is independent of storage technology and supports graph, relational, vector, and document databases.
+
+8. Retention Strategy
+
+Each memory object is evaluated using:
+
+Importance
+
+Usage frequency
+
+Confidence
+
+Business value
+
+Regulatory requirements
+
+Age
+
+Relevance
+
+Relationships
+
+Possible actions:
+
+Retain
+
+Compress
+
+Archive
+
+Merge
+
+Expire
+
+Preserve permanently
+
+9. Integration Points
+
+Inputs
+
+Learning Engine
+
+Monitoring Engine
+
+Knowledge Engine
+
+Execution Engine
+
+User interactions
+
+External systems
+
+Outputs
+
+Knowledge Engine
+
+Recommendation Engine
+
+ADCOS
+
+AI Agents
+
+Search Engine
+
+Personalization Engine
+
+10. Design Principles
+
+Memory is immutable unless versioned.
+
+Experience is never discarded without policy.
+
+Retrieval is contextual rather than keyword-only.
+
+Relationships are first-class objects.
+
+Memory supports multiple representations.
+
+Retention is policy-driven.
+
+Every retrieval is auditable.
+
+Organizational intelligence accumulates over time.
+
+11. Foundation Summary
+
+The Memory & Memory Management Engine provides the persistent intelligence layer of the Universal Intelligence Operating System. By organizing experiences into episodic, semantic, procedural, working, and organizational memory while supporting contextual retrieval, lifecycle management, and policy-driven retention, MME enables the system to continuously accumulate and reuse intelligence across every domain, workflow, and decision.

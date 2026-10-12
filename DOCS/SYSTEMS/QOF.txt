@@ -1,0 +1,326 @@
+QOF-005 · Quality Observation Framework (QOF)
+
+Version: 1.0
+Status: Core Intelligence Engine
+Layer: Observation, Measurement & Evidence Quality
+Dependencies: Universal Intelligence Kernel (UIK), ADCOS, MNIF, DQS
+
+1. Purpose
+
+The Quality Observation Framework (QOF) is responsible for measuring the quality of observations before they become facts, knowledge, or evidence.
+
+Every intelligent system ultimately depends on observations:
+
+User statements
+
+Market prices
+
+Sensor readings
+
+API responses
+
+Documents
+
+Images
+
+Audio
+
+Expert opinions
+
+Research papers
+
+Simulations
+
+QOF determines:
+
+"Can this observation be trusted, measured, reproduced, and used as evidence?"
+
+Unlike DQS, which evaluates decisions, QOF evaluates inputs.
+
+2. Responsibilities
+
+QOF is responsible for:
+
+Observation acquisition
+
+Observation normalization
+
+Observation scoring
+
+Source reliability
+
+Data quality measurement
+
+Signal quality assessment
+
+Noise detection
+
+Bias detection
+
+Missing information detection
+
+Observation lineage
+
+Observation reproducibility
+
+Observation confidence
+
+3. Observation Lifecycle
+
+Observation Captured ↓ Normalization ↓ Source Validation ↓ Quality Measurement ↓ Noise Detection ↓ Bias Detection ↓ Completeness Check ↓ Reliability Scoring ↓ Confidence Estimation ↓ Evidence Classification ↓ Knowledge Engine 
+
+4. Observation Model
+
+Every observation contains:
+
+Source
+
+Timestamp
+
+Collector
+
+Context
+
+Raw Value
+
+Normalized Value
+
+Measurement Method
+
+Confidence
+
+Reliability
+
+Provenance
+
+Quality Score
+
+5. Database Schema
+
+Table 1 — observations
+
+Master observation table.
+
+observation_id UUID PK workspace_id FK project_id FK observation_type title raw_value normalized_value status captured_at 
+
+Table 2 — observation_sources
+
+source_id UUID PK source_name source_type provider owner reliability_score trust_level 
+
+Examples
+
+Human
+
+API
+
+Database
+
+Sensor
+
+Camera
+
+Trading Feed
+
+Government Dataset
+
+Academic Paper
+
+Table 3 — observation_context
+
+context_id UUID PK observation_id location_reference environment collection_method conditions metadata_json 
+
+Table 4 — observation_quality
+
+Quality measurements.
+
+quality_id UUID PK observation_id accuracy_score precision_score consistency_score completeness_score timeliness_score overall_score 
+
+Table 5 — observation_bias
+
+bias_id UUID PK observation_id bias_type severity description mitigation 
+
+Examples
+
+Sampling Bias
+
+Confirmation Bias
+
+Measurement Bias
+
+Selection Bias
+
+Observer Bias
+
+Table 6 — observation_noise
+
+noise_id UUID PK observation_id noise_type estimated_level filtered filter_method 
+
+Table 7 — observation_confidence
+
+confidence_id UUID PK observation_id confidence_score confidence_method confidence_interval generated_at 
+
+Table 8 — observation_lineage
+
+Tracks provenance.
+
+lineage_id UUID PK observation_id parent_observation transformation operator timestamp 
+
+Table 9 — observation_validation
+
+validation_id UUID PK observation_id validator validation_status validation_notes validated_at 
+
+Table 10 — observation_evidence
+
+Maps observations into evidence.
+
+evidence_id UUID PK observation_id evidence_level support_strength usable knowledge_ready 
+
+Evidence levels
+
+Raw
+
+Verified
+
+Corroborated
+
+Strong
+
+Definitive
+
+Table 11 — observation_versions
+
+version_id UUID PK observation_id version change_summary created_at 
+
+Table 12 — observation_tags
+
+tag_mapping_id UUID PK observation_id tag_id 
+
+Table 13 — measurement_methods
+
+method_id UUID PK method_name description expected_accuracy standard_reference 
+
+Table 14 — quality_metrics
+
+Reference quality metrics.
+
+metric_id UUID PK metric_name weight threshold enabled 
+
+Table 15 — metric_results
+
+result_id UUID PK observation_id metric_id score passed 
+
+Table 16 — source_reputation
+
+Historical reliability.
+
+reputation_id UUID PK source_id historical_accuracy failure_rate usage_count last_updated 
+
+Table 17 — observation_relationships
+
+Graph connections.
+
+relationship_id UUID PK source_observation target_observation relationship_type confidence 
+
+Examples
+
+Confirms
+
+Contradicts
+
+Extends
+
+Refines
+
+Duplicates
+
+Table 18 — observation_alerts
+
+alert_id UUID PK observation_id alert_type severity message resolved 
+
+Table 19 — observation_statistics
+
+Aggregate metrics.
+
+statistics_id UUID PK workspace_id observation_count verified_count rejected_count average_quality generated_at 
+
+Table 20 — observation_catalog
+
+Searchable registry.
+
+catalog_id UUID PK observation_id domain classification keywords search_vector 
+
+6. Observation Quality Formula
+
+The overall observation quality is computed from weighted dimensions:
+
+Observation Quality = Accuracy + Precision + Completeness + Consistency + Timeliness + Reliability ──────────────────────── Weighted Average 
+
+Weights are configurable through the Kernel.
+
+7. Relationships
+
+Observation │ ├── Source ├── Context ├── Quality ├── Confidence ├── Bias ├── Noise ├── Validation ├── Evidence ├── Lineage ├── Relationships ├── Versions └── Alerts 
+
+8. Observation States
+
+Captured ↓ Normalized ↓ Validated ↓ Quality Scored ↓ Evidence Classified ↓ Knowledge Ready ↓ Archived 
+
+Rejected observations remain archived for audit purposes.
+
+9. Integration Points
+
+Inputs
+
+Human interviews
+
+APIs
+
+Sensors
+
+Documents
+
+Databases
+
+Simulations
+
+AI outputs
+
+External systems
+
+Outputs
+
+Knowledge Engine
+
+Research Engine
+
+Validation Engine
+
+DQS
+
+Learning Engine
+
+Memory Engine
+
+Only observations meeting quality thresholds are promoted to evidence.
+
+10. Design Principles
+
+Every observation has provenance.
+
+Every observation has measurable quality.
+
+No observation is accepted without traceability.
+
+Reliability is measured independently from confidence.
+
+Contradictory observations are preserved rather than discarded.
+
+Every transformation is recorded.
+
+Evidence is derived from validated observations, not raw inputs.
+
+Observation quality can be recalculated as standards evolve.
+
+11. Foundation Summary
+
+The Quality Observation Framework establishes the evidential foundation of the Universal Intelligence Operating System. By evaluating the quality, provenance, reliability, and reproducibility of every observation before it enters downstream intelligence pipelines, QOF ensures that higher-level reasoning engines operate on trusted, measurable, and auditable information rather than unverified data.

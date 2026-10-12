@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TCN Transport — Marshal App (Prototype)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--orange:#ff5722;--yellow:#ffd369;--ink:#263742;--mut:#667380;--bg:#f3f5f9;--teal:#10c7a0;--lilac:#8f7ff5;--aqua:#37c4e5;--peach:#ffb59e;--red:#e5484d;--card:#fff;--line:#e9edf2;--shadow:0 24px 50px -22px rgba(38,55,66,.28)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100dvh}
+h1,h2,h3{font-weight:800;letter-spacing:-.03em}
+button{font-family:inherit;cursor:pointer;border:0}
+input,select{font-family:inherit;font-size:14px}
+.app{max-width:430px;margin:0 auto;min-height:100dvh;background:var(--bg);position:relative;padding-bottom:96px}
+.view{display:none;padding:20px 20px 0}.view.on{display:block;animation:fade .28s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border-radius:22px;padding:18px;box-shadow:var(--shadow)}
+.eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.hero{background:var(--ink);border-radius:28px;padding:22px;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;width:130px;height:130px;border-radius:50%;background:var(--yellow);right:-40px;top:-40px}
+.hero .eyebrow{color:var(--yellow)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:99px;font-weight:800;font-size:14.5px}
+.btn.primary{background:var(--orange);color:#fff}.btn.dark{background:var(--ink);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.teal{background:var(--teal);color:#fff}.btn.red{background:var(--red);color:#fff}
+.btn.sm{padding:10px 16px;width:auto;font-size:12.5px;border-radius:99px}
+.chip{display:inline-flex;align-items:center;font-size:10.5px;font-weight:800;padding:5px 11px;border-radius:99px}
+.chip.g{background:#d9f7ef;color:#0a8a6d}.chip.o{background:#fff0d3;color:#9a6b00}.chip.r{background:#ffe1e3;color:#b03038}.chip.b{background:#e8eeff;color:#2f56d6}.chip.k{background:#efeaff;color:#6a56d9}
+.pill{padding:9px 16px;border-radius:99px;background:#fff;border:1.5px solid var(--line);font-size:12.5px;font-weight:700}
+.pill.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
+.field{display:grid;gap:6px}.field label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--mut)}
+.field input,.field select{padding:14px 16px;border-radius:16px;border:1.5px solid var(--line);background:#fff;outline:none;width:100%}
+.row{display:flex;align-items:center;gap:12px}.spread{justify-content:space-between}
+.stack{display:grid;gap:12px}.muted{color:var(--mut);font-size:12.5px;line-height:1.5}
+.hair{height:1px;background:var(--line)}
+.seg{display:flex;background:#eef1f5;border-radius:99px;padding:4px;gap:4px}
+.seg button{flex:1;padding:10px;border-radius:99px;font-size:12.5px;font-weight:800;color:var(--mut);background:transparent}
+.seg button.sel{background:#fff;color:var(--ink);box-shadow:0 4px 12px -6px rgba(38,55,66,.3)}
+.toast{position:fixed;left:50%;bottom:110px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 22px;border-radius:99px;font-size:13px;font-weight:700;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.3s;z-index:50;white-space:nowrap}
+.toast.on{opacity:1}
+.sheet{position:fixed;inset:0;background:rgba(38,55,66,.5);display:none;align-items:flex-end;justify-content:center;z-index:60}
+.sheet.on{display:flex}.sheet .inner{background:#fff;width:100%;max-width:430px;border-radius:28px 28px 0 0;padding:22px;max-height:82dvh;overflow:auto}
+.grip{width:44px;height:5px;border-radius:99px;background:var(--line);margin:0 auto 16px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 4px}
+.avatar{width:42px;height:42px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+.iconbtn{width:42px;height:42px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:var(--shadow);position:relative}
+.iconbtn .dot{position:absolute;top:9px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--orange);border:2px solid #fff}
+.bottomnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:#fff;border-top:1px solid var(--line);display:flex;padding:10px 8px calc(10px + env(safe-area-inset-bottom));z-index:40}
+.bottomnav button{flex:1;display:grid;place-items:center;gap:3px;font-size:10px;font-weight:700;color:var(--mut);background:none;padding:6px 0;border-radius:14px}
+.bottomnav button.sel{color:var(--orange)}.bottomnav svg{width:21px;height:21px}
+/* skeleton loading state */
+.skb{background:#e8edf2;border-radius:16px;position:relative;overflow:hidden}
+.skb::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 25%,rgba(255,255,255,.85) 50%,transparent 75%);animation:shim 1.1s infinite}
+@keyframes shim{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.pax{display:flex;align-items:center;gap:11px;padding:13px 14px;background:#fff;border-radius:16px;border:1.5px solid var(--line)}
+.pax.boarded{border-color:var(--teal);background:#f2fdf9}
+.pax.noshow{border-color:#f0c0c2;background:#fef5f5;opacity:.75}
+.pax .av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;font-size:11px;flex-shrink:0}
+.pax .act{margin-left:auto;display:flex;gap:6px}
+.actbtn{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--bg)}
+.actbtn.yes{background:var(--teal)}.actbtn.no{background:var(--red)}
+.ring{width:86px;height:86px;flex-shrink:0}
+.stat-mini{background:#fff;border-radius:16px;padding:12px;text-align:center;flex:1}
+.search{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:99px;padding:12px 16px}
+.search input{border:0;outline:none;flex:1;font-size:13.5px}
+@media(min-width:431px){.app{border-left:1px solid var(--line);border-right:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ============ V-AUTH ============ -->
+<div class="view" id="v-auth">
+  <div style="height:14px"></div>
+  <div class="hero" style="padding:24px">
+    <span class="eyebrow">Marshal duty</span>
+    <h2 style="font-size:26px;margin:8px 0 6px">Boarding Control</h2>
+    <p style="font-size:13px;color:#c9d3d8">Sunday Service · Ikorodu Garage Route · Bus 1</p>
+  </div>
+  <div class="stack" style="margin-top:16px">
+    <div class="field"><label>Marshal ID</label><input value="MSH-014"></div>
+    <div class="field"><label>Pin</label><input type="password" value="••••"></div>
+    <button class="btn primary" onclick="go('v-duty')">Sign In</button>
+    <p class="muted" style="text-align:center;font-size:11.5px">Assigned by the transport team · one marshal per bus</p>
+  </div>
+</div>
+
+<!-- ============ V-DUTY ============ -->
+<div class="view" id="v-duty">
+  <div class="topbar" style="padding:0 0 14px">
+    <div class="row"><div class="avatar" style="background:var(--orange)">TO</div><div><b style="font-size:15px">Tobi Olanrewaju</b><div class="muted" style="font-size:11.5px">Marshal · Bus 1</div></div></div>
+    <button class="iconbtn" onclick="go('v-alerts')"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg><span class="dot"></span></button>
+  </div>
+
+  <div class="hero">
+    <div class="row spread"><span class="eyebrow">Today's duty</span><span class="chip" style="background:rgba(16,199,160,.2);color:#7ff5dd">BOARDING LIVE</span></div>
+    <h2 style="font-size:24px;margin:8px 0 4px">Sunday Service</h2>
+    <p style="font-size:12.5px;color:#c9d3d8">Ikorodu Garage Route · Bus 1 · 14 seats</p>
+    <div class="row" style="margin-top:14px;gap:8px">
+      <span class="chip" style="background:rgba(255,255,255,.12);color:#fff">OUT 6:00 AM</span>
+      <span class="chip" style="background:rgba(255,255,255,.12);color:#fff">RETURN 11:45 AM</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;display:flex;align-items:center;gap:16px">
+    <svg class="ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="#eef1f5" stroke-width="11"/><circle cx="50" cy="50" r="42" fill="none" stroke="var(--teal)" stroke-width="11" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="198" transform="rotate(-90 50 50)"/><text x="50" y="47" text-anchor="middle" font-size="20" font-weight="800" fill="#263742">9/14</text><text x="50" y="62" text-anchor="middle" font-size="9" font-weight="700" fill="#667380">BOARDED</text></svg>
+    <div style="flex:1;display:grid;gap:8px">
+      <div class="row spread"><span class="muted" style="font-size:12px">Awaiting</span><b style="font-size:15px" id="st-await">5</b></div>
+      <div class="row spread"><span class="muted" style="font-size:12px">No-show</span><b style="font-size:15px" id="st-ns">0</b></div>
+      <div class="row spread"><span class="muted" style="font-size:12px">Guests aboard</span><b style="font-size:15px">3</b></div>
+    </div>
+  </div>
+
+  <div class="stack" style="margin-top:14px">
+    <button class="btn primary" onclick="go('v-manifest')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>
+      Open Manifest
+    </button>
+    <button class="btn dark" onclick="sheetOpen('v-scan')">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14h1M14 20h1M18 18h3v3h-3z"/></svg>
+      Scan Ticket QR
+    </button>
+    <div class="row" style="gap:10px">
+      <button class="btn ghost" style="flex:1" onclick="go('v-walkon')">+ Walk-on</button>
+      <button class="btn ghost" style="flex:1;color:var(--red)" onclick="sheetOpen('v-incident')">Report issue</button>
+    </div>
+  </div>
+
+  <h3 style="font-size:14px;margin:18px 0 10px">Upcoming duties</h3>
+  <div class="stack">
+    <div class="card" style="padding:15px"><div class="row spread"><div><b style="font-size:13.5px">Hallelujah Night <span class="chip k" style="margin-left:4px">SPECIAL EVENT</span></b><p class="muted" style="font-size:11.5px;margin-top:3px">Fri, Oct 31 · 9:00 PM · Bus 1 · Ikorodu Garage</p></div><span class="chip o">SCHEDULED</span></div></div>
+    <div class="card" style="padding:15px"><div class="row spread"><div><b style="font-size:13.5px">Sunday Service</b><p class="muted" style="font-size:11.5px;margin-top:3px">Sun, Oct 19 · 6:00 AM · Bus 1 · Ikorodu Garage</p></div><span class="chip b">NEXT WEEK</span></div></div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <span class="eyebrow">Reach the transport admin</span>
+    <div class="row" style="margin-top:10px"><div class="avatar" style="background:var(--ink);width:40px;height:40px;font-size:12px">PI</div><div style="flex:1"><b style="font-size:13.5px">Pastor I. — Transport Admin</b><div class="muted" style="font-size:11px">Assignments, buses, emergencies</div></div></div>
+    <div class="row" style="margin-top:12px;gap:8px">
+      <a class="btn teal sm" style="flex:1;text-decoration:none;padding:11px" href="https://wa.me/2348000000002?text=Admin%2C%20Marshal%20Tobi%20(Bus%201)%20here…" target="_blank">WhatsApp</a>
+      <a class="btn ghost sm" style="flex:1;text-decoration:none;padding:11px" href="tel:+2348000000002">Call</a>
+      <button class="btn ghost sm" style="flex:1" onclick="sheetOpen('v-bug')">App bug</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ V-MANIFEST ============ -->
+<div class="view" id="v-manifest">
+  <div class="row" style="margin-bottom:12px"><button class="iconbtn" onclick="go('v-duty')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div><h3 style="font-size:17px">Manifest — Bus 1</h3><span class="muted" style="font-size:11.5px">Ikorodu Garage · Sunday Service</span></div>
+    <button class="iconbtn" style="margin-left:auto" title="Print backup" onclick="toast('Printable manifest generated')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2"><path d="M6 9V3h12v6M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+  </div>
+
+  <div class="seg" style="margin-bottom:12px">
+    <button class="sel" id="seg-out" onclick="legTab('out')">Outbound · 6:00 AM</button>
+    <button id="seg-ret" onclick="legTab('ret')">Return · 11:45 AM</button>
+  </div>
+
+  <div class="search" style="margin-bottom:12px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#667380" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="q" placeholder="Search name or ref…" oninput="renderPax()"></div>
+
+  <div class="row" style="gap:6px;margin-bottom:12px;flex-wrap:wrap" id="filters">
+    <button class="pill sel" data-f="all" onclick="filt(this)">All · <b id="c-all">14</b></button>
+    <button class="pill" data-f="wait" onclick="filt(this)">Awaiting · <b id="c-wait">5</b></button>
+    <button class="pill" data-f="board" onclick="filt(this)">Boarded · <b id="c-board">9</b></button>
+    <button class="pill" data-f="ns" onclick="filt(this)">No-show · <b id="c-ns">0</b></button>
+  </div>
+
+  <div class="stack" id="paxlist"></div>
+
+  <div class="card" style="margin-top:14px;background:var(--ink);color:#fff;display:flex;align-items:center;gap:12px">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd369" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16.5v.5"/></svg>
+    <p style="font-size:12px;color:#c9d3d8">Manifest locks at departure. Mistake? Long-press a passenger to correct — every change is recorded.</p>
+  </div>
+</div>
+
+<!-- ============ V-WALKON ============ -->
+<div class="view" id="v-walkon">
+  <div class="row" style="margin-bottom:14px"><button class="iconbtn" onclick="go('v-duty')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button><h3 style="font-size:17px">Add Walk-on Passenger</h3></div>
+  <div class="approval" style="background:#fff8e8;border:1.5px solid var(--yellow);border-radius:16px;padding:13px 15px;font-size:12.5px;color:#7a5b00;margin-bottom:14px;display:flex;gap:9px">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9a6b00" stroke-width="2.2" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><path d="M12 8v5M12 16.5v.5"/></svg>
+    <span>3 seats remain. Walk-ons are logged to the manifest with your marshal tag — only add if a seat is truly free.</span>
+  </div>
+  <div class="stack">
+    <div class="field"><label>Passenger name</label><input id="wo-name" placeholder="Full name"></div>
+    <div class="field"><label>Passenger type</label><select id="wo-type"><option>Church member (on register)</option><option>Guest of a member — tag member name below</option><option>Visitor (unregistered)</option></select></div>
+    <div class="field"><label>Host member (if guest)</label><input id="wo-host" placeholder="Member who brought them"></div>
+    <div class="field"><label>Leg</label><select id="wo-leg"><option value="out">Outbound</option><option value="ret">Return only — didn't come with us</option><option value="both">Round trip</option></select></div>
+    <button class="btn primary" onclick="addWalkon()">Add to Manifest</button>
+  </div>
+</div>
+
+<!-- ============ V-ALERTS ============ -->
+<div class="view" id="v-alerts">
+  <div class="row" style="margin-bottom:14px"><button class="iconbtn" onclick="go('v-duty')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#263742" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg></button><h2 style="font-size:22px">Alerts</h2></div>
+  <div class="stack" id="alertlist"></div>
+</div>
+
+<!-- ============ V-BUSES ============ -->
+<div class="view" id="v-buses">
+  <h2 style="font-size:22px;margin-bottom:14px">All Buses Today</h2>
+  <div class="stack" id="buslist"></div>
+</div>
+
+<!-- ============ V-SUMMARY ============ -->
+<div class="view" id="v-summary">
+  <h2 style="font-size:22px;margin-bottom:14px">End-of-Duty Summary</h2>
+  <div class="card">
+    <div class="row spread"><span class="eyebrow">Sunday Service · Bus 1</span><span class="chip g">LIVE</span></div>
+    <div class="hair" style="margin:14px 0"></div>
+    <div class="row" style="gap:10px">
+      <div class="stat-mini"><b style="font-size:20px" id="sum-booked">0</b><div class="muted" style="font-size:10.5px">Booked</div></div>
+      <div class="stat-mini"><b style="font-size:20px;color:var(--teal)" id="sum-boarded">0</b><div class="muted" style="font-size:10.5px">Boarded</div></div>
+      <div class="stat-mini"><b style="font-size:20px;color:var(--red)" id="sum-ns">0</b><div class="muted" style="font-size:10.5px">No-show</div></div>
+      <div class="stat-mini"><b style="font-size:20px;color:var(--orange)" id="sum-wo">0</b><div class="muted" style="font-size:10.5px">Walk-ons</div></div>
+    </div>
+  </div>
+  <div class="stack" style="margin-top:14px">
+    <div class="card" style="padding:15px"><b style="font-size:13.5px">Outbound leg</b><p class="muted" style="font-size:12px;margin-top:4px" id="sum-out"></p></div>
+    <div class="card" style="padding:15px"><b style="font-size:13.5px">Return leg</b><p class="muted" style="font-size:12px;margin-top:4px" id="sum-ret"></p></div>
+    <button class="btn dark" onclick="toast('Summary submitted to transport team')">Submit Report</button>
+    <button class="btn ghost" onclick="go('v-duty')">Back to duty</button>
+  </div>
+</div>
+
+<!-- ============ V-SKEL : loading state ============ -->
+<div class="view" id="v-skel"><div style="height:10px"></div>
+  <div class="skb" style="height:26px;width:46%;margin-bottom:18px"></div>
+  <div class="skb" style="height:80px;margin-bottom:12px"></div>
+  <div class="skb" style="height:64px;margin-bottom:12px"></div>
+  <div class="skb" style="height:64px;margin-bottom:12px"></div>
+  <div class="skb" style="height:64px;margin-bottom:12px"></div>
+  <div class="skb" style="height:48px;width:72%"></div>
+</div>
+
+<!-- ============ SHEETS ============ -->
+<div class="sheet" id="sh-v-scan"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:12px">Scan Ticket</h3>
+  <div style="aspect-ratio:1;background:var(--ink);border-radius:20px;display:grid;place-items:center;margin-bottom:14px"><svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#ffd369" stroke-width="1.6"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/></svg></div>
+  <p class="muted" style="text-align:center;font-size:12.5px;margin-bottom:14px">Point camera at the member's ticket QR — boards them instantly</p>
+  <button class="btn primary" style="margin-bottom:10px" onclick="simScan()">Simulate a scan</button>
+  <button class="btn dark" onclick="sheetClose()">Close scanner</button></div></div>
+
+<div class="sheet" id="sh-v-incident"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:12px">Report an Issue</h3>
+  <div class="stack">
+    <div class="field"><label>Issue type</label><select id="inc-type"><option>Bus mechanical problem</option><option>Bus hasn't arrived</option><option>Passenger boarded wrong bus</option><option>Unregistered person demanding seat</option><option>Medical / safety</option><option>Other</option></select></div>
+    <div class="field"><label>Details</label><input id="inc-detail" placeholder="Brief description"></div>
+    <div class="field"><label>Urgency</label><select id="inc-urg"><option>Notify admin — normal</option><option>Urgent — departure at risk</option></select></div>
+    <button class="btn red" onclick="sendIncident()">Send Report</button>
+    <button class="btn ghost" onclick="sheetClose()">Cancel</button>
+  </div></div></div>
+
+<div class="sheet" id="sh-v-bug"><div class="inner"><div class="grip"></div><h3 style="margin-bottom:4px">Report an app problem</h3><p class="muted" style="font-size:12px;margin-bottom:14px">Bugs, crashes, wrong data — goes to the admin + dev team</p>
+  <div class="stack">
+    <div class="field"><label>What's wrong?</label><select id="bug-cat"><option>Manifest shows wrong passengers</option><option>Check-in didn't save</option><option>App crashed / froze</option><option>Can't reach a screen</option><option>Wrong bus/route assignment</option><option>Other</option></select></div>
+    <div class="field"><label>Details</label><input id="bug-msg" placeholder="What happened, on which screen"></div>
+    <button class="btn primary" onclick="sendBug()">Send report</button>
+    <button class="btn ghost" onclick="sheetClose()">Cancel</button>
+  </div></div></div>
+
+<nav class="bottomnav" id="bnav" style="display:none">
+  <button class="sel" onclick="nav(this,'v-duty')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/></svg>Duty</button>
+  <button onclick="nav(this,'v-manifest')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>Manifest</button>
+  <button onclick="nav(this,'v-buses')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="13" rx="3"/><path d="M3 10h18M8 21h.01M16 21h.01M6 17v4M18 17v4"/></svg>Buses</button>
+  <button onclick="nav(this,'v-summary')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>Summary</button>
+</nav>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+/* views that "fetch" data — flash skeleton first, then hydrate */
+const LAZY={'v-manifest':1,'v-buses':1,'v-alerts':1,'v-summary':1,'v-walkon':1};
+let sklT=0;
+function _show(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));$(v).classList.add('on');window.scrollTo(0,0);$('bnav').style.display=v==='v-auth'?'none':'flex'}
+function _hydrate(v){if(v==='v-manifest')renderPax();if(v==='v-buses')renderBuses();if(v==='v-alerts')renderAlerts();if(v==='v-summary')renderSummary()}
+function go(v){clearTimeout(sklT);
+  if(LAZY[v]){_show('v-skel');sklT=setTimeout(()=>{_show(v);_hydrate(v)},480)}
+  else{_show(v);_hydrate(v)}}
+function nav(el,v){document.querySelectorAll('#bnav button').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');go(v)}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2200)}
+function sheetOpen(v){$('sh-'+v).classList.add('on')}
+function sheetClose(){document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on'))}
+document.querySelectorAll('.sheet').forEach(s=>s.addEventListener('click',e=>{if(e.target===s)s.classList.remove('on')}));
+
+/* manifest data: leg-specific lists — outbound has all booked; return has
+   boarders + return-only riders who never came outbound */
+const PAX={
+out:[
+ {n:'Adaeze Okafor',ref:'TCN-8F3K2',tag:'+2 group',st:'boarded',av:'var(--ink)',pick:'Garage'},
+ {n:'Emeka Okafor',ref:'TCN-8F3K2',tag:'guest of A. Okafor',st:'boarded',av:'var(--lilac)',pick:'Garage'},
+ {n:'Mrs. Bassey',ref:'TCN-8F3K2',tag:'guest of A. Okafor',st:'boarded',av:'var(--peach)',pick:'Garage'},
+ {n:'Kunle Adewale',ref:'TCN-3D9M1',tag:'',st:'wait',av:'var(--aqua)',pick:'Agric'},
+ {n:'Funke Balogun',ref:'TCN-5H2P8',tag:'',st:'boarded',av:'var(--teal)',pick:'Garage'},
+ {n:'Pastor R. Eze',ref:'TCN-2K7N4',tag:'',st:'boarded',av:'var(--ink)',pick:'Garage'},
+ {n:'Sister Amara',ref:'TCN-7W1Q3',tag:'',st:'boarded',av:'var(--lilac)',pick:'Owutu'},
+ {n:'Deacon Femi',ref:'TCN-4T8R6',tag:'',st:'boarded',av:'var(--aqua)',pick:'Garage'},
+ {n:'Bro. Chuka',ref:'TCN-6Y3U9',tag:'',st:'wait',av:'var(--peach)',pick:'Agric'},
+ {n:'Mrs. Ngozi',ref:'TCN-9B5V2',tag:'',st:'boarded',av:'var(--teal)',pick:'Garage'},
+ {n:'Tunde Ajayi',ref:'TCN-1M6X0',tag:'guest of A. Okafor',st:'wait',av:'var(--lilac)',pick:'Garage'},
+ {n:'Elder Sanni',ref:'TCN-8C4D7',tag:'',st:'boarded',av:'var(--ink)',pick:'Garage'},
+ {n:'Walk-on: J. Doe',ref:'WALK-01',tag:'added by you',st:'boarded',av:'var(--orange)',pick:'Garage'},
+ {n:'Sis. Kemi',ref:'TCN-5N9F3',tag:'',st:'wait',av:'var(--aqua)',pick:'Owutu'}],
+ret:[
+ {n:'Adaeze Okafor',ref:'TCN-8F3K2',tag:'+2 group',st:'wait',av:'var(--ink)',pick:'Church gate'},
+ {n:'Emeka Okafor',ref:'TCN-8F3K2',tag:'guest of A. Okafor',st:'wait',av:'var(--lilac)',pick:'Church gate'},
+ {n:'Mrs. Bassey',ref:'TCN-8F3K2',tag:'guest of A. Okafor',st:'wait',av:'var(--peach)',pick:'Church gate'},
+ {n:'Funke Balogun',ref:'TCN-5H2P8',tag:'',st:'wait',av:'var(--teal)',pick:'Church gate'},
+ {n:'Pastor R. Eze',ref:'TCN-2K7N4',tag:'',st:'wait',av:'var(--ink)',pick:'Church gate'},
+ {n:'Sister Amara',ref:'TCN-7W1Q3',tag:'',st:'wait',av:'var(--lilac)',pick:'Church gate'},
+ {n:'Deacon Femi',ref:'TCN-4T8R6',tag:'',st:'wait',av:'var(--aqua)',pick:'Church gate'},
+ {n:'Mrs. Ngozi',ref:'TCN-9B5V2',tag:'',st:'wait',av:'var(--teal)',pick:'Church gate'},
+ {n:'Elder Sanni',ref:'TCN-8C4D7',tag:'',st:'wait',av:'var(--ink)',pick:'Church gate'},
+ {n:'Walk-on: J. Doe',ref:'WALK-01',tag:'added by you',st:'wait',av:'var(--orange)',pick:'Church gate'},
+ {n:'Bro. Ikenna',ref:'TCN-3Z8L5',tag:'RETURN ONLY',st:'wait',av:'var(--yellow)',pick:'Church gate'},
+ {n:'Mrs. Falade',ref:'TCN-6Q2W7',tag:'RETURN ONLY',st:'wait',av:'var(--yellow)',pick:'Church gate'}]};
+let curLeg='out',curF='all';
+
+function legTab(l){curLeg=l;$('seg-out').classList.toggle('sel',l==='out');$('seg-ret').classList.toggle('sel',l==='ret');
+  curF='all';document.querySelectorAll('#filters .pill').forEach(p=>p.classList.remove('sel'));document.querySelector('#filters .pill').classList.add('sel');renderPax()}
+function filt(el){curF=el.dataset.f;document.querySelectorAll('#filters .pill').forEach(p=>p.classList.remove('sel'));el.classList.add('sel');renderPax()}
+function counts(){const l=PAX[curLeg];$('c-all').textContent=l.length;$('c-wait').textContent=l.filter(p=>p.st==='wait').length;$('c-board').textContent=l.filter(p=>p.st==='boarded').length;$('c-ns').textContent=l.filter(p=>p.st==='ns').length}
+function renderPax(){counts();const q=($('q').value||'').toLowerCase();let h='';
+  PAX[curLeg].forEach((p,i)=>{if(q&&!p.n.toLowerCase().includes(q)&&!p.ref.toLowerCase().includes(q))return;
+    if(curF!=='all'&&p.st!==curF)return;
+    const acts=p.st==='wait'
+      ?`<button class="actbtn yes" title="Board" onclick="setSt(${i},'boarded')"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg></button>
+        <button class="actbtn no" title="No-show" onclick="setSt(${i},'ns')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg></button>`
+      :`<button class="actbtn" title="Undo" onclick="setSt(${i},'wait')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#667380" stroke-width="2.4"><path d="M3 12a9 9 0 109-9 9.7 9.7 0 00-6.7 2.8L3 8"/><path d="M3 3v5h5"/></svg></button>`;
+    h+=`<div class="pax ${p.st==='boarded'?'boarded':p.st==='ns'?'noshow':''}">
+      <div class="av" style="background:${p.av}">${p.n.split(' ').map(x=>x[0]).join('').slice(0,2)}</div>
+      <div style="min-width:0"><b style="font-size:13px;display:block">${p.n}</b>
+      <div class="muted" style="font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.ref} · ${p.pick}${p.tag?' · <b>'+p.tag+'</b>':''}</div></div>
+      <div class="act">${p.st==='boarded'?'<span class="chip g">BOARDED</span>':p.st==='ns'?'<span class="chip r">NO-SHOW</span>':''}${acts}</div></div>`});
+  $('paxlist').innerHTML=h||'<p class="muted" style="text-align:center;padding:20px">No passengers match</p>'}
+function setSt(i,st){const p=PAX[curLeg][i];const was=p.st;p.st=st;renderPax();
+  toast(st==='boarded'?p.n+' boarded ✓':st==='ns'?p.n+' marked no-show':'Reverted — correction logged')}
+
+/* ---------- walk-on ---------- */
+let woN=2;
+function addWalkon(){const n=$('wo-name').value.trim();if(!n){toast('Enter passenger name');return}
+  const type=$('wo-type').value,host=$('wo-host').value.trim(),leg=$('wo-leg').value;
+  const tag=type.startsWith('Guest')&&host?'guest of '+host:type.startsWith('Visitor')?'visitor — added by you':'added by you';
+  const p={n:'Walk-on: '+n,ref:'WALK-0'+woN++,tag,st:'boarded',av:'var(--orange)',pick:leg==='ret'?'Church gate':'Garage'};
+  if(leg==='out'||leg==='both')PAX.out.push(p);
+  if(leg==='ret'||leg==='both')PAX.ret.push({...p,tag:leg==='ret'?tag+' · RETURN ONLY':tag,st:leg==='ret'?'wait':'wait'});
+  renderPax();renderBuses();renderSummary();
+  $('wo-name').value='';$('wo-host').value='';
+  toast(n+' added to '+(leg==='ret'?'return':'outbound')+' manifest');setTimeout(()=>go('v-manifest'),700)}
+
+/* ---------- scan simulation ---------- */
+function simScan(){const i=PAX[curLeg].findIndex(p=>p.st==='wait');
+  if(i<0){toast('Everyone on this leg is already processed');sheetClose();return}
+  PAX[curLeg][i].st='boarded';renderPax();renderSummary();sheetClose();
+  toast('QR scanned — '+PAX[curLeg][i].n+' boarded ✓')}
+
+/* ---------- incidents → alerts ---------- */
+const ALERTS=[
+ {c:'var(--orange)',t:'New booking — seat now full',b:'A. Okafor + 2 riders joined Bus 1 · manifest updated',w:'12 min ago'},
+ {c:'var(--teal)',t:'Boarding window opened',b:'Admin opened Bus 1 boarding · depart 6:00 AM',w:'40 min ago'},
+ {c:'var(--lilac)',t:'You were reassigned',b:'Admin moved you from Bus 3 → Bus 1 for today\'s service',w:'Yesterday'}];
+function renderAlerts(){$('alertlist').innerHTML=ALERTS.map(a=>`<div class="card" style="padding:15px;border-left:4px solid ${a.c}"><b style="font-size:13.5px">${a.t}</b><p class="muted" style="font-size:12px;margin-top:3px">${a.b}</p><span class="muted" style="font-size:10.5px">${a.w}</span></div>`).join('')}
+function sendIncident(){const t=$('inc-type').value,u=$('inc-urg').value,d=$('inc-detail').value.trim();
+  ALERTS.unshift({c:u.startsWith('Urgent')?'var(--red)':'var(--orange)',t:(u.startsWith('Urgent')?'URGENT — ':'')+'You reported: '+t,b:d||'No details given',w:'just now'});
+  renderAlerts();$('inc-detail').value='';sheetClose();toast('Issue reported — admin notified')}
+function sendBug(){const c=$('bug-cat').value,m=$('bug-msg').value.trim();
+  ALERTS.unshift({c:'var(--lilac)',t:'Bug report sent: '+c,b:(m||'No details')+' · logged for the dev team',w:'just now'});
+  renderAlerts();$('bug-msg').value='';sheetClose();toast('Bug report sent — thank you')}
+
+/* ---------- buses overview (Bus 1 computed live) ---------- */
+function renderBuses(){const boarded=PAX.out.filter(p=>p.st==='boarded').length;
+  const buses=[{n:'Bus 1 — Ikorodu Garage',m:'You · Tobi O.',b:boarded,t:14,you:true},{n:'Bus 2 — Ikorodu Garage',m:'Marshal: S. Ade',b:6,t:14},{n:'Bus 3 — Isawo / Agric',m:'Marshal: unassigned',b:0,t:14,warn:true},{n:'Bus 4 — Owutu / Bayeku',m:'Marshal: K. Uche',b:14,t:14}];
+  $('buslist').innerHTML=buses.map(b=>{const pct=Math.round(b.b/b.t*100);
+    return `<div class="card" style="padding:15px"><div class="row spread"><b style="font-size:13.5px">${b.n}</b>${b.you?'<span class="chip b">YOU</span>':b.warn?'<span class="chip r">NO MARSHAL</span>':''}</div>
+    <div class="muted" style="font-size:11.5px;margin-top:3px">${b.m}</div>
+    <div class="row spread" style="margin-top:10px"><div style="flex:1;height:8px;border-radius:99px;background:#eef1f5;overflow:hidden"><i style="display:block;height:100%;border-radius:99px;background:${pct===100?'var(--orange)':pct>70?'var(--yellow)':'var(--teal)'};width:${pct}%"></i></div><b style="font-size:12px;margin-left:10px">${b.b}/${b.t}</b></div></div>`}).join('');
+  const aw=PAX.out.filter(p=>p.st==='wait').length,ns=PAX.out.filter(p=>p.st==='ns').length;
+  $('st-await').textContent=aw;$('st-ns').textContent=ns;
+  const ring=document.querySelector('.ring circle:nth-child(2)');if(ring)ring.setAttribute('stroke-dashoffset',264-264*boarded/14);
+  const rt=document.querySelector('.ring text');if(rt)rt.textContent=boarded+'/14'}
+
+/* ---------- summary computed from real state ---------- */
+function renderSummary(){const ob=PAX.out,rb=PAX.ret;
+  const wo=ob.filter(p=>p.ref.startsWith('WALK')).length+rb.filter(p=>p.ref.startsWith('WALK')&&!ob.some(o=>o.ref===p.ref)).length;
+  $('sum-booked').textContent=ob.length;$('sum-boarded').textContent=ob.filter(p=>p.st==='boarded').length;
+  $('sum-ns').textContent=ob.filter(p=>p.st==='ns').length;$('sum-wo').textContent=wo;
+  const nsNames=ob.filter(p=>p.st==='ns').map(p=>p.n).join(', ');
+  $('sum-out').textContent='Departed 6:04 AM · '+ob.filter(p=>p.st==='boarded').length+' aboard'+(nsNames?' · no-show: '+nsNames:'');
+  const retOnly=rb.filter(p=>p.tag.includes('RETURN ONLY')).length;
+  $('sum-ret').textContent='Boarding opens 11:30 AM · '+rb.length+' expected'+(retOnly?' (incl. '+retOnly+' return-only)':'')}
+
+renderPax();renderBuses();renderAlerts();renderSummary();go('v-auth');
+</script>
+</body>
+</html>

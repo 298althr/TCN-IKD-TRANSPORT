@@ -47,6 +47,17 @@ These answers are recorded in `QA-LOG.md` (Batches 1 and 2). Where an answer cha
 | OI-024 special-event approval | **Decided:** second admin approves before booking opens | D-042 |
 | OI-038 record retention (proposal in DATA-MODEL §4) | **Decided in part:** payments per finance period; attendance to counts after one year. Legal review still required | D-043 |
 | OI-028 registration turnaround | **Decided:** 24 hours, admin reminder at 12 hours | D-044 |
+| Journey B4a and STATE-MACHINES §1: free booking confirmed at once | **Superseded.** A free booking is confirmed after the marshal's call | D-051 |
+| BRD requirement 11: booking is not the same as a confirmed booking | **Restored** (BRD rule kept; the design had dropped it) | D-051 |
+| D-029: sign-in methods at MVP (phone code, authenticator, Google at deployment) | **Extended.** Magic link is added later, alongside the phone code | D-052 |
+| NOTIFICATIONS §6: marshal alerts name the bus, not the passenger list | **Superseded.** The app names the rider; SMS shows the bus and count | D-053 |
+| NOTIFICATIONS §2 and §7: 22 event rows, 14 templates | **Extended.** 25 event rows, 17 templates | D-053 |
+| D-047: 115 acceptance criteria (109 at Level P) | **Extended.** MAR-21 added at Level P: 116 criteria, 110 at Level P | D-051 |
+| OI-049 meaning of public use (open) | **Decided.** Pilot group first; all members after the 30-day review | D-054 |
+| OI-050 hold length for unconfirmed free bookings (open) | **Decided.** Held until 18:00 the day before departure (not the manifest lock) | D-055 |
+| OI-042 password question (open) | **Decided.** Password added next to the phone code | D-056 |
+| OI-042 gender choices (open) | **Decided.** Male or female only; no decline option | D-057 |
+| D-029: phone code only for members at MVP | **Extended.** Password next to the phone code (D-056); magic link and Google later (D-052) | D-056 |
 
 **Decision ID:** D-030
 **Decision:** When a programme or bus is full, riders join a **waitlist**. When a seat is released or a bus is added, the marshal is notified, the marshal contacts admin, and admin adds a bus or finds another solution. Waitlisted riders are offered seats in priority order (guests first, then members) by push and SMS, and must rebook within an offer window. Priority is defined by the sponsor as "guests are first-timers"; the definition is confirmed in Q-010.
@@ -259,6 +270,107 @@ These answers are recorded in `QA-LOG.md` (Batches 1 and 2). Where an answer cha
 **Consequences:** Change control after the freeze uses change requests and branches (`change/CR-###`). Git identity is set per person; no configuration is altered by scripts.
 **Affected systems:** Whole project; DEVELOPMENT-STRATEGY §3 and §9.
 **Next action:** Sponsor chooses a host for the remote, owned by the church rather than an individual.
+
+---
+
+**Decision ID:** D-050
+**Decision:** The requirements are consolidated in a candidate PRD (`PRD/PRD-v1.0-CANDIDATE.md`), with a line-by-line trace to the BRD. The full build, deployment, review, security and testing work is planned in `ROADMAP/IMPLEMENTATION-TASKS.md`. Both are working baselines. They become PRD v1.0 and roadmap baseline v1.0 only at the freeze (D-045). BRD requirements that the design does not yet meet are recorded as OI-041 to OI-049, not absorbed silently. Tasks tagged NEW in the task plan are engineering standards proposed by this plan, not requirements from the sponsor; the sponsor may reject any of them.
+**Status:** Proposed (product manager working baseline, 2026-10-13). Not frozen.
+**Owner:** Product Manager (documents); Executive Product Sponsor (approval at the freeze).
+**Reason:** The sponsor asked for a complete plan covering build, deployment, review, security and final testing before public use, traced to the documents. The trace against the BRD found four requirement conflicts and five gaps that the design had not closed.
+**Evidence:** Candidate PRD §13 (BRD trace) and §14 (gaps and assumptions). Task plan §14 (module coverage). QA-LOG Batch 8 (Q-036 to Q-039).
+**Alternatives considered:** Write PRD v1.0 now (rejected: it would precede the sign-off and break D-045). Plan without a BRD trace (rejected: requirements would be lost silently).
+**Consequences:** A stage that depends on OI-041 to OI-049 cannot close until each is decided or deferred with a named owner. The plan adds NEW tasks that the source documents do not list. Risk RISK-013: requirements lost between the BRD and the build. Mitigation: the trace in the PRD, module coverage in the task plan, and change control after the freeze.
+**Affected systems:** PRD, roadmap, testing (criteria mapping), frontend route map (OI-045), data model (OI-042, OI-043), notifications (OI-044).
+**Next action:** Batch 8 answers recorded when given. Owners named for OI-043 and OI-045 to OI-048, which need no sponsor question. Candidate PRD and task plan reviewed with the sponsor before the reconvene.
+
+**Update 2026-10-13.** Batch 8 answers are recorded: D-051 to D-054 below. The candidate PRD and task plan are updated to match.
+
+---
+
+**Decision ID:** D-051
+**Decision:** A free booking stays `held` until the marshal has called the member and recorded the result. Only a reached call with the member's confirmation moves it to `confirmed`. A member cannot confirm a free booking alone. The marshal records each contact per rider (reached, not reached, or no longer going). Held riders appear on the duty list as "to contact".
+**Status:** Accepted (sponsor answer Q-036, option A, the BRD rule). Not the recommended option B.
+**Owner:** Executive Product Sponsor (rule); Product Manager (state change); Backend lead (functions); Frontend lead (duty list).
+**Reason:** BRD §11 and requirement 11: a booking is a request; a confirmed booking is when the marshal has called the member. The sponsor chose the BRD rule.
+**Evidence:** QA-LOG Batch 8, Q-036. BRD §12, requirements 10 and 11, journeys A and B. Priority note recorded in QA-LOG Batch 8.
+**Alternatives considered:** confirm on booking and track the call (recommended, not chosen); paid confirms on payment and free waits (not chosen).
+**Consequences:** Supersedes the free path in SCOPE Journey B4a and STATE-MACHINES §1. Adds `record_contact` and a marshal-side `confirm_free_booking` to CONTRACTS §2. Adds MAR-21 to the criteria (supersession table). Creates OI-050 (how long an unconfirmed free booking holds its seat, Q-040). A seat held for a call can starve the waiting list until OI-050 is decided.
+**Affected systems:** Booking state machine, API contracts, marshal duty screens, notifications, acceptance criteria (MEM-07, MEM-40 revised; MAR-21 added), scenario A01.
+**Next action:** Q-040 decides the hold length (OI-050). Backend implements after the decision (BE-B1-05, BE-B1-18).
+
+---
+
+**Decision ID:** D-052
+**Decision:** Gender is a required member field at registration. Its choices are set by Q-042. Members and marshals sign in with a phone code. Magic link (email) and Google sign-in are added later, alongside the phone code. Whether a password is also offered is set by Q-041.
+**Status:** Accepted in part (sponsor answer Q-037, "Other"). The password question (Q-041) and the gender choices (Q-042) are open under OI-042.
+**Owner:** Executive Product Sponsor (requirement); Security and compliance lead (sign-in methods); Transport Department (other fields).
+**Reason:** The sponsor requires gender for the male and female report, and states that BRD rules take priority.
+**Evidence:** QA-LOG Batch 8, Q-037. BRD §6 and §17.
+**Consequences:** `profiles` gains a required `gender` field (DATA-MODEL §2.1). AUTH-DESIGN §2 lists magic link as a later member method. Extends D-029 (its other sign-in answers stand). The password question stays open, so BRD §6's password requirement is neither met nor dropped until Q-041 is answered. Gender is personal data and is minimised in reports (OI-038).
+**Affected systems:** Registration form, profiles table, reports (male and female), AUTH-DESIGN, criteria (none changed).
+**Next action:** Q-041 (password) and Q-042 (gender choices).
+
+---
+
+**Decision ID:** D-053
+**Decision:** Marshal alert content. The app push names the rider and booking reference, for the marshal's own assignment only. An SMS to a marshal shows only the bus and the rider count. Three missing alerts are added, following BRD §13 and §18: a new-booking alert to the assignment's marshal; a payment-change alert to the marshal; and a programme reminder to booked riders the day before departure.
+**Status:** Accepted for content (sponsor answer Q-038, option A). The three added alerts follow the BRD, and are a product manager decision under the "BRD rules are the priority" note (QA-LOG Batch 8). The sponsor may reopen them.
+**Owner:** Executive Product Sponsor (content); Product Manager (event list); Security lead (privacy).
+**Reason:** Names on the phone are useful on duty; SMS is a copy that leaves the app's control, so it carries the minimum.
+**Evidence:** QA-LOG Batch 8, Q-038. BRD §13 and §18. NOTIFICATIONS-DESIGN §2 and §6 (before this decision).
+**Consequences:** NOTIFICATIONS-DESIGN §2 gains three event rows (25 in total). §6 content rule is replaced. §7 template list gains three templates (17 in total). Closes the content part of OI-044. The SMS vendor and cost remain OI-031.
+**Affected systems:** Notifications, marshal duty screens, privacy (SMS minimal).
+**Next action:** Backend adds the three events to the outbox catalogue (NOT-12).
+
+---
+
+**Decision ID:** D-054
+**Decision:** Public use is staged. A named pilot group uses the app first. All members are admitted after the 30-day review of the pilot. The public-use gate (task plan §12) applies to the release to all members.
+**Status:** Accepted (sponsor answer Q-039, option A, recommended).
+**Owner:** Executive Product Sponsor.
+**Evidence:** QA-LOG Batch 8, Q-039.
+**Consequences:** The roster import is staged: the pilot list first, then the whole roster after the review (DEP-16). The pilot group still needs its programme (Q-027, OI-040) and its marshals and administrators (START-CHECKLIST C9, C10).
+**Affected systems:** Roster import, support load, public-use gate, roadmap §8 and §9.
+**Next action:** Name the pilot group (OI-040).
+
+---
+
+**Decision ID:** D-055
+**Decision:** A free booking's hold ends at 18:00 (Africa/Lagos time) on the day before departure. The existing expiry rule then applies (STATE-MACHINES §1): the booking expires and its seats return to the waiting list. A free booking made after that time holds until the manifest lock, 30 minutes before departure. The after-18:00 rule is a product manager recommendation, not a sponsor answer; the sponsor confirms it at the freeze.
+**Status:** Accepted (sponsor answer Q-040, option B). Not the recommended option A (hold until the lock).
+**Owner:** Executive Product Sponsor (time); Product Manager (after-18:00 rule); Backend lead (expiry rule).
+**Reason:** The sponsor wants seats released a day before departure so the waiting list can use them, and accepts less time to call late bookings.
+**Evidence:** QA-LOG Batch 9, Q-040. D-030 and D-035 (waiting list), D-037 (lock).
+**Alternatives considered:** hold until the manifest lock (option A, recommended, not chosen); no limit (not recommended); the 15-minute hold (not practical for calls).
+**Consequences:** A rider not reached by 18:00 the day before loses the held seat and must rebook if seats remain. The day-of calls cannot hold a seat. Uses the existing `expired` state; no new state is added. The waiting list receives the released seats.
+**Affected systems:** Expiry job; `hold_seats` (`hold_expires_at` value for free bookings); notifications (hold expiring); duty list ("to contact" window); criteria MAR-21.
+**Next action:** Backend implements the rule (BE-B1-18). Department confirms the 18:00 time.
+
+---
+
+**Decision ID:** D-056
+**Decision:** Password sign-in is added next to the phone code, as BRD §6 asks. Members and marshals may sign in with either. Magic link (email) and Google sign-in are added later (D-052). Password recovery uses the phone code, so a member never needs a second channel to recover an account. The recovery route is a recommendation for the security review to confirm.
+**Status:** Accepted (sponsor answer Q-041, option A). It follows the sponsor's note that BRD rules are the priority (QA-LOG Batch 8). It extends D-029, which had no passwords for members.
+**Owner:** Executive Product Sponsor; Security and compliance lead (password policy); Backend lead (implementation).
+**Reason:** BRD §6 asks for a password for subsequent login.
+**Evidence:** QA-LOG Batch 9, Q-041; QA-LOG Batch 8, Q-037; BRD §6.
+**Alternatives considered:** phone code only (option B, not chosen).
+**Consequences:** Adds password handling: a password policy, lockout and rate limits (AU-03), recovery through the phone code. A credential-stuffing threat is added to the threat model. Administrators keep the password plus authenticator (D-029).
+**Affected systems:** Auth, member sign-in screen, threat model, security tasks (SEC-05 to SEC-08), acceptance criteria mapping (TST-22).
+**Next action:** Security lead writes the password policy and the recovery procedure; threat model updated (REV-11).
+
+---
+
+**Decision ID:** D-057
+**Decision:** Gender is a required field with two choices, male or female. There is no decline option. It is used for the male and female report and for no other purpose.
+**Status:** Accepted (sponsor answer Q-042, option A). Replaces the recommended option B (prefer not to say).
+**Owner:** Executive Product Sponsor; Security and compliance lead (privacy review).
+**Reason:** Matches the BRD §17 report exactly.
+**Evidence:** QA-LOG Batch 9, Q-042; BRD §17; D-052.
+**Consequences:** RISK-014: a forced binary choice may exclude a person, and gender is personal data, so it can cause a privacy complaint. Counsel review (OI-038, SEC-25) must cover it. The pilot review revisits it (RISK-014).
+**Affected systems:** Registration form; profiles table (`gender`, values `male` and `female`); reports; privacy notice.
+**Next action:** Counsel review includes the gender field (SEC-25). Pilot review checks for exclusions (RISK-014).
 
 ---
 
@@ -1191,6 +1303,152 @@ Format per protocol. Decisions already agreed in Phase 1 are formalized here for
 ---
 
 *Register cross-references applied: OI-001's reconvene agenda now includes OI-017 (hold-abuse) and OI-015 (register ownership, alongside D-007/AUTH-2); OI-002 narrowed further by [R-12] — cash proof gap now reads "optional receipt-photo on manual-payment records" rather than a parallel upload system; R-07 (marshal device failure) is already mitigated by scope row "Printable/offline marshal manifest export" (MVP) — no separate issue needed.*
+
+---
+
+*OI-041 to OI-049 originate from the 2026-10-13 BRD trace in `PRD/PRD-v1.0-CANDIDATE.md` §13 and §14. Each has a required-field record per `AGENTS.md` Part I §7. Recommendations are repeated in `RECOMMENDATIONS/OPEN-ISSUE-RECOMMENDATIONS.md` §D.*
+
+---
+
+**Issue ID:** OI-041
+**Description:** The BRD requires a marshal to call the member before a booking is confirmed (BRD §11 and requirement 11; journeys A and B: "Marshal Contacts Member, Member Confirms, BOOKING CONFIRMED"). The design confirms a free booking at once (SCOPE-AND-JOURNEYS Journey B4a; STATE-MACHINES §1). The "Marshal Contacted" step in the PRD summary (sections 1 and 4.2) has no state, and no notification tells a marshal that a booking needs confirmation (BRD §18).
+**Why it matters:** It decides what a marshal does on duty and what "confirmed" means for a seat. Changing it later changes the booking state machine, the notification list and the marshal screens.
+**Domain:** Product, Booking, Notifications.
+**Owner:** Executive Product Sponsor (rule); Product Manager (specification).
+**Agents required:** Sponsor, Liaison, PM, Backend, UI/UX.
+**Options:** A. Keep the BRD rule (free bookings wait for a marshal call). B. Confirm on payment or on a free booking; record the marshal contact per rider. C. Paid confirm on payment; free needs a marshal call.
+**Recommended resolution:** B. Contact is tracked per rider, not as a booking status, so D-025 holds and the marshal sees who is still uncontacted.
+**Decision required from:** Executive Product Sponsor (Q-036).
+**Deadline/gate:** Before the booking screens (F1) and the manifest (F2) are built.
+**Status:** Decided by Q-036 (D-051). Free bookings wait for the marshal's call. Hold length for unconfirmed free bookings: OI-050.
+
+---
+
+**Issue ID:** OI-042
+**Description:** The data model has no gender field, but BRD §17 asks for a male and female report. BRD §6 asks for a password for later sign-in; D-029 chose phone code with no password. BRD §6 also asks for "other required member information", which no document specifies.
+**Why it matters:** The registration form and the demographic reports cannot be built correctly without it. Gender is personal data and must be minimised (OI-038).
+**Domain:** Identity, Reporting, Privacy.
+**Owner:** Church Transport Department (fields); Executive Product Sponsor (password decision).
+**Agents required:** Sponsor, Liaison, Security, PM.
+**Options:** A. Gender optional, aggregate only, no password. B. Gender required. C. Password offered alongside the phone code. D. No gender; first-time and returning only.
+**Recommended resolution:** A, and the department lists any other required fields in writing.
+**Decision required from:** Executive Product Sponsor (Q-037); Transport Department (other fields).
+**Deadline/gate:** Before the registration form (F1) and the profiles table are finalised (B0).
+**Status:** Decided. Gender is required with two choices, male or female (D-057). Password added next to the phone code (D-056).
+
+---
+
+**Issue ID:** OI-043
+**Description:** BRD §5 asks for a programme end time, description, transport-availability flag and location (also BRD §8). BRD §1, §2 and §9 ask for a pickup time at every pickup point. The data model has none of these: `programmes` has no end time, description, venue or transport flag, and `pickup_points` has no time.
+**Why it matters:** Members cannot see where and when to be, and marshals cannot plan. The change is cheap before data exists and expensive after.
+**Domain:** Programmes, Data model.
+**Owner:** Product Manager (specification); Database lead (model).
+**Agents required:** Database, Frontend, Transport Department (times, from D3).
+**Options:** A. Add the fields as the BRD states. B. Keep venue and times as free text (rejected: cannot compare or sort times). C. Pickup time per pickup point per leg.
+**Recommended resolution:** A, with a pickup time per pickup point per leg, because return times differ from outbound times.
+**Decision required from:** Product Manager (specification); Transport Department supplies the times.
+**Deadline/gate:** Before the schema lock (B0 exit) and the programme screens (F3).
+**Status:** Open. Blocking for the B0 schema lock.
+
+---
+
+**Issue ID:** OI-044
+**Description:** Four notification gaps. (a) No marshal notification when a booking is created (BRD §13, §18). (b) BRD §13 puts the member's name and phone in marshal alerts; NOTIFICATIONS-DESIGN §6 limits marshal alerts to the bus. (c) No programme reminder (BRD §18). (d) No marshal notification for payment-related booking changes (BRD §18). BRD "registration successful" maps to "application submitted" (NOTIFICATIONS-DESIGN §2) and is covered.
+**Why it matters:** A marshal who is not told about a booking cannot plan the bus, which is the purpose of the system.
+**Domain:** Notifications, Privacy.
+**Owner:** Product Manager (events); Sponsor and Liaison (content and privacy); Backend (events).
+**Agents required:** Liaison, Security, Backend, UI/UX.
+**Options:** (a) and (d): add route-scoped marshal alerts. (c): add a reminder the day before, by push and inbox. (b): Q-038 options A, B or C.
+**Recommended resolution:** Add (a), (c) and (d). For (b), option A of Q-038: the app names the rider; SMS carries only the bus and count.
+**Decision required from:** Executive Product Sponsor (Q-038); Product Manager (event list).
+**Deadline/gate:** Before the marshal screens (F2) and the notification build (B3).
+**Status:** Partly decided: alert content and the three added alerts (D-053). The SMS vendor remains OI-031.
+
+---
+
+**Issue ID:** OI-045
+**Description:** The route map (FRONTEND-DESIGN §2) omits screens that the scope and BRD require: member notifications and profile (SCOPE §3, BRD §7), marshal incident and walk-on screens (SCOPE §3, Journey D), admin reports and finance views (BRD §17), and admin settings (cutoff, support numbers, quiet hours).
+**Why it matters:** A screen with no route is not built, tested or traced.
+**Domain:** Frontend, Product.
+**Owner:** Product Manager (scope); Frontend lead (routes).
+**Agents required:** Frontend, UI/UX.
+**Options:** A. Add the routes to FRONTEND-DESIGN §2 now. B. Build them as sub-screens with no route (rejected: no test target).
+**Recommended resolution:** A, before the route shell (F0).
+**Decision required from:** Product Manager (no sponsor question needed).
+**Deadline/gate:** Before the F0 route shell.
+**Status:** Open. Blocking for the F0 route shell.
+
+---
+
+**Issue ID:** OI-046
+**Description:** Marshal taps may be made offline (MAR-10, FRONTEND-DESIGN §5). When they reach the server the list may have changed: the rider was removed, the bus departed, the manifest lock passed, or the marshal was replaced (D-005). No rule says what happens to the queued tap.
+**Why it matters:** A stale boarding tap accepted silently records a boarding that did not happen, or a removed rider as boarded.
+**Domain:** Backend, Frontend, Duty policy.
+**Owner:** Backend lead (rule); Transport Department (queue age, under P-14).
+**Agents required:** Backend, Frontend, Liaison.
+**Options:** A. The server decides on replay; a conflicting tap is rejected and shown to the marshal with the reason; the queue expires after departure plus a set time. B. Last write wins. C. Offline is read-only.
+**Recommended resolution:** A.
+**Decision required from:** Backend lead; Transport Department confirms the queue age.
+**Deadline/gate:** Before the F2 offline queue and test MAR-10.
+**Status:** Open. Blocking for the F2 offline queue.
+
+---
+
+**Issue ID:** OI-047
+**Description:** Operational services are named but not chosen or recorded: off-platform backup destination and encryption (RISK-010, DEVOPS-PLAN §5), error tracking (§6), uptime monitor, transactional email provider (B6), SMS vendor (OI-031), Web Push key custody (B10), and whether a scheduled query keeps a Supabase Free project active (D-027, Verify).
+**Why it matters:** Production cannot hold real member data without the backup. Monitoring is needed before the first duty day.
+**Domain:** DevOps.
+**Owner:** DevOps and infrastructure engineer.
+**Agents required:** Security, Integrations.
+**Options:** Free-tier options that meet the vendor terms recorded in DEVOPS-PLAN §2; each choice re-checked against those terms.
+**Recommended resolution:** Choose one per row. Store credentials in the team vault with two holders (START-CHECKLIST B9).
+**Decision required from:** DevOps lead; Sponsor approves any paid service.
+**Deadline/gate:** Staging by the B0 exit. Production before any real member data (RISK-010).
+**Status:** Open. Blocking for production data.
+
+---
+
+**Issue ID:** OI-048
+**Description:** BRD §17 asks for demographic, route popularity and utilisation, and payment-total reports. The design gives no formulas, no export format and no finance-period export (D-043).
+**Why it matters:** Reports built without definitions get disputed, and finance needs a stable export.
+**Domain:** Reporting, Data Science, Finance.
+**Owner:** Data Science (definitions); church finance contact (export format and period).
+**Agents required:** Data Science, Database, Liaison.
+**Options:** A. A metric specification per report, with formulas. B. Build first and define later (rejected).
+**Recommended resolution:** A, with a CSV export by finance period.
+**Decision required from:** Data Science (specification); finance contact (format).
+**Deadline/gate:** Before the F3 reports screen and the pilot.
+**Status:** Open. Non-blocking until the F3 reports screen.
+
+---
+
+**Issue ID:** OI-049
+**Description:** The sponsor has not defined who may use the app at launch, or what "public use" means: a pilot group, all roster members, or anyone who applies. The public-use release gate in the task plan depends on this answer.
+**Why it matters:** It sets the scope of the public-use gate, the roster import and the admin workload on the first day.
+**Domain:** Product, Sponsor.
+**Owner:** Executive Product Sponsor.
+**Agents required:** PM, Liaison, QA.
+**Options:** Q-039: A. Pilot group first, then all members after the 30-day review. B. All roster members after UAT. C. Anyone may apply, approved one by one.
+**Recommended resolution:** A.
+**Decision required from:** Executive Product Sponsor (Q-039).
+**Deadline/gate:** Before the public-use release gate is defined (before B5).
+**Status:** Decided by Q-039 (D-054). Pilot group first; all members after the 30-day review.
+
+---
+
+---
+
+**Issue ID:** OI-050
+**Description:** How long a free booking holds its seat while the marshal calls the member (D-051). The standard hold is 15 minutes (D-003, blocked), which is too short for a call. Without a limit, riders who are never reached would hold seats indefinitely.
+**Why it matters:** Seats held by free bookings can starve the waiting list (D-030). An unlimited hold removes the seat guarantee that the capacity engine depends on.
+**Domain:** Booking, Capacity, Policy.
+**Owner:** Executive Product Sponsor (rule); Backend lead (implementation).
+**Agents required:** Sponsor, Marshal lead, Backend, QA.
+**Options:** Q-040. A. Until the manifest lock, 30 minutes before departure. B. Until 18:00 on the day before departure. C. No limit (not recommended). D. The 15-minute hold.
+**Recommended resolution:** A. The marshal has the whole booking window to call; riders not reached by the lock are removed with notice.
+**Decision required from:** Executive Product Sponsor (Q-040).
+**Deadline/gate:** Before the F1 booking screens and BE-B1-18.
+**Status:** Decided by Q-040 (D-055): held until 18:00 the day before departure. Not the recommended option A.
 
 ---
 

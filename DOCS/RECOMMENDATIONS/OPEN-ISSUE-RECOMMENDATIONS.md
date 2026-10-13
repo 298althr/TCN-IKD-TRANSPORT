@@ -91,3 +91,22 @@ Blocking means a named gate cannot pass until the issue closes. Decision owner i
 4. Counsel and security: OI-038, OI-039, OI-012, OI-013.
 5. Integrations: OI-033, OI-025, OI-020.
 6. DevOps: OI-032, OI-005, OI-014 (runbooks), OI-035.
+
+---
+
+## I. Gaps from the BRD trace (2026-10-13)
+
+Found by tracing every BRD requirement to the design (`PRD/PRD-v1.0-CANDIDATE.md` §13). Full records are in the decision log.
+
+| ID | Issue (short) | Recommendation | Decision owner | Blocks | Affects |
+|---|---|---|---|---|---|
+| OI-041 | Decided (Q-036, D-051): a free booking waits for the marshal's reached call and the member's confirmation | Keep the BRD rule | Sponsor | None | BRD §11 and req. 11; SCOPE Journey B4a and STATE-MACHINES §1 updated |
+| OI-042 | Decided: gender required, male or female (D-057); password next to the phone code (D-056). Other required fields open | The department lists any other required fields in writing | Department | B0 profiles (other fields) | BRD §6, §17; DATA-MODEL §2.1 |
+| OI-043 | Programme end time, venue, description, transport flag and pickup times missing | Add the fields; pickup time per pickup point per leg | PM; Database lead | B0 schema lock, F3 | BRD §5, §8, §9; DATA-MODEL §2.2 |
+| OI-044 | Decided: alert content (Q-038) and three added alerts (D-053). SMS vendor remains under OI-031 | Done; implement the three events (NOT-12) | Sponsor; PM | None for content | BRD §13, §18; NOTIFICATIONS §2, §6 |
+| OI-045 | Screens required by scope missing from the route map | Add the routes to FRONTEND-DESIGN §2 before the F0 shell | PM; Frontend lead | F0 route shell | FRONTEND §2; SCOPE §3 |
+| OI-046 | No conflict rule for offline marshal taps | Server decides on replay; conflicting taps rejected with a reason; queue expires after departure | Backend lead; Department | F2 offline queue | MAR-10; FRONTEND §5 |
+| OI-047 | Backup destination, error tracking, uptime, email, SMS vendor and key custody not chosen | Choose free-tier options that meet the vendor terms; two key holders | DevOps lead | Production data; monitoring | DEVOPS-PLAN §2, §5, §6 |
+| OI-048 | Report and finance formulas and export format not defined | Metric specification per report; CSV export by finance period | Data Science; finance contact | F3 reports, pilot | BRD §17; D-043 |
+| OI-049 | Decided: pilot group first; all members after the 30-day review (Q-039, D-054) | Done | Sponsor | None | Task plan §12 |
+| OI-050 | Decided (Q-040, D-055): a free booking holds until 18:00 the day before departure, not the manifest lock | Done; BE-B1-18 implements it | Sponsor | None | Booking expiry; task plan BE-B1-18 |

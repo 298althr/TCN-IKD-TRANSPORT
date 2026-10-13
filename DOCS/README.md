@@ -1,7 +1,7 @@
 # DOCS: Index
 
 **Status:** Live · **Date:** 2026-10-12 · **Owner:** Product Manager
-**Start here:** `DECISION-LOGS/PM-DECISION-LOG-AND-ROADMAP.md` (decisions and open issues). The log wins on any conflict.
+**Start here:** `../HANDOFF.md` for the current state, then `NAVIGATION.md` for how to read the docs and logs. Decisions and open issues: `DECISION-LOGS/PM-DECISION-LOG-AND-ROADMAP.md`. The log wins on any conflict.
 
 ---
 
@@ -63,7 +63,8 @@
 | `SECURITY/` | Threat model, controls, data protection, pilot security acceptance |
 | `TESTING/` | Test layers, PRD edge cases as tests, release gate, UAT |
 | `OPTIMISATION/` | Performance budgets, cost controls, scale triggers |
-| `ROADMAP/` | PRD to deployment, gates, pilot, launch, review |
+| `ROADMAP/` | PRD to deployment, gates, pilot, launch, review; `IMPLEMENTATION-TASKS.md` lists every build, deployment, review, security and test task |
+| `PRD/` | Candidate PRD with feature modules, requirements, BRD trace and open issues (`PRD-v1.0-CANDIDATE.md`); PRD v1.0 is created at the freeze |
 
 ### Method, evidence and history
 

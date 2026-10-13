@@ -372,6 +372,107 @@ Members must be church members (AUTH-1). Google sign-in proves identity, not mem
 
 ---
 
+## Batch 8: Gaps between the BRD and the design (2026-10-13)
+
+**Asked:** 2026-10-13, in the interactive chat. Logged before asking, per D-026. The candidate PRD traced every BRD requirement to the design (`PRD/PRD-v1.0-CANDIDATE.md` §13). Four traced items need a sponsor decision: OI-041 (marshal contact before confirmation), OI-042 (member fields), OI-044 (notification content) and OI-049 (meaning of public use). The other gaps are owner-level and need no sponsor question (OI-043, OI-045 to OI-048).
+
+### Q-036: Must a marshal call a member before a booking counts as confirmed? (OI-041)
+
+| Option | Consequence |
+|---|---|
+| A. Keep the BRD rule: a free booking stays held until the marshal has called the member and recorded it | Free bookings are slower to confirm; the duty list drives confirmation |
+| B. Confirm on payment or on a free booking. The marshal call is recorded per rider as "contacted" and tracked on the duty list, but does not block confirmation | Matches the current design; the BRD confirmation step becomes a tracked follow-up (**recommended**) |
+| C. Paid bookings confirm on payment. Free bookings need a marshal call first | A hybrid; two confirmation rules to explain and test |
+
+Recommended: **B**.
+
+### Q-037: What member details are required at registration? (OI-042)
+
+| Option | Consequence |
+|---|---|
+| A. Gender optional, used only in aggregate reports. No password: members sign in with a phone code | Matches D-029; minimal personal data (**recommended**) |
+| B. Gender required at registration. No password: phone code only | Complete reports; more personal data than needed |
+| C. Gender optional. A password is offered next to the phone code | Follows BRD §6 literally; adds a credential to manage and reset |
+| D. No gender field. Reports show first-time and returning members only | Drops the BRD §17 male and female report |
+
+Recommended: **A**.
+
+### Q-038: What does a marshal alert say? (OI-044)
+
+| Option | Consequence |
+|---|---|
+| A. The app push names the rider and booking reference. SMS shows only the bus and the rider count | Useful on duty; SMS stays minimal (**recommended**) |
+| B. The app push and SMS both show only the bus and the rider count | Most private; the marshal opens the app for names |
+| C. The app push and SMS show the full passenger list and phone numbers | Follows BRD §13 literally; the widest exposure of personal data by SMS |
+
+Recommended: **A**.
+
+### Q-039: Who may use the app first, and what is "public use"? (OI-049)
+
+| Option | Consequence |
+|---|---|
+| A. Pilot group first; all members after the 30-day review | Limits the first support load; needs a named pilot list (**recommended**) |
+| B. All roster members at once after UAT | Faster adoption; the first day carries the full load |
+| C. Anyone may apply from day one, approved one by one | Open entry; relies on approval capacity from the start |
+
+Recommended: **A**.
+
+**Answers (2026-10-13):**
+
+| Q | Answer | Decision | Effect |
+|---|---|---|---|
+| Q-036 | **A. Keep the BRD rule.** A free booking stays held until the marshal has called the member and recorded it. Recommended option B was not chosen | D-051 | Free bookings are confirmed by the marshal's call. Supersedes the free path in SCOPE Journey B4a and STATE-MACHINES §1 |
+| Q-037 | **Other:** "gender is a must." "We can use magic link as well as Google OAuth later." "BRD rules are the priority." | D-052 | Gender required at registration. Password and gender values follow in Q-041 and Q-042 |
+| Q-038 | **A. Names in app, count in SMS** (recommended) | D-053 | App push names the rider and booking reference. SMS shows bus and count. Three missing alerts added |
+| Q-039 | **A. Pilot group first; all members after the 30-day review** (recommended) | D-054 | Public use means all members, after the pilot review |
+
+**How the "BRD rules are the priority" note is applied.** It is recorded as the sponsor's rule for conflicts between the BRD and the design. D-051 and D-053 apply it, and the three alerts added by D-053 follow BRD §13 and §18. The sponsor may narrow the rule with a later answer.
+
+---
+
+## Batch 9: Follow-up questions from the Batch 8 answers (2026-10-13)
+
+**Asked:** logged 2026-10-13, before they are asked. Q-040 follows from Q-036. Q-041 and Q-042 follow from the "Other" answer to Q-037.
+
+### Q-040: How long does a free booking hold its seat while the marshal calls? (OI-050)
+
+| Option | Consequence |
+|---|---|
+| A. Until the manifest lock, 30 minutes before departure | The marshal has the whole booking window to call. Riders not reached by the lock are removed with notice (**recommended**) |
+| B. Until 18:00 on the day before departure | Seats are released earlier for the waiting list; less time to call late bookings |
+| C. Until the marshal records a result, with no time limit | Seats can stay locked indefinitely. Not recommended |
+| D. The same 15-minute hold as paid bookings | Calls must happen within 15 minutes of booking; unlikely to be practical |
+
+Recommended: **A**.
+
+### Q-041: Should password sign-in be added alongside the phone code? (OI-042)
+
+| Option | Consequence |
+|---|---|
+| A. Yes: a password next to the phone code, as BRD §6 says (**recommended**, following the note that BRD rules are the priority) | A credential to store, reset and protect; matches BRD §6 literally |
+| B. No: phone code now; magic link and Google later (Q-037) | Matches D-029 and the sign-in answers; no passwords to manage |
+
+Recommended: **A**.
+
+### Q-042: Which gender choices must registration offer? (OI-042)
+
+| Option | Consequence |
+|---|---|
+| A. Male and female only | Matches the BRD §17 report exactly; no way to decline |
+| B. Male, female, or prefer not to say (**recommended**) | Gender is still required to submit; a person may decline to give a value. Less personal data than a forced choice |
+
+Recommended: **B**.
+
+**Answers (2026-10-13):**
+
+| Q | Answer | Decision | Effect |
+|---|---|---|---|
+| Q-040 | **B. Until 18:00 on the day before departure.** Not the recommended option A | D-055 | A free booking's hold ends at 18:00 the day before; the seat returns to the waiting list. Closes OI-050 |
+| Q-041 | **A. Yes: a password next to the phone code**, as BRD §6 says | D-056 | Password sign-in added; phone code remains the main method. Extends D-029 |
+| Q-042 | **A. Male or female only.** Not the recommended option B | D-057 | Gender required with two choices and no decline option. Risk recorded (RISK-014) |
+
+---
+
 ## Open questions queued for later batches
 
 Batch 4: answered (see above).

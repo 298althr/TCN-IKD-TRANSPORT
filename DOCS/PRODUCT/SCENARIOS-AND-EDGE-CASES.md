@@ -37,7 +37,7 @@ Every POLICY row cites a register ID (P-xx). If a row needs an answer for the pi
 
 | ID | Trip | Scenario | Expected outcome | Status | Ref |
 |---|---|---|---|---|---|
-| A01 | O | Outbound booking, bus has seats | Held; confirmed (free) or paid; one outbound manifest entry | Designed | STATE-MACHINES §1 |
+| A01 | O | Outbound booking, bus has seats | Held. A free booking waits for the marshal's reached call (D-051) and holds until 18:00 the day before departure (D-055). A paid booking waits for payment. One outbound manifest entry | Designed | STATE-MACHINES §1 |
 | A02 | R | Return-only booking | One return manifest entry; no outbound entry; boards on return list | Decided | PROGRAMMES §2 |
 | A03 | RT | Round trip, both legs have seats | Two manifest entries, one per leg; one price per rider | Decided | D-039 |
 | A04 | RT | Round trip, outbound full, return has seats | Hold fails for the full leg with SEATS_UNAVAILABLE. Member is offered: join the outbound waitlist, or book the return leg only. Whether a round trip can be split this way is not decided | POLICY | P-06 |

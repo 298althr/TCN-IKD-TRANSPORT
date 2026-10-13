@@ -44,6 +44,9 @@
 | Waitlist offer (seat released or bus added) | Waitlisted riders, in priority order | Push, SMS, inbox | Critical (offer window applies) |
 | Waitlist offer expired; next rider offered | Next rider | Push, SMS, inbox | High |
 | Marshal notified: bus needed for waitlist (D-030) | Marshal, admin | Push, inbox | High |
+| New booking on the assignment (D-053; BRD §13) | Marshal of the assignment | Push, inbox | High |
+| Payment changed on a booked rider (D-053; BRD §18) | Marshal of the assignment | Push, inbox | High |
+| Programme reminder the day before departure (D-053; BRD §18) | Booked riders | Push, inbox | Normal |
 
 ---
 
@@ -77,14 +80,14 @@ Proposal (Recommendation, to confirm with the transport department): no non-crit
 - Plain language. Booking reference always included. Programme name and departure time included.
 - No payment instruments, passwords, or one-time codes in any message. OTP codes are sent only by the sign-in provider.
 - No internal state names; use the member-facing labels from `FRONTEND/FRONTEND-DESIGN.md` §4.
-- Marshal alerts name the bus and the assignment, not the full passenger list.
+- Marshal push alerts name the rider and the booking reference, for the marshal's own assignment only. An SMS to a marshal shows only the bus and the rider count (D-053).
 - Messages in English at launch.
 
 ---
 
 ## 7. Templates (initial list)
 
-`application.decided`, `booking.held`, `booking.hold_expiring`, `booking.confirmed`, `booking.cancelled`, `payment.failed`, `refund.decided`, `rider.removed`, `assignment.changed`, `incident.opened`, `programme.cancelled`, `support.updated`, `guest.decided`, `broadcast.generic`.
+`application.decided`, `booking.held`, `booking.hold_expiring`, `booking.confirmed`, `booking.cancelled`, `payment.failed`, `refund.decided`, `rider.removed`, `assignment.changed`, `incident.opened`, `programme.cancelled`, `support.updated`, `guest.decided`, `broadcast.generic`, `marshal.booking_created`, `marshal.payment_changed`, `programme.reminder` (the last three from D-053).
 
 Each template has a plain-language version for push, a fuller version for email, and an inbox entry.
 

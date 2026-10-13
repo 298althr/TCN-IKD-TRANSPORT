@@ -1,7 +1,7 @@
 # Canonical State Machines
 
 **Status:** Proposed · **Version:** 0.1 · **Date:** 2026-10-12 · **Owner:** Product Manager
-**Decisions:** D-005, D-008, D-023, D-025 · **Open issues:** OI-027, OI-012, OI-019, OI-022, OI-036
+**Decisions:** D-005, D-008, D-023, D-025, D-051, D-055 · **Open issues:** OI-027, OI-012, OI-019, OI-022, OI-036
 
 Each section gives the states, the legal transitions, who may trigger them, guards that must hold, and what must be recorded. A transition not listed here is illegal.
 
@@ -14,8 +14,8 @@ States: `held`, `confirmed`, `cancel_pending`, `cancelled`, `expired`. Terminal:
 | From | To | Trigger | Actor | Guard | Side effects | Required record |
 |---|---|---|---|---|---|---|
 | (none) | `held` | hold seats | Member, Marshal (walk-on), Admin | Assignment `booking_open`; seats available under row lock; member approved; guests approved for guest riders | Ledger `+n` (hold); `hold_expires_at` set (D-003 TTL, proposed 15 min) | Transition row, audit |
-| `held` | `confirmed` | payment succeeded, or free programme confirm | System (webhook), Member (free only) | Payment `succeeded` for this booking, amount matches; or programme free | Manifest entries `awaiting` created; notifications queued | Transition row, payment event ID |
-| `held` | `expired` | hold timer passes | System (scheduler) | `now() > hold_expires_at` and not confirmed | Ledger `-n` (expire) | Transition row |
+| `held` | `confirmed` | payment succeeded; or, for a free programme, a reached call and the member's confirmation recorded by the marshal | System (webhook); Marshal (free only, own assignment) | Payment `succeeded` for this booking, amount matches; or programme free and a `reached` contact with confirmation recorded (D-051) | Manifest entries `awaiting` created; notifications queued | Transition row, payment event ID or contact record |
+| `held` | `expired` | hold timer passes | System (scheduler) | `now() > hold_expires_at` and not confirmed. For a free booking, `hold_expires_at` is 18:00 Lagos time the day before departure, or the manifest lock if the booking was made after that time (D-055) | Ledger `-n` (expire) | Transition row |
 | `held` | `cancelled` | member or admin abandons | Member, Admin | Not yet confirmed | Ledger `-n` (release) | Transition row, reason |
 | `confirmed` | `cancelled` | cancellation with no payment, or free booking | Member (in window), Marshal, Admin | Before departure; within cancellation window per OI-022 | Ledger `-n` (cancel); manifest entries `removed`; notifications | Transition row, reason |
 | `confirmed` | `cancel_pending` | cancellation of a paid booking | Member, Admin | Paid; refund rule requires review or is manual | Refund request created (refund machine) | Transition row, reason |
@@ -24,6 +24,7 @@ States: `held`, `confirmed`, `cancel_pending`, `cancelled`, `expired`. Terminal:
 
 **Rules**
 
+- A free booking stays `held` until the marshal records a reached call and the member's confirmation (D-051). It is never confirmed by the member alone.
 - A booking is never moved back from `cancelled` or `expired`. A new booking is created instead.
 - `expired` and a late payment: if a payment succeeds after `expired`, the payment goes to `reconciliation_required` (payment machine) and the booking is not revived automatically. An admin decides (PRD §6 item 2).
 - Cancellation has one function callable by member, marshal and admin (PRD §6 item 3). Only the actor and the window check differ.
@@ -48,6 +49,7 @@ States: `awaiting`, `boarded`, `no_show`, `removed`. Terminal: `boarded` (except
 - `no_show` is a first-class terminal state (D-008), distinct from `removed`. Reports count them separately.
 - A rider on a round trip has two entries. Boarding one leg does not change the other.
 - Return-only riders have one entry on the return leg.
+- Riders on a held free booking appear on the duty list as "to contact" until a contact result is recorded (D-051).
 
 ---
 

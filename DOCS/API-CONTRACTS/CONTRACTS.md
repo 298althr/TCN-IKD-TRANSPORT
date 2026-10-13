@@ -51,7 +51,8 @@ type Result<T> = Ok<T> | Err;
 | `publish_programme` | programme id | status `published` | Admin | Guards in STATE-MACHINES §10 |
 | `set_booking_state` | assignment id or programme id, to (`open`, `closed`, `paused`) | status | Admin | Writes transition |
 | `hold_seats` | assignment id, leg, riders[] (rider type, profile or guest id, display name), p_idem | booking id, reference, `hold_expires_at`, status `held` | Member (own), Marshal (walk-on), Admin | Row lock on assignment; returns `SEATS_UNAVAILABLE` if short |
-| `confirm_free_booking` | booking id | status `confirmed` | Member (own, free only) | Rejects if programme has a price |
+| `record_contact` | manifest entry id, outcome (`reached`, `not_reached`, `no_longer_going`), note | contact status | Marshal (own assignment), Admin | Logs each call; `no_longer_going` leads to `cancel_booking` (D-051) |
+| `confirm_free_booking` | booking id; member confirmed on the call (must be true) | status `confirmed` | Marshal (own assignment), Admin | Free programmes only; refused for priced programmes; requires a recorded `reached` contact (D-051) |
 | `cancel_booking` | booking id, reason | status `cancelled` or `cancel_pending` | Member (own, in window), Marshal (own assignment), Admin | One function for all roles (PRD §6 item 3) |
 | `board_rider` | manifest entry id | board status `boarded` | Marshal (own assignment), Admin | Writes manifest transition |
 | `mark_no_show` | manifest entry id, reason optional | board status `no_show` | Marshal (own), Admin | Closing the list is a separate call |

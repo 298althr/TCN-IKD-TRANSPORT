@@ -65,7 +65,7 @@ Each journey lists the steps, the state that changes at each step, and the dashb
 | B1 | Chooses programme, leg (outbound, return, round trip), bus and pickup point | none | Member |
 | B2 | Adds riders (self, registered guests, or guests not yet registered: see PROGRAMMES-LEGS-GUESTS) | none | Member |
 | B3 | Confirms: seats reserved atomically | booking `held`, seats ledger `+n` | Member, Admin |
-| B4a | Free programme (Sunday): confirmed immediately | booking `confirmed` | Member, Marshal |
+| B4a | Free programme (Sunday): held until the marshal records a reached call and the member's confirmation (D-051); the hold ends at 18:00 the day before departure (D-055) | booking `confirmed` | Member, Marshal |
 | B4b | Paid programme: redirected to provider-hosted checkout | payment `redirected` | Member |
 | B5 | Provider confirms by server-side event (never by the return URL alone) | payment `succeeded`, booking `confirmed` | Member, Admin, Marshal |
 | B6 | Hold not paid in time | booking `expired`, seats released | Member |

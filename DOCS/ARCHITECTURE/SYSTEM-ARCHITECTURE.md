@@ -47,7 +47,7 @@ Each domain owns its tables and the functions that change them. Other domains re
 |---|---|---|
 | Identity and membership | `profiles`, `membership_applications`, `user_roles`, `guests`, `guest_invites` | `submit_application`, `decide_application`, `invite_guest`, `redeem_invite` |
 | Programmes and capacity | `programmes`, `routes`, `pickup_points`, `buses`, `route_bus_assignments`, `departures`, `seat_ledger` | `create_programme`, `publish_programme`, `set_bus_booking`, `open_booking` |
-| Booking and manifest | `bookings`, `booking_riders`, `manifest_entries`, `booking_transitions` | `hold_seats`, `confirm_free_booking`, `cancel_booking`, `board_rider`, `mark_no_show`, `add_walk_on` |
+| Booking and manifest | `bookings`, `booking_riders`, `manifest_entries`, `booking_transitions` | `hold_seats`, `record_contact`, `confirm_free_booking`, `cancel_booking`, `board_rider`, `mark_no_show`, `add_walk_on` |
 | Payments | `payments`, `payment_events`, `refunds` | `start_payment` (Edge Function), `apply_payment_event`, `request_refund`, `decide_refund` |
 | Notifications | `notifications_outbox`, `push_subscriptions`, `notification_inbox` | `enqueue_notification` (internal), dispatch (Edge Function) |
 | Support and incidents | `support_reports`, `report_messages`, `incidents` | `create_support_report`, `transition_support_report`, `open_incident`, `transition_incident` |
@@ -55,7 +55,7 @@ Each domain owns its tables and the functions that change them. Other domains re
 
 ## 4. Data flows
 
-**Booking with a free programme:** Member taps confirm → `hold_seats` locks the bus-leg row, checks the seat ledger, writes booking `held`, rider rows and ledger `+n` → `confirm_free_booking` writes `confirmed` and a transition row → Realtime pushes new seat count to all open screens → outbox row enqueued for the member and the marshal.
+**Booking with a free programme (D-051):** Member taps confirm → `hold_seats` locks the bus-leg row, checks the seat ledger, writes booking `held`, rider rows and ledger `+n` → the marshal calls the member and records the result with `record_contact` → on a reached call with the member's confirmation, `confirm_free_booking` writes `confirmed` and a transition row → Realtime pushes new seat count to all open screens → outbox row enqueued for the member and the marshal. An unreached free booking expires at 18:00 Lagos time the day before departure (D-055).
 
 **Paid booking:** `hold_seats` as above → `start_payment` (Edge Function) creates a provider order with the booking reference and amount, returns the hosted checkout URL → member is redirected → provider calls the webhook → `apply_payment_event` verifies the signature, records the event once (idempotent on provider event ID), and confirms the booking if the amount and reference match → if the hold has already expired, the payment is routed to `reconciliation_required`, not silently dropped (PRD §6 item 2).
 

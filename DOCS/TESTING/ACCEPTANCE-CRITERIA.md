@@ -1,7 +1,7 @@
 # Acceptance Criteria by Role
 
 **Status:** Proposed · **Version:** 0.1 · **Date:** 2026-10-12 · **Owner:** QA/Test Engineer with Product Manager
-**Decisions:** D-019, D-025, D-029, D-030 to D-044, D-045 (sign-off gate), D-047 (criteria are release criteria) · **Source scenarios:** `PRODUCT/SCENARIOS-AND-EDGE-CASES.md`
+**Decisions:** D-019, D-025, D-029, D-030 to D-044, D-045 (sign-off gate), D-047 (criteria are release criteria), D-051 (MAR-21 added) · **Source scenarios:** `PRODUCT/SCENARIOS-AND-EDGE-CASES.md`
 
 ---
 
@@ -33,7 +33,7 @@ Each criterion is written as **Given / When / Then** in one line. The ID tells y
 | MEM-04 | Given an approval, when the admin approves, then the member is notified and sees booking controls | ADM-03 | P |
 | MEM-05 | Given a rejection, when the member opens the app, then the reason and the contact route are shown and no booking is possible | F02 | P |
 | MEM-06 | Given a request for more information, when the member replies, then the status returns to pending | F03 | P |
-| MEM-07 | Given a free Sunday seat, when the member chooses the bus and pickup and confirms, then one outbound booking is created with a reference | A01, SUN | P |
+| MEM-07 | Given a free Sunday seat, when the member chooses the bus and pickup and confirms, then one outbound booking is created with a reference and shows as waiting for the marshal's call | A01, SUN, D-051 | P |
 | MEM-08 | Given a return-only booking, when the member travels, then the ticket shows the return leg only and the rider appears on the return list only | A02 | P |
 | MEM-09 | Given both legs open, when the member books a round trip, then the two legs are shown and one price per rider applies whichever leg | A03, D-039 | P |
 | MEM-10 | Given one leg full, when the member books a round trip, then the app offers the open leg or the waiting list and never books a leg the member did not choose | A04, P-06 | P |
@@ -66,7 +66,7 @@ Each criterion is written as **Given / When / Then** in one line. The ID tells y
 | MEM-37 | Given the programme list offline, when it is shown, then a "last synced at" time is displayed | OPT §5, E12 | P |
 | MEM-38 | Given a suspended member with future bookings, when they open the app, then they cannot book and the bookings are flagged for the admin | F10, P-10 | L |
 | MEM-39 | Given a booking for three riders, when the total is shown, then it equals price per rider times three, on any leg | D-039 | P |
-| MEM-40 | Given a free Sunday booking, when the member confirms, then no payment step is shown | A08, SUN | P |
+| MEM-40 | Given a free Sunday booking, when the member confirms, then no payment step is shown and the booking is not confirmed until the marshal records the member's confirmation | A08, SUN, D-051 | P |
 
 ---
 
@@ -113,6 +113,7 @@ Each criterion is written as **Given / When / Then** in one line. The ID tells y
 | MAR-18 | Given a dispute at the bus, when the marshal flags it, then the flag is recorded and the marshal cannot change any fee or refund | H04, P-14 | L |
 | MAR-19 | Given a duty ended or a session idle for the set time, when the marshal returns, then they must sign in again | AUTH §7 | P |
 | MAR-20 | Given a bus marked departed, when a boarding tap is made, then it is refused unless an administrator corrects it | STATE §6 | P |
+| MAR-21 | Given a free booking held for a rider, when the marshal records a reached call and the member's confirmation, then the booking is confirmed; when the marshal records not reached, then the rider stays held and shows as not reached | D-051, BRD §11, requirements 10 and 11 | P |
 
 ---
 
@@ -179,9 +180,9 @@ Each criterion is written as **Given / When / Then** in one line. The ID tells y
 |---|---|---|---|
 | Member | 40 | 38 | 2 (MEM-33, MEM-38) |
 | Guest | 12 | 11 | 1 (GST-12) |
-| Marshal | 20 | 19 | 1 (MAR-18) |
+| Marshal | 21 | 20 | 1 (MAR-18) |
 | Administrator | 25 | 23 | 2 (ADM-19, ADM-21) |
 | Cross-cutting | 18 | 18 | 0 |
-| **Total** | **115** | **109** | **6** |
+| **Total** | **116** | **110** | **6** |
 
 Counts are checked by the test-mapping step in the frontend-first plan (`ROADMAP/DEVELOPMENT-STRATEGY.md`). Any scenario marked POLICY in the scenario table must be covered by at least one criterion or be listed as deferred with its policy ID.

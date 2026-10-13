@@ -45,7 +45,7 @@ Mutability: **A** append-only · **S** state-machine (changed by a named functio
 
 | Table | Key | Key columns | Owner | Mut. | Notes |
 |---|---|---|---|---|---|
-| `profiles` | `id` = `auth.users.id` | full_name, phone_e164, email, membership_status (`pending`, `approved`, `rejected`, `needs_info`, `suspended`, `retired`), register_ref, joined_via (`first_timer`, `guest_conversion`, `register_import`) | Identity | S | Membership status changes only through approval functions |
+| `profiles` | `id` = `auth.users.id` | full_name, phone_e164, email, gender (required; `male` or `female`; D-057), membership_status (`pending`, `approved`, `rejected`, `needs_info`, `suspended`, `retired`), register_ref, joined_via (`first_timer`, `guest_conversion`, `register_import`) | Identity | S | Membership status changes only through approval functions |
 | `membership_applications` | uuid | profile_id, status (`submitted`, `pending_review`, `needs_info`, `approved`, `rejected`), submitted_at, decided_by, decided_at, reason, referred_by_name | Identity | S | First-timer registration (AUTH-2 open) |
 | `membership_roster` | uuid | import_batch_id, name, phone_e164, register_ref, row_hash | Identity | A | CSV import rows for matching (D-007 policy open). Not the source of truth for membership; a reference for matching |
 | `roster_import_batches` | uuid | source_filename, imported_by, imported_at, row_count, checksum | Identity | A | Every import recorded |

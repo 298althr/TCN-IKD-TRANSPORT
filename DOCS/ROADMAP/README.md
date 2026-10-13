@@ -12,6 +12,7 @@ The path from the PRD to a running, tested, deployed product: what happens in wh
 | File | Contents |
 |---|---|
 | `IMPLEMENTATION-ROADMAP.md` | Phases from PRD to deployment, testing and optimisation, with deliverables, owners, gates and exit criteria |
+| `IMPLEMENTATION-TASKS.md` | Every task from governance to public use, with owners, dependencies, evidence and source: engineering, frontend (F0 to F5), backend (B0 to B5), authentication, payments and notifications, deployment, review, security development, final testing, the public-use gate and operations. Includes a module coverage check (D-050) |
 | `DEVELOPMENT-STRATEGY.md` | Sign-off gate, documentation freeze, PRD v1.0, frontend-first sequence (F0 to F5), then backend (B0 to B5), integration and risks. Governs the order of the roadmap (D-046) |
 
 ## Governing rules
@@ -22,4 +23,4 @@ The path from the PRD to a running, tested, deployed product: what happens in wh
 
 ## Open issues
 
-OI-001 (Gate 0 for all engineering), OI-030 (production hosting), OI-036 (refund rules before refund build), OI-038 (data protection before pilot), OI-040 (pilot scope).
+OI-001 (Gate 0 for all engineering), OI-030 (production hosting), OI-036 (refund rules before refund build), OI-038 (data protection before pilot), OI-040 (pilot scope), OI-043 and OI-045 to OI-048 (BRD gaps still open; the decided gaps are in the decision log).

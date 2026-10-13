@@ -20,7 +20,7 @@ Being signed in gives no membership. Being approved gives membership. Every scre
 
 | Who | Method | Second factor | Notes |
 |---|---|---|---|
-| Member | Phone OTP (one-time code by SMS) | None at MVP | SMS channel decided (D-028); vendor and cost open (OI-031). Email magic link as fallback for members without a usable number, to decide |
+| Member | Phone OTP (one-time code by SMS) | None at MVP | SMS channel decided (D-028); vendor and cost open (OI-031). Password next to the phone code (D-056). Magic link (email) and Google are added later (D-052) |
 | Member (optional) | Google | None | Identity only; does not grant membership. Button shown in the UI now; integrated at deployment (D-029) |
 | Guest (invite link) | Phone OTP after clicking the link | None | Link grants a route to register, not access to bookings |
 | Marshal | Phone OTP | Admin-enrolled device check (to decide, OI-039) | Few accounts; admin provisions |
